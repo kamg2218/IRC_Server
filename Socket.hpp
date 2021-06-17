@@ -22,7 +22,7 @@ class Socket
 		Socket(int port, unsigned long addr);
 		Socket(const Socket& other);
 		Socket&		operator=(const Socket& other);
-		~Socket() { close(_s); }
+		~Socket();
 		int&			s();
 		sockaddr_in&	sin();
 		protoent*		proto();
@@ -60,10 +60,37 @@ Socket::Socket(int port) : _s(0) {
 	_sin.sin_addr.s_addr = htonl(INADDR_ANY);
 }
 
+Socket::Socket(int port, unsigned long addr) : _s(0) {
+	_proto = getprotobyname("tcp");
+	if (!_proto){
+		std::cout << "Error" << std::endl;
+		exit(0);
+	}
+	_s = socket(AF_INET, SOCK_STREAM, _proto->p_proto);
+	if (_s == -1){
+		std::cout << "Socket Error" << std::endl;
+		exit(0);
+	}
+	_sin.sin_family = AF_INET;
+	_sin.sin_port = htons(port);
+	_sin.sin_addr.s_addr = htonl(addr);
+}
+
+Socket::Socket(const Socket& other) { *this = other; }
+
+Socket&		Socket::operator=(const Socket& other){
+	if (this == &other)
+		return *this;
+	this->_s = other._s;
+	this->_sin = other._sin;
+	this->_proto = other._proto;
+	return *this;
+}
+
 int&			Socket::s() { return _s; }
 sockaddr_in&	Socket::sin() { return _sin; }
 protoent*		Socket::proto() { return _proto; }
 
-//Socket::~Socket() { close(_s); }
+Socket::~Socket() { close(_s); }
 
 #endif
