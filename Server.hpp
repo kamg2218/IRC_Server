@@ -3,12 +3,12 @@
 
 #include <exception>
 #include <iostream>
-#include "User.hpp"
 #include <netinet/in.h>
 #include <netdb.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
+#include "Session.hpp"
 
 class Server
 {
@@ -55,7 +55,7 @@ class Server
 			struct protoent *pe;
 			struct sockaddr_in	sin;
 			pe = getprotobyname("tcp");
-			sockfd = socket(PF_INET, SOCK_STREAM, pe->p_proto);
+			sockfd = ::socket(PF_INET, SOCK_STREAM, pe->p_proto);
 			if (!sockfd)
 				throw (SocketException());
 			sin.sin_family = AF_INET;
@@ -66,7 +66,7 @@ class Server
 			if (listen(sockfd, 42) < 0)
 				throw (ListenException());
 		}
-		void startaccept()
+		Session* handleAccept()
 		{
 			int cs;
 			struct sockaddr_in	csin;
@@ -77,8 +77,9 @@ class Server
 			if (cs < 0)
 				throw (AcceptException());
 			std::cout << inet_ntoa(csin.sin_addr) << ":" << ntohs(csin.sin_port) << " is connected\n";
+			return (new Session(cs, csin));
 		}
-		int getSockfd()
+		int socket() const
 		{
 			return (sockfd);
 		}

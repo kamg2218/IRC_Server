@@ -18,6 +18,9 @@ class User
 		bool didNick;
 		bool didUser;
 	public:
+		User(std::string const& r, std::string const& n, std::string const& h)
+		: sRealname(r), sNickname(n), sHost(h), didNick(false), didUser(false)
+		{}
 		std::string	RealName() const
 		{
 			return (sRealname);
@@ -30,6 +33,5 @@ class User
 		{
 			return (sHost);
 		}
-
 };
 #endif

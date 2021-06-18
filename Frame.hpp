@@ -6,7 +6,8 @@
 #include "User.hpp"
 #include "Channel.hpp"
 #include "Server.hpp"
-#include "Socket.hpp"
+#include "Service.hpp"
+#include "Session.hpp"
 
 typedef std::map<std::string, User*> UserMap;
 typedef std::map<std::string, Channel*> ChannelMap;
@@ -16,8 +17,9 @@ class Frame
 		static Frame* pInstance;
 		UserMap		mUsers;
 		ChannelMap	mChannels;
-		Socket		socket;
 		Server		server;
+		Service		service;
+		std::map<int, Session*> mSessions;
 	public:
 		~Frame()
 		{
@@ -26,36 +28,20 @@ class Frame
 		static Frame* instance()
 		{
 			if (!pInstance)
+			{
 				pInstance = new Frame();
+			}
 			return (pInstance);
 		} 
-		void start()
+		void	start()
 		{
 			server.create(80);
-			socket.addServer(server.getSockfd(), &server);
-			while (1)
+			while(1)
 			{
-				socket.do_select();
-				do_service();
+				service.do_select(server, mSessions);
+				service.do_service(server, mSessions);
 			}
-		}
-		void do_service()
-		{
-			/*
-			int r ;
-			r = socket.getRes();
-			m = socket.getMaxopen();
-			for (int i = 0 ; i < m && r > 0 ; i++)
-			{
-				if (socket.check_read(i))
-					fds[i].read();
-				if (socket.check_write(i))
-					fds[i].write();
-				if (socket.check_read(i) || socket.check_write(i))
-					r--;
-			}
-			*/
-			std::cout << "hi\n";
+
 		}
 		bool doesNicknameExists(std::string const& name)
 		{
