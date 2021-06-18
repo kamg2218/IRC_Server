@@ -8,7 +8,8 @@
 #include <iostream>
 #include "Message.hpp"
 #include "User.hpp"
-//#include "Shared_Ptr.hpp"
+class Session;
+#include "Shared_Ptr.hpp"
 
 class Session
 {
