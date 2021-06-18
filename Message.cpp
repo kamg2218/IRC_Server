@@ -42,7 +42,7 @@ void	Message::cmdNICK()
 {
 	Frame *mainframe = Frame::instance();
 	
-	mainframe.addUser();
+	//mainframe.addUser();
 }
 
 void	Message::cmdUSER()
