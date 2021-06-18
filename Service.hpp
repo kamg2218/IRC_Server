@@ -9,6 +9,7 @@
 class Service
 {
 	private:
+		std::map<int, Session*> mSessions;
 		fd_set fd_read;
 		fd_set fd_write;
 		int max;
@@ -23,7 +24,7 @@ class Service
 		getrlimit(RLIMIT_NOFILE, &rlp);
 		maxopen = rlp.rlim_cur;
 	}
-	void do_select(Server const& sv, std::map<int, Session*> const& ms)
+	void do_select(Server const& sv)
 	{
 		res = 0;
 		max = 0;
@@ -31,7 +32,7 @@ class Service
 		FD_ZERO(&fd_write);
 		FD_SET(sv.socket(), &fd_read);
 		max = std::max(max, sv.socket());
-		for (std::map<int, Session*>::const_iterator it = ms.begin() ; it != ms.end() ; ++it)
+		for (std::map<int, Session*>::const_iterator it = mSessions.begin() ; it != mSessions.end() ; ++it)
 		{
 			FD_SET((*it).second->socket(), &fd_read);
 			max = std::max(max, (*it).second->socket());
@@ -41,8 +42,7 @@ class Service
 	}
 
 
-
-	void do_service(Server & sv, std::map<int, Session*> & ms)
+	void do_service(Server & sv)
 	{
 		Session *newclient;
 		
@@ -50,33 +50,22 @@ class Service
 		{
 			newclient = sv.handleAccept();
 			std::map<int, Session*>::value_type res(newclient->socket(), newclient);
-			ms.insert(res);
+			mSessions.insert(res);
 		}
-		for (std::map<int, Session*>::iterator it = ms.begin(); it != ms.end() ; )
+		for (std::map<int, Session*>::iterator it = mSessions.begin(); it != mSessions.end() ; )
 		{
 			if (FD_ISSET((*it).first, &fd_read))
 			{
 				std::map<int, Session*>::iterator temp = it++;
-				if ((*temp).second->handleRead(ms))
-					ms.erase(temp);
+				if ((*temp).second->handleRead(mSessions))
+					mSessions.erase(temp);
 			}
 			else
 				++it;
 		}
 	}
-	int getRes() const
-	{
-		return (res);
-	}
+
 	void close(int fd);
-	bool check_read(int fd)
-	{
-		return (FD_ISSET(fd, &fd_read));
-	}
-	bool check_write(int fd)
-	{
-		return (FD_ISSET(fd, &fd_write));
-	}
 	int getMaxopen() const
 	{
 		return (maxopen);

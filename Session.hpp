@@ -3,7 +3,6 @@
 
 #include <string>
 #include <sys/select.h>
-#include "Server.hpp"
 #include <sys/resource.h>
 #include <string>
 #include <map>
@@ -52,20 +51,26 @@ class Session
 			else
 			{
 				buffer.insert(buf, r);
+				if (!buffer.gotFullMsg())
+					return (true);
+
 				for (std::map<int, Session*>::iterator it = ms.begin() ; it != ms.end() ; ++it)
 				{
-					if (buffer.gotFullMsg())
+					if ((*it).first != fd)
 					{
-						if ((*it).first != fd)
-						{
-							r = send((*it).first, buffer.getMessage().c_str(), buffer.msglen(), 0);	
-							std::cout << r << "bytes : sent to " << (*it).first << "\n";
-							buffer.reset();
-						}
+						r = send((*it).first, buffer.getMessage().c_str(), buffer.msglen(), 0);	
 					}
 				}
+				buffer.reset();
+				reply("001");
 				return (false);
 			}
+		}
+		void reply(std::string const& str)
+		{
+			std::string res = str;	
+			res += "\r\n";
+			send(fd, res.c_str(), res.length(), 0);
 		}
 };
 
