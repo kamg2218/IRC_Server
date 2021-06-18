@@ -5,20 +5,22 @@
 #include <sys/select.h>
 #include "Server.hpp"
 #include <sys/resource.h>
-#include "Shared_Ptr.hpp"
 #include <string>
 #include <map>
 #include <unistd.h>
+#include "Message.hpp"
 
 class Session
 {
 	private:
 		User	*user;
 		int		fd;
-		std::string buffer;
+		//std::string buffer;
+		Message buffer;
 		std::string msg;
 
 	public:
+		typedef Session* 	pointer;
 		Session(int csfd, struct sockaddr_in const& csinfo)
 		{
 			this->fd = csfd;
@@ -29,7 +31,6 @@ class Session
 			fd = -1;
 			user = NULL;
 		}
-		typedef Session* 	pointer;
 		static pointer create()
 		{
 			return (new Session());
@@ -50,10 +51,18 @@ class Session
 			}
 			else
 			{
+				buffer.insert(buf, r);
 				for (std::map<int, Session*>::iterator it = ms.begin() ; it != ms.end() ; ++it)
 				{
-					if ((*it).first != fd)
-						r = send((*it).first, buf, strlen(buf), 0);	
+					if (buffer.gotFullMsg())
+					{
+						if ((*it).first != fd)
+						{
+							r = send((*it).first, buffer.getMessage().c_str(), buffer.msglen(), 0);	
+							std::cout << r << "bytes : sent to " << (*it).first << "\n";
+							buffer.reset();
+						}
+					}
 				}
 				return (false);
 			}
