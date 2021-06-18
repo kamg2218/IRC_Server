@@ -49,7 +49,7 @@ void		check_rfds(s_fd* fd, Socket* soc, Socket* client){
 				write(client->s(), "end", 1024);
 				if (strncmp(buf, "quit", 4) == 0){
 					close(i);
-					close(soc->s());
+					//close(soc->s());
 					exit(1);
 				}
 				memset(buf, 0, 1024);
@@ -75,6 +75,11 @@ int			main(){
 	}
 	std::cout << "max = " << fd.max_fd << std::endl;
 	while (1){
+		//set_fd(soc.s(), &fd);
+		std::cout << "soc = " << soc.s() << std::endl;
+		for (int i = 0; i < fd.max_fd; i++)
+			std::cout << i << ", " << fd.rfds.fds_bits[i] << "\n";
+		std::cout << "\n";
 		ret = select(fd.max_fd + 1, &fd.rfds, &fd.wfds, &fd.except, &fd.tv);
 		std::cout << "ret = " << ret << std::endl;
 		if (ret == -1){
@@ -86,6 +91,8 @@ int			main(){
 		}
 		else
 			std::cout << "No data within five seconds.\n";
+		FD_SET(client.s(), &fd.rfds);
+		FD_SET(soc.s(), &fd.rfds);
 	}
 	close(soc.s());
 	return 0;
