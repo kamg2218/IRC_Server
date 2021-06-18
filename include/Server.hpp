@@ -18,22 +18,22 @@ class Server
 		class BindException : public std::exception
 		{
 			public:
-			virtual const char *what(void) const throw();
+				virtual const char *what(void) const throw();
 		};
 		class ListenException : public std::exception
 		{
 			public:
-			virtual const char *what(void) const throw();
+				virtual const char *what(void) const throw();
 		};
 		class SocketException : public std::exception
 		{
 			public:
-			virtual const char *what(void) const throw();
+				virtual const char *what(void) const throw();
 		};
 		class AcceptException : public std::exception
 		{
 			public:
-			virtual const char *what(void) const throw();
+				virtual const char *what(void) const throw();
 		};
 		Server();
 		void	create(unsigned int port);

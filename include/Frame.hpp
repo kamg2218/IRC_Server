@@ -15,22 +15,22 @@ typedef std::map<std::string, Channel*> ChannelMap;
 class Frame
 {
 	private:
-		static Frame* pInstance;
-		UserMap		mUsers;
-		ChannelMap	mChannels;
-		Server		server;
-		Service		service;
+		static Frame*	pInstance;
+		UserMap			mUsers;
+		ChannelMap		mChannels;
+		Server			server;
+		Service			service;
 	public:
 		~Frame();
-		static Frame* instance();
+		static Frame*	instance();
 		void	start();
-		bool doesNicknameExists(std::string const& name);
-		bool addUser(User *new_user);
-		void removeUser(std::string & nick);
-		bool doesChannelExists(std::string const& name);
-		void addChannel(Channel* new_chan);
-		void removeChannel(std::string const& name);
-		void removeAllChannel();
+		bool	doesNicknameExists(std::string const& name);
+		bool	addUser(User *new_user);
+		void	removeUser(std::string & nick);
+		bool	doesChannelExists(std::string const& name);
+		void	addChannel(Channel* new_chan);
+		void	removeChannel(std::string const& name);
+		void	removeAllChannel();
 };
 
 #endif

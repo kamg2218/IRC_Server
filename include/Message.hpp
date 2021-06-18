@@ -5,17 +5,18 @@
 
 class Message
 {
-	std::string buff;
+	private:
+		std::string	buff;
+
 	public:
-	
-	void operator +=(const char *str);
-	void insert(char *str, int r);
-	bool gotFullMsg() const;
-	std::string getMessage();
-	int	msglen();
-	void reset();
-	void cmdNICK();
-	void cmdUSER();
+		void	operator +=(const char *str);
+		void	insert(char *str, int r);
+		bool	gotFullMsg() const;
+		int		msglen();
+		void	reset();
+		void	cmdNICK();
+		void	cmdUSER();
+		std::string		getMessage();
 };
 
 #endif

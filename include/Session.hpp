@@ -16,18 +16,18 @@ class Session
 		User	*user;
 		int		fd;
 		//std::string buffer;
-		Message buffer;
-		std::string msg;
+		Message		buffer;
+		std::string	msg;
 
 	public:
-		typedef Session* pointer;
+		typedef Session*	pointer;
 		//typedef Shared_Ptr 	pointer;
 		Session(int csfd, struct sockaddr_in const& csinfo);
 		Session();
-		static pointer create();
-		int socket() const;
-		bool handleRead(std::map<int, Session*> & ms);
-		void reply(std::string const& str);
+		static pointer	create();
+		int		socket() const;
+		bool	handleRead(std::map<int, Session*> & ms);
+		void	reply(std::string const& str);
 };
 
 #endif

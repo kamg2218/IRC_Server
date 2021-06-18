@@ -3,37 +3,21 @@
 
 #include "Session.hpp"
 
-class shared_ptr
+class Shared_ptr
 {
 	public:
 		typedef Session element_type;
 	private:
-		elemen_type *ptr;
-		static unsigned int count;
+		elemen_type			*ptr;
+		static unsigned int	count;
 		
 	public:
-		shared_ptr() : ptr(NULL), count(0)
-		{}
-		shared_ptr(element_type p) : ptr(p), count(1)
-		{}
-		void	reset()
-		{
-
-		}
-		int		use_count() const
-		{
-			return (count);
-		}
-		element_type* get() const
-		{
-			return (ptr);
-		}
-		element_type& operator*() const
-		{
-			return   (*ptr);
-		}
+		Shared_ptr();
+		Shared_ptr(element_type p);
+		void	reset();
+		int		use_count() const;
+		element_type*	get() const;
+		element_type&	operator*() const;
 };
-
-unsigned int shared_ptr::shared_cnt = 0;
 
 #endif

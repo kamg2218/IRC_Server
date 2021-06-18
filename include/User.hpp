@@ -15,23 +15,12 @@ class User
 		std::string		sNickname;
 		std::string		sHost;
 		Channelmap		mChannels;
-		bool didNick;
-		bool didUser;
+		bool	didNick;
+		bool	didUser;
 	public:
-		User(std::string const& r, std::string const& n, std::string const& h)
-		: sRealname(r), sNickname(n), sHost(h), didNick(false), didUser(false)
-		{}
-		std::string	RealName() const
-		{
-			return (sRealname);
-		}
-		std::string nick() const
-		{
-			return (sNickname);
-		}
-		std::string Host() const
-		{
-			return (sHost);
-		}
+		User(std::string const& r, std::string const& n, std::string const& h);
+		std::string	RealName() const;
+		std::string nick() const;
+		std::string Host() const;
 };
 #endif

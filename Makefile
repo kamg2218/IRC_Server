@@ -1,5 +1,5 @@
 SRC=main.cpp Message.cpp Frame.cpp Session.cpp Service.cpp \
-	Server.cpp
+	Server.cpp User.cpp Channel.cpp
 
 OBJ=$(SRC.c=.o)
 NAME=a.out

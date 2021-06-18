@@ -18,9 +18,6 @@ class Channel
 		bool				bPassword;
 		Usermap 			mUsers;
 	public:
-		std::string name() const
-		{
-			return (sName);
-		}
+		std::string name() const;
 };
 #endif
