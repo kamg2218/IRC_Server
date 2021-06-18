@@ -1,5 +1,5 @@
-#include "Message.hpp"
-#include "Frame.hpp"
+#include "include/Message.hpp"
+#include "include/Frame.hpp"
 
 void	Message::operator +=(const char *str)
 {
