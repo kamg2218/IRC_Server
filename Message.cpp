@@ -40,7 +40,9 @@ int		Message::msglen()
 
 void	Message::cmdNICK()
 {
-	Frame *mainframe = Frame::instance();			
+	Frame *mainframe = Frame::instance();
+	
+	mainframe.addUser();
 }
 
 void	Message::cmdUSER()

@@ -8,6 +8,7 @@
 #include <map>
 #include <unistd.h>
 #include "Message.hpp"
+#include "Shared_Ptr.hpp"
 
 class Session
 {
@@ -19,7 +20,8 @@ class Session
 		std::string msg;
 
 	public:
-		typedef Session* 	pointer;
+		typedef Session* pointer;
+		//typedef Shared_Ptr 	pointer;
 		Session(int csfd, struct sockaddr_in const& csinfo)
 		{
 			this->fd = csfd;
