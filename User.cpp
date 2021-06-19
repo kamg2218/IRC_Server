@@ -24,8 +24,19 @@ User::~User()
 		 */
 	}
 }
-
-std::string		User::RealName() const
+void			User::setName(std::string const& s)
+{
+	sRealname = s;
+}
+void			User::setNick(std::string const& s)
+{
+	sNickname = s;
+}
+void			User::setHost(std::string const& s)
+{
+	sHost = s;
+}
+std::string		User::name() const
 {
 	return (sRealname);
 }
@@ -38,4 +49,9 @@ std::string		User::nick() const
 std::string		User::Host() const
 {
 	return (sHost);
+}
+
+std::string		User::msgHeader() const
+{
+	return (std::string(":" + sNickname + "!" + sNickname + "@" + sHost+ " "));
 }

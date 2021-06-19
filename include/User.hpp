@@ -24,12 +24,19 @@ class User
 		User(Session* ms);
 		~User();
 		/*
-		void	cmdNICK();
-		void	cmdUSER();
-		void	cmdJOIN();
+		void	cmdNick();
+		void	cmdUser();
+		void	cmdJoin();
+		void	cmdKick();
+		void	cmdPart();
+		void	cmdQuit();
 		*/
-		std::string	RealName() const;
+		void		setName(std::string const& s);
+		void		setNick(std::string const& s);
+		void		setHost(std::string const& s);
+		std::string	name() const;
 		std::string nick() const;
 		std::string Host() const;
+		std::string	msgHeader() const;
 };
 #endif
