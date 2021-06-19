@@ -6,14 +6,12 @@ SRC = main.cpp\
 	  Server.cpp\
 	  Service.cpp
 
-OBJECTS = *.o
-CFLAGS = -L../utils -lft -L../utils/libstack -lstack
 DFLAGS = -Wall -Wextra -Werror
 
 all : $(NAME)
 
 $(NAME) :
-	gcc $(DFLAGS) -o $(NAME) $(SRC)
+	clang++ $(DFLAGS) -o $(NAME) $(SRC)
 
 clean :
 	/bin/rm -f *.o

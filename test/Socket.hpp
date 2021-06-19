@@ -15,7 +15,7 @@ class Socket
 {
 	private:
 		int				_s;
-		int				_len;
+		unsigned int	_len;
 		int				_port;
 		sockaddr_in		_sin;
 		protoent*		_proto;
@@ -28,14 +28,30 @@ class Socket
 		~Socket();
 		void			makeSocket(int port);
 		int&			s();
-		int&			len();
 		int&			port();
+		unsigned int&	len();
 		sockaddr_in&	sin();
 		protoent*		proto();
-		class ProtoException;
-		class SocketException;
-};
+		//class ProtoException;
+		//class SocketException;
+		class	ProtoException : public std::exception
+		{
+			public:
+				virtual const char *what(void) const throw()
+				{
+					return "Proto Error\n";
+				}
+		};
 
-#include "Socket.ipp"
+		class	SocketException : public std::exception
+		{
+			public:
+				virtual const char *what(void) const throw()
+				{
+					return "Socket Error\n";
+				}
+		};
+
+};
 
 #endif

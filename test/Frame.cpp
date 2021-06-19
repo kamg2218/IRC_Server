@@ -31,10 +31,11 @@ Frame&	Frame::operator=(const Frame& other)
 
 void	Frame::start()
 {
-	sev.makeServer(sev.soc());
+	sev.makeServer();
 	while (1)
 	{
 		svi.doSelect(sev.soc(), mSockets);
+		svi.set(sev.soc(), mSockets);
 	}
 }
 

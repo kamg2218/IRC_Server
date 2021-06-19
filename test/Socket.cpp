@@ -77,6 +77,11 @@ int&			Socket::s()
 	return _s;
 }
 
+unsigned int&	Socket::len()
+{
+	return _len;
+}
+
 int&			Socket::port()
 {
 	return _port;
@@ -96,7 +101,7 @@ Socket::~Socket()
 {
 	close(_s);
 }
-
+/*
 class	ProtoException : public std::exception
 {
 	public:
@@ -114,5 +119,4 @@ class	SocketException : public std::exception
 			return "Socket Error\n";
 		}
 };
-
-#endif
+*/

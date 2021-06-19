@@ -10,9 +10,10 @@ Service::Service()
 	tv.tv_usec = 0;
 }
 
-Service::Service(const Socket& soc)
-	: max(soc.s()), ret(0)
+Service::Service(Socket& soc)
+	: max(0), ret(0)
 {
+	max = soc.s();
 	FD_ZERO(&rfds);
 	FD_ZERO(&wfds);
 	FD_ZERO(&except);
@@ -28,7 +29,7 @@ Service::Service(const Service& other)
 	*this = other;
 }
 
-Service&	operator=(const Service& other)
+Service&	Service::operator=(const Service& other)
 {
 	if (this == &other)
 		return *this;
@@ -38,6 +39,7 @@ Service&	operator=(const Service& other)
 	this->wfds = other.wfds;
 	this->except = other.except;
 	this->tv = other.tv;
+	return *this;
 }
 
 Service::~Service()
@@ -64,22 +66,21 @@ void		Service::doSelect(Socket& soc, std::map<int, Socket>& mSockets)
 	{
 		std::cout << "No data within five seconds.\n";
 	}
-	set(soc, mSockets);
 }
 
 void		Service::handleAccept(Socket& soc, std::map<int, Socket>& mSockets)
 {
 	std::pair<int, Socket>	p;
 
-	p.first = accept(soc.s(), (struct sockaddr*)&(p.second.sin()), &p.second.len());
+	p.first = accept(soc.s(), (struct sockaddr*)&(p.second.sin()), &(p.second.len()));
 	if (p.first == -1)
 	{
-		throw AcceptExceptin();
+		throw AcceptException();
 	}
 	mSockets.insert(p);
 	FD_SET(p.first, &rfds);
 	if (max < p.first)
-		max = p.first();
+		max = p.first;
 }
 
 void		Service::set(Socket& soc, std::map<int, Socket>& mSockets)
@@ -88,15 +89,16 @@ void		Service::set(Socket& soc, std::map<int, Socket>& mSockets)
 
 	max = 0;
 	FD_SET(soc.s(), &rfds);
-	FD_SET(soc.s(), &wfds);
-	FD_SET(soc.s(), &except);
-	for (it = mSockets.begin(); it != end(); it++)
+	//FD_SET(soc.s(), &wfds);
+	//FD_SET(soc.s(), &except);
+	for (it = mSockets.begin(); it != mSockets.end(); it++)
 	{
-		FD_SET((*it).second.s(), &rfds);
-		FD_SET((*it).second.s(), &wfds);
-		FD_SET((*it).second.s(), &except);
-		if ((*it).second.s() > max)
-			max = (*it).second.s();
+		std::cout << "it = " << it->first << std::endl;
+		FD_SET((*it).first, &rfds);
+		//FD_SET((*it).first, &wfds);
+		//FD_SET((*it).first, &except);
+		if ((*it).first > max)
+			max = (*it).first;
 	}
 }
 
@@ -124,13 +126,14 @@ void		Service::check_rfds(Socket& soc, std::map<int, Socket>& mSockets)
 				write(i, "end", 1024);
 				if (strncmp(buf, "quit", 4) == 0)
 				{
+					FD_CLR(i, &rfds);
 					mSockets.erase(i);
 				}
 			}
 		}
 	}
 }
-
+/*
 class		AcceptException : public std::exception
 {
 	public:
@@ -148,4 +151,4 @@ class		SelectException : public std::exception
 			return "Select Error\n";
 		}
 };
-
+*/

@@ -19,8 +19,25 @@ class		Server
 		void		makeServer();
 		void		handleAccept();
 		Socket&		soc();
-		class	BindException;
-		class	ListenException;
+		//class	BindException;
+		//class	ListenException;
+		class	BindException : public std::exception
+		{
+			public:
+				virtual const char* what(void) const throw()
+				{
+					return "Bind Error\n";
+				}
+		};
+
+		class	ListenException : public std::exception
+		{
+			public:
+				virtual const char* what(void) const throw()
+				{
+					return "Listen Error\n";
+				}
+		};
 };
 
 #endif

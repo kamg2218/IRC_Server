@@ -16,7 +16,7 @@ class	Frame
 		Frame();
 		Frame(int port);
 		Frame(const Frame& other);
-		void	operator=(const Frame& other);
+		Frame&	operator=(const Frame& other);
 		~Frame();
 		void	start();
 };

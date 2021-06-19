@@ -31,11 +31,11 @@ void		Server::makeServer()
 {
 	if (bind(_soc.s(), (const sockaddr *)&(_soc.sin()), sizeof(_soc.sin())) == -1)
 	{
-		throw BindError();
+		throw BindException();
 	}
 	if (listen(_soc.s(), 42) != 0)
 	{
-		throw ListenError();
+		throw ListenException();
 	}
 }
 
@@ -43,8 +43,8 @@ Socket&		Server::soc()
 {
 	return _soc;
 }
-
-class	BindException : public std::exception
+/*
+class	Server::BindException : public std::exception
 {
 	public:
 		virtual const char* what(void) const throw()
@@ -53,7 +53,7 @@ class	BindException : public std::exception
 		}
 };
 
-class	ListenException : public std::exception
+class	Server::ListenException : public std::exception
 {
 	public:
 		virtual const char* what(void) const throw()
@@ -61,4 +61,4 @@ class	ListenException : public std::exception
 			return "Listen Error\n";
 		}
 };
-
+*/
