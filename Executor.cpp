@@ -1,5 +1,7 @@
+#include <cctype>
 #include "include/Executor.hpp"
 #include "include/Frame.hpp"
+#include "include/User.hpp"
 
 void	Executor::operator +=(const char *str)
 {
@@ -40,10 +42,9 @@ int		Executor::msglen()
 
 void	Executor::split(std::vector<std::string> & v)
 {
-	std::string msgline = getMessage();
+	std::string msgline	= getMessage();
 	std::string::size_type	pos;
 	
-	std::cout << "FULL : \n" << msgline << "\n";
 	while ((pos = msgline.find(" ")) != std::string::npos)
 	{
 		v.push_back(msgline.substr(0, pos));
@@ -51,15 +52,31 @@ void	Executor::split(std::vector<std::string> & v)
 	}
 	if (msgline.size())
 		v.push_back(msgline);
+	std::string::iterator it = v[0].begin();
+	for (; it != v[0].end() ; ++it)
+	{
+		*it = toupper(*it);
+	}
 }
 
-void	Executor::execute()
+void	Executor::execute(User *user)
 {
-	std::vector<std::string> splited_cmd;
+	std::vector<std::string>	splited_cmd;
 
 	split(splited_cmd);
-
-
+	if (splited_cmd[0] == "NICK")
+	{
+		/*
+		user->cmdNick();
+		user->session->sendAsServer();
+		*/
+	}
+	else if (splited_cmd[0] == "USER")
+	{
+		/*
+		user->cmdUser();
+		*/
+	}
 	/*
 	// print splited cmd vector
 	std::cout << "CMD START--------\n";

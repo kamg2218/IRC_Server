@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+#include "User.hpp"
 
 class Executor
 {
@@ -15,7 +16,7 @@ class Executor
 		bool	gotFullMsg() const;
 		int		msglen();
 		void	reset();
-		void	execute();
+		void	execute(User *user);
 		std::string		getMessage();
 };
 

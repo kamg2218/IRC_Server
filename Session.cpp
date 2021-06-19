@@ -40,7 +40,7 @@ bool	Session::handleRead(std::map<int, Session*> & ms)
 		request.insert(buf, r);
 		if (!request.gotFullMsg())
 			return (false);
-		request.execute();
+		request.execute(&user);
 		request.reset();
 		//reply("001");
 		return (false);
