@@ -1,14 +1,14 @@
 #include "Frame.hpp"
 
-int main()
+int		main(void)
 {
 	try
 	{
-		Frame *mainframe = Frame::instance();
-		mainframe->start();
+		Frame	mainFrame;
+		mainFrame.start();
 	}
 	catch(std::exception const& err)
 	{
-		std::cout << err.what() << "\n";
+		std::cout << err.what();
 	}
 }

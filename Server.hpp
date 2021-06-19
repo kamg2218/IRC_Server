@@ -1,88 +1,43 @@
-#ifndef FT_SERVER_HPP
-# define FT_SERVER_HPP
+#ifndef SERVER_HPP
+# define SERVER_HPP
 
-#include <exception>
+#include "Socket.hpp"
 #include <iostream>
-#include <netinet/in.h>
-#include <netdb.h>
+#include <exception>
 #include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include "Session.hpp"
 
-class Server
+class		Server
 {
 	private:
-		int sockfd;
+		Socket		_soc;
 	public:
-		class BindException : public std::exception
+		Server();
+		Server(int port);
+		Server(const Server& other);
+		Server&		operator=(const Server& other);
+		~Server();
+		void		makeServer();
+		void		handleAccept();
+		Socket&		soc();
+		//class	BindException;
+		//class	ListenException;
+		class	BindException : public std::exception
 		{
 			public:
-			virtual const char *what(void) const throw()
-			{
-				return ("Bind Error");
-			}
+				virtual const char* what(void) const throw()
+				{
+					return "Bind Error\n";
+				}
 		};
-		class ListenException : public std::exception
-		{
-			public:
-			virtual const char *what(void) const throw()
-			{
-				return ("Listen Error\n");
-			}
-		};
-		class SocketException : public std::exception
-		{
-			public:
-			virtual const char *what(void) const throw()
-			{
-				return ("Socket Error\n");
-			}
-		};
-		class AcceptException : public std::exception
-		{
-			public:
-			virtual const char *what(void) const throw()
-			{
-				return ("Accpet Error");
-			}
-		};
-		Server()
-		{
-		}
-		void create(unsigned int port)
-		{
-			struct protoent *pe;
-			struct sockaddr_in	sin;
-			pe = getprotobyname("tcp");
-			sockfd = ::socket(PF_INET, SOCK_STREAM, pe->p_proto);
-			if (!sockfd)
-				throw (SocketException());
-			sin.sin_family = AF_INET;
-			sin.sin_addr.s_addr = htonl(INADDR_ANY);
-			sin.sin_port = htons(port);
-			if ((bind(sockfd, (struct sockaddr *)&sin, sizeof(sin))) == -1)
-				throw (BindException());
-			if (listen(sockfd, 42) < 0)
-				throw (ListenException());
-		}
-		Session* handleAccept()
-		{
-			int cs;
-			struct sockaddr_in	csin;
-			socklen_t	csin_len;
 
-			csin_len = sizeof(csin);
-			cs = accept(sockfd, (struct sockaddr*)&csin, &csin_len);
-			if (cs < 0)
-				throw (AcceptException());
-			std::cout << inet_ntoa(csin.sin_addr) << ":" << ntohs(csin.sin_port) << " is connected\n";
-			return (new Session(cs, csin));
-		}
-		int socket() const
+		class	ListenException : public std::exception
 		{
-			return (sockfd);
-		}
+			public:
+				virtual const char* what(void) const throw()
+				{
+					return "Listen Error\n";
+				}
+		};
 };
 
 #endif

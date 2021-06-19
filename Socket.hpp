@@ -1,66 +1,57 @@
-#ifndef FT_SOCKET_HPP
-# define FT_SOCKET_HPP
+#ifndef SOCKET_HPP
+# define SOCKET_HPP
 
-#include "Fd.hpp"
-#include <sys/resource.h>
+#include <unistd.h>
+#include <iostream>
+#include <sys/types.h>
 #include <sys/select.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <netdb.h>
+#include <sys/socket.h>
+#include <exception>
 
 class Socket
 {
 	private:
-		Fd *fds;
-		fd_set fd_read;
-		fd_set fd_write;
-		int max;
-		int maxopen;
-		int res;
-
+		int				_s;
+		unsigned int	_len;
+		int				_port;
+		sockaddr_in		_sin;
+		protoent*		_proto;
 	public:
-	Socket()
-	{
-		struct rlimit rlp;
-		
-		getrlimit(RLIMIT_NOFILE, &rlp);
-		maxopen = rlp.rlim_cur;
-		fds = new Fd[maxopen];
-		for (int i = 0; i < maxopen ; i++)
-			fds[i].clean();
-	}
-	void init()
-	{
-		res = 0;
-		max = 0;
-		FD_ZERO(&fd_read);
-		FD_ZERO(&fd_write);
-		for (int i = 0 ; i < maxopen ; i++)
+		Socket();
+		Socket(int port);
+		Socket(int port, unsigned long addr);
+		Socket(const Socket& other);
+		Socket&		operator=(const Socket& other);
+		~Socket();
+		void			makeSocket(int port);
+		int&			s();
+		int&			port();
+		unsigned int&	len();
+		sockaddr_in&	sin();
+		protoent*		proto();
+		//class ProtoException;
+		//class SocketException;
+		class	ProtoException : public std::exception
 		{
-			if (fds[i].getType() != Fd::FREE)
-			{
-				FD_SET(i, &fd_read);
-				max = std::max(max, i);
-				if (fds[i].wbuf().length() > 0)
-					FD_SET(i, &fd_write);
-			}
-		}
-	}
-	void do_select()
-	{
-		init();
-		res = select(max + 1, &fd_read, &fd_write, NULL, NULL);
-	}
-	int getRes() const
-	{
-		return (res);
-	}
-	void	addServer(int fd, Server *p)
-	{
-		fds[fd].set(p);
-	}
-	void	addClient(int fd, User *p)
-	{
-		fds[fd].set(p);
-	}
-	void close(int fd);
+			public:
+				virtual const char *what(void) const throw()
+				{
+					return "Proto Error\n";
+				}
+		};
+
+		class	SocketException : public std::exception
+		{
+			public:
+				virtual const char *what(void) const throw()
+				{
+					return "Socket Error\n";
+				}
+		};
+
 };
 
 #endif

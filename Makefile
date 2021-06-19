@@ -1,7 +1,7 @@
 NAME = server
 
 SRC = main.cpp\
-	  Frame.cpp
+	  Frame.cpp\
 	  Socket.cpp\
 	  Server.cpp\
 	  Service.cpp
@@ -11,12 +11,9 @@ DFLAGS = -Wall -Wextra -Werror
 all : $(NAME)
 
 $(NAME) :
-	clang++ $(DFLAGS) -o $(NAME) $(SRC)
+	clang++ -o $(NAME) $(SRC)
 
-clean :
-	/bin/rm -f *.o
-
-fclean : clean
+fclean :
 	/bin/rm -f $(NAME)
 
 re : fclean all
