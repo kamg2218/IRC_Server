@@ -2,6 +2,7 @@
 # define FT_EXECUTOR_HPP
 
 #include <string>
+#include <vector>
 
 class Executor
 {

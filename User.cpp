@@ -55,3 +55,55 @@ std::string		User::msgHeader() const
 {
 	return (std::string(":" + sNickname + "!" + sNickname + "@" + sHost+ " "));
 }
+
+void			User::cmdNick(std::string const& s)
+{
+	bool res;
+
+	res = Frame::instance()->doesNicknameExists(s);
+	if (res)
+		return ; // fail
+	sNickname = s;
+	didNick = true;
+	//channel 에 있는 usermap의 키 닉네임도 바꿔야함. 
+	//frame에 있는 usermap의 키 닉네임도 바꿔야함. 
+	return ; //success
+}
+
+void			User::cmdUser()
+{
+	//write
+	didUser = s;
+}
+
+void			User::cmdJoin(std::string const& s)
+{
+	//write
+	bool	res;
+	
+	res - Frame::instance()->doesChannelExists(s);
+	if (res)
+	{
+		// channel 이미 존재 찾아서 user 추가
+	}
+	else
+	{
+		Channel *new_chan = new Channel(this, s);
+		Frame::instance()->addChannel(new_chan);
+	}
+}
+
+void			User::cmdKick()
+{
+	//write
+}
+
+void			User::cmdPart()
+{
+	//write
+}
+
+void			User::cmdQuit()
+{
+	//write
+}

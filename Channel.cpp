@@ -15,28 +15,49 @@ Channel::~Channel()
 void		Channel::addUser(User *user)
 {
 	//write
+	mUsers[user->nick()] = user;
+	
 }
 
 void		Channel::removeUser(User *user)
 {
 	//write
+	mUsers.erase(mUsers.find(user->nick()));
 }
 
 bool		Channel::hasUser(User *user)
 {
 	//write
+	Usermap::iterator it;
+
+	it = mUsers.find(user.nick());
+	if (it == mUsers.end())
+		return (false);
 	return (true);
 }
 
 bool		Channel::isOperator(User *user)
 {
-	//write
+	//write	
+	Usermap::iterator it;
+
+	it = mOperators.find(user.nick());
+	if (it == mOperators.end())
+		return (false);
+
 	return (true);
 }
 
 void		Channel::broadcast(std::string const& message)
 {
 	//write
+	Usermap::iterator it;
+
+	it = mUsers.first();
+	for (; it != mUsers.end() ; ++it)
+	{
+		//(*it).second->session->sendAsUser(message);
+	}
 }
 
 std::string	Channel::password() const
