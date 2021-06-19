@@ -73,7 +73,7 @@ void			User::cmdNick(std::string const& s)
 void			User::cmdUser()
 {
 	//write
-	didUser = s;
+	didUser = true;
 }
 
 void			User::cmdJoin(std::string const& s)
@@ -81,7 +81,7 @@ void			User::cmdJoin(std::string const& s)
 	//write
 	bool	res;
 	
-	res - Frame::instance()->doesChannelExists(s);
+	res = Frame::instance()->doesChannelExists(s);
 	if (res)
 	{
 		// channel 이미 존재 찾아서 user 추가

@@ -23,14 +23,12 @@ class User
 	public:
 		User(Session* ms);
 		~User();
-		/*
-		void	cmdNick();
+		void	cmdNick(std::string const& s);
 		void	cmdUser();
-		void	cmdJoin();
+		void	cmdJoin(std::string const& s);
 		void	cmdKick();
 		void	cmdPart();
 		void	cmdQuit();
-		*/
 		void		setName(std::string const& s);
 		void		setNick(std::string const& s);
 		void		setHost(std::string const& s);

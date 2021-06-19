@@ -30,7 +30,7 @@ bool		Channel::hasUser(User *user)
 	//write
 	Usermap::iterator it;
 
-	it = mUsers.find(user.nick());
+	it = mUsers.find(user->nick());
 	if (it == mUsers.end())
 		return (false);
 	return (true);
@@ -41,7 +41,7 @@ bool		Channel::isOperator(User *user)
 	//write	
 	Usermap::iterator it;
 
-	it = mOperators.find(user.nick());
+	it = mOperators.find(user->nick());
 	if (it == mOperators.end())
 		return (false);
 
@@ -53,7 +53,7 @@ void		Channel::broadcast(std::string const& message)
 	//write
 	Usermap::iterator it;
 
-	it = mUsers.first();
+	it = mUsers.begin();
 	for (; it != mUsers.end() ; ++it)
 	{
 		//(*it).second->session->sendAsUser(message);
