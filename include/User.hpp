@@ -3,6 +3,7 @@
 
 #include <string>
 
+class Session;
 class User;
 #include "Channel.hpp"
 
@@ -11,14 +12,22 @@ typedef std::map<std::string, Channel*>  Channelmap;
 class User
 {
 	private:
+		Session			*mysession;
 		std::string		sRealname;
 		std::string		sNickname;
 		std::string		sHost;
 		Channelmap		mChannels;
 		bool	didNick;
 		bool	didUser;
+		bool	is_properly_quit;
 	public:
-		User(std::string const& r, std::string const& n, std::string const& h);
+		User(Session* ms);
+		~User();
+		/*
+		void	cmdNICK();
+		void	cmdUSER();
+		void	cmdJOIN();
+		*/
 		std::string	RealName() const;
 		std::string nick() const;
 		std::string Host() const;

@@ -1,8 +1,29 @@
 #include "include/User.hpp"
+#include "include/Session.hpp"
+#include "include/Frame.hpp"
 
-User::User(std::string const& r, std::string const& n, std::string const& h)
-	: sRealname(r), sNickname(n), sHost(h), didNick(false), didUser(false)
+User::User(Session*	ms)
+	: mysession(ms), didUser(false), didNick(false), is_properly_quit(false)
 {}
+
+User::~User()
+{
+	if (!is_properly_quit)
+	{
+		/*
+		ChannelMap::iterator it;
+
+		it = mChannels.begin()
+		for (; it != mChaneels.end() ; ++it)
+		{
+			(*it).removeUser(this);
+			mChaneels.erase(*it);
+		}
+		Mainframe::instance()->removeUser(sNickName);
+		Mainframe::instance()->updateChannels();
+		 */
+	}
+}
 
 std::string		User::RealName() const
 {

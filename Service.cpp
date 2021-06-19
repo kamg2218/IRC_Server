@@ -1,4 +1,5 @@
 #include "include/Service.hpp"
+#include "include/User.hpp"
 
 Service::Service()
 {
@@ -31,7 +32,7 @@ void	Service::do_service(Server & sv)
 	
 	if (FD_ISSET(sv.socket(), &fd_read))
 	{
-		newclient = sv.handleAccept();
+		newclient = sv.handleAccept(this);
 		std::map<int, Session*>::value_type res(newclient->socket(), newclient);
 		mSessions.insert(res);
 	}
@@ -41,11 +42,20 @@ void	Service::do_service(Server & sv)
 		{
 			std::map<int, Session*>::iterator temp = it++;
 			if ((*temp).second->handleRead(mSessions))
-				mSessions.erase(temp);
+				deleteSession(temp);
 		}
 		else
 			++it;
 	}
+}
+void	Service::deleteSession(std::map<int, Session*>::iterator& pos)
+{
+	Session* temp;
+
+	temp = (*pos).second;
+	mSessions.erase(pos);
+	delete (temp);
+	std::cout << "client is removed\n";
 }
 
 int		Service::getMaxopen() const

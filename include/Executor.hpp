@@ -1,9 +1,9 @@
-#ifndef FT_MESSAGE_HPP
-# define FT_MESSAGE_HPP
+#ifndef FT_EXECUTOR_HPP
+# define FT_EXECUTOR_HPP
 
 #include <string>
 
-class Message
+class Executor
 {
 	private:
 		std::string	buff;
@@ -14,8 +14,7 @@ class Message
 		bool	gotFullMsg() const;
 		int		msglen();
 		void	reset();
-		void	cmdNICK();
-		void	cmdUSER();
+		void	execute();
 		std::string		getMessage();
 };
 

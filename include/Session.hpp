@@ -6,26 +6,29 @@
 #include <string>
 #include <map>
 #include <iostream>
-#include "Message.hpp"
-#include "User.hpp"
+#include "Executor.hpp"
 class Session;
-#include "Shared_Ptr.hpp"
+class User;
+class Service;
+#include "User.hpp"
+#include "Service.hpp"
 
 class Session
 {
 	private:
-		User	*user;
+		User	user;
 		int		fd;
 		//std::string buffer;
-		Message		buffer;
-		std::string	msg;
+		Executor		request;
+		//std::string		buffer;
+		//std::string	msg;
+		Service*	service;
 
 	public:
 		typedef Session*	pointer;
-		//typedef Shared_Ptr 	pointer;
-		Session(int csfd, struct sockaddr_in const& csinfo);
-		Session();
-		static pointer	create();
+		Session(int csfd, Service* svc);
+		Session(Service* svc);
+		static pointer	create(Service* svc, int);
 		int		socket() const;
 		bool	handleRead(std::map<int, Session*> & ms);
 		void	reply(std::string const& str);

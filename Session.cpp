@@ -1,20 +1,22 @@
 #include "include/Session.hpp"
+#include "include/User.hpp"
+#include "include/Service.hpp"
 
-Session::Session(int csfd, struct sockaddr_in const& csinfo)
+Session::Session(int csfd, Service* svc)
+	: user(this), service(svc)
 {
 	this->fd = csfd;
-	user = new User("real", "nick", "host");
 }
 
-Session::Session()
+Session::Session(Service* svc)
+	: user(this), service(svc)
 {
 	fd = -1;
-	user = NULL;
 }
 
-Session::pointer	Session::create()
+Session::pointer	Session::create(Service* svc, int nbr)
 {
-	return (new Session());
+	return (new Session(svc));
 }
 
 int		Session::socket() const
@@ -35,18 +37,12 @@ bool	Session::handleRead(std::map<int, Session*> & ms)
 	}
 	else
 	{
-		buffer.insert(buf, r);
-		if (!buffer.gotFullMsg())
-			return (true);
-		for (std::map<int, Session*>::iterator it = ms.begin() ; it != ms.end() ; ++it)
-		{
-			if ((*it).first != fd)
-			{
-				r = send((*it).first, buffer.getMessage().c_str(), buffer.msglen(), 0);	
-			}
-		}
-		buffer.reset();
-		reply("001");
+		request.insert(buf, r);
+		if (!request.gotFullMsg())
+			return (false);
+		request.execute();
+		request.reset();
+		//reply("001");
 		return (false);
 	}
 }

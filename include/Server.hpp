@@ -8,7 +8,9 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
-#include "Session.hpp"
+class Service;
+class Session;
+//#include "Service.hpp"
 
 class Server
 {
@@ -37,7 +39,7 @@ class Server
 		};
 		Server();
 		void	create(unsigned int port);
-		Session*	handleAccept();
+		Session*	handleAccept(Service *p);
 		int		socket() const;
 };
 

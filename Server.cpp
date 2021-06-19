@@ -1,4 +1,6 @@
 #include "include/Server.hpp"
+#include "include/Session.hpp"
+#include "include/Service.hpp"
 
 const char*		Server::BindException::what() const throw()
 {
@@ -40,7 +42,7 @@ void	Server::create(unsigned int port)
 		throw (ListenException());
 }
 
-Session*	Server::handleAccept()
+Session*	Server::handleAccept(Service* p)
 {
 	int		cs;
 	struct	sockaddr_in	csin;
@@ -51,7 +53,7 @@ Session*	Server::handleAccept()
 	if (cs < 0)
 		throw (AcceptException());
 	std::cout << inet_ntoa(csin.sin_addr) << ":" << ntohs(csin.sin_port) << " is connected\n";
-	return (new Session(cs, csin));
+	return (new Session(cs, p));
 }
 
 int 	Server::socket() const

@@ -4,8 +4,8 @@
 #include <map>
 #include <sys/resource.h>
 #include <sys/select.h>
-#include "Server.hpp"
 #include "Session.hpp"
+#include "Server.hpp"
 
 class Service
 {
@@ -22,6 +22,7 @@ class Service
 		void	do_select(Server const& sv);
 		void	do_service(Server & sv);
 		int		getMaxopen() const;
+		void	deleteSession(std::map<int, Session*>::iterator& pos);
 };
 
 #endif
