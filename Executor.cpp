@@ -38,7 +38,36 @@ int		Executor::msglen()
 	return (res.length());
 }
 
+void	Executor::split(std::vector<std::string> & v)
+{
+	std::string msgline = getMessage();
+	std::string::size_type	pos;
+	
+	std::cout << "FULL : \n" << msgline << "\n";
+	while ((pos = msgline.find(" ")) != std::string::npos)
+	{
+		v.push_back(msgline.substr(0, pos));
+		msgline.erase(0, msgline.find(" ") + 1);
+	}
+	if (msgline.size())
+		v.push_back(msgline);
+}
+
 void	Executor::execute()
 {
-	std::cout << "cmd is executing\n";
+	std::vector<std::string> splited_cmd;
+
+	split(splited_cmd);
+
+
+	/*
+	// print splited cmd vector
+	std::cout << "CMD START--------\n";
+	while (it != splited_cmd.end())
+	{
+		std::cout << (*it) << std::endl;
+		++it;
+	}
+	std::cout << "CMD END----------\n";
+	*/
 }
