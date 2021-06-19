@@ -10,6 +10,7 @@ class	Frame
 {
 	private:
 		Server	sev;
+		Service	svi;
 		std::map<int, Socket>	mSockets;
 	public:
 		Frame();
@@ -17,6 +18,7 @@ class	Frame
 		Frame(const Frame& other);
 		void	operator=(const Frame& other);
 		~Frame();
+		void	start();
 };
 
 #endif

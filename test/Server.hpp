@@ -2,11 +2,14 @@
 # define SERVER_HPP
 
 #include "Socket.hpp"
+#include <iostream>
+#include <exception>
+#include <sys/socket.h>
 
 class		Server
 {
 	private:
-		Socket		soc;
+		Socket		_soc;
 	public:
 		Server();
 		Server(int port);
@@ -15,6 +18,7 @@ class		Server
 		~Server();
 		void		makeServer();
 		void		handleAccept();
+		Socket&		soc();
 		class	BindException;
 		class	ListenException;
 };

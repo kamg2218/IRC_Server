@@ -2,15 +2,16 @@
 
 Frame::Frame()
 {
+	svi = Service(sev.soc());
 }
 
 Frame::Frame(int port)
 {
-	if (port != soc.port())
+	if (port != sev.soc().port())
 	{
-		soc = Socket(port);
+		sev = Server(port);
+		svi = Service(sev.soc());
 	}
-	sev = Server(soc.s());
 }
 
 Frame::Frame(const Frame& other)
@@ -22,14 +23,19 @@ Frame&	Frame::operator=(const Frame& other)
 {
 	if (this == &other)
 		return *this;
-	this->soc = other.soc;
+	this->sev = other.sev;
+	this->svi = other.svi;
+	this->mSockets = other.mSockets;
 	return *this;
 }
 
 void	Frame::start()
 {
-	sev.makeServer(soc);
-	sev.runServer();
+	sev.makeServer(sev.soc());
+	while (1)
+	{
+		svi.doSelect(sev.soc(), mSockets);
+	}
 }
 
 Frame::~Frame()
