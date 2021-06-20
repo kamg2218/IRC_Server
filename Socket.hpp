@@ -26,7 +26,7 @@ class Socket
 		Socket(const Socket& other);
 		Socket&		operator=(const Socket& other);
 		~Socket();
-		void			makeSocket(int port);
+		//void			makeSocket(int port);
 		int&			s();
 		int&			port();
 		unsigned int&	len();

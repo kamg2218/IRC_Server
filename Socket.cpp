@@ -99,7 +99,7 @@ protoent*		Socket::proto()
 
 Socket::~Socket()
 {
-	close(_s);
+	//close(_s);
 }
 /*
 class	ProtoException : public std::exception
