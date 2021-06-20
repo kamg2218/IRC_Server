@@ -2,6 +2,7 @@
 # define SERVICE_HPP
 
 #include "Socket.hpp"
+#include "User.hpp"
 #include <map>
 #include <exception>
 #include <sys/select.h>
@@ -24,12 +25,12 @@ class		Service
 		Service(const Service& other);
 		Service&	operator=(const Service& other);
 		~Service();
-		void		doSelect(Socket& soc, std::map<int, Socket>& mSockets);
-		void		doService(Socket& soc, std::map<int, Socket>& mSockets);
-		void		handleAccept(Socket& soc, std::map<int, Socket>& mSockets);
-		void		set(Socket& soc, std::map<int, Socket>& mSockets);
-		void		check_rfds(Socket& soc, std::map<int, Socket>& mSockets);
-		void		check_wfds(Socket& soc, std::map<int, Socket>& mSockets);
+		void		doSelect(Socket& soc, std::map<int, User>& mSockets);
+		void		doService(Socket& soc, std::map<int, User>& mSockets);
+		void		handleAccept(Socket& soc, std::map<int, User>& mSockets);
+		void		set(Socket& soc, std::map<int, User>& mSockets);
+		void		check_rfds(Socket& soc, std::map<int, User>& mSockets);
+		void		check_wfds(Socket& soc, std::map<int, User>& mSockets);
 		//class		AcceptException;
 		//class		SelectException;
 		class		AcceptException : public std::exception

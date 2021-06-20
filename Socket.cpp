@@ -50,7 +50,13 @@ Socket&		Socket::operator=(const Socket& other)
 	{
 		return *this;
 	}
-	close(this->_s);
+	/*
+	if (this->_s > 2)
+	{
+		std::cout << "close(" << this->_s << ")\n";
+		close(this->_s);
+	}
+	*/
 	this->_s = other._s;
 	this->_sin = other._sin;
 	this->_proto = other._proto;
@@ -84,8 +90,14 @@ protoent*		Socket::proto()
 
 Socket::~Socket()
 {
-	//close(_s);
+	std::cout << "~socket\n";
+	//if (_s > 2)
+	//{
+	//	std::cout << "close(" << _s << ")\n";
+	//	close(_s);
+	//}
 }
+
 /*
 class	ProtoException : public std::exception
 {

@@ -2,6 +2,7 @@
 # define FRAME_HPP
 
 #include <map>
+#include "User.hpp"
 #include "Socket.hpp"
 #include "Server.hpp"
 #include "Service.hpp"
@@ -11,7 +12,7 @@ class	Frame
 	private:
 		Server	sev;
 		Service	svi;
-		std::map<int, Socket>	mSockets;
+		std::map<int, User>	mSockets;
 	public:
 		Frame();
 		Frame(int port);

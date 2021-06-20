@@ -21,8 +21,6 @@ class Socket
 		protoent*		_proto;
 	public:
 		Socket();
-		//Socket(int port);
-		//Socket(int port, unsigned long addr);
 		Socket(const Socket& other);
 		Socket&		operator=(const Socket& other);
 		~Socket();
@@ -33,8 +31,6 @@ class Socket
 		unsigned int&	len();
 		sockaddr_in&	sin();
 		protoent*		proto();
-		//class ProtoException;
-		//class SocketException;
 		class	ProtoException : public std::exception
 		{
 			public:

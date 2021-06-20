@@ -1,21 +1,23 @@
 #ifndef USER_HPP
 # define USER_HPP
 
+#include "Socket.hpp"
 #include <string>
 
 class User
 {
 	private:
+		Socket			_soc;
 		std::string		_realname;
 		std::string		_nickname;
 		std::string		_host;
-		//Channelmap	mChannels;
-		//bool didNick;
-		//bool didUser;
 	public:
+		User() {}
 		User(std::string const& r, std::string const& n, std::string const& h)
-		: _realname(r), _nickname(n), _host(h)//, didNick(false), didUser(false)
+		: _realname(r), _nickname(n), _host(h)
 		{}
+		~User() { std::cout << "~User()\n"; }
+		Socket&		soc() { return _soc; }
 		std::string	name() const
 		{
 			return (_realname);
@@ -29,4 +31,5 @@ class User
 			return (_host);
 		}
 };
+
 #endif

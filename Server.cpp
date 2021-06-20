@@ -7,8 +7,8 @@ Server::Server()
 
 Server::Server(int port)
 {
-	if (_soc.port() != port)
-		_soc.makeSocket(port);
+	//if (_soc.port() != port)
+	_soc.makeSocket(port);
 }
 
 Server::Server(const Server& other)
@@ -26,6 +26,8 @@ Server&		Server::operator=(const Server& other)
 
 Server::~Server()
 {
+	std::cout << "~Server\n";
+	close(_soc.s());
 }
 
 void		Server::makeServer()

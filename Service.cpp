@@ -35,12 +35,12 @@ Service::~Service()
 	FD_ZERO(&except);
 }
 
-void		Service::doSelect(Socket& soc, std::map<int, Socket>& mSockets)
+void		Service::doSelect(Socket& soc, std::map<int, User>& mSockets)
 {
 	ret = select(max + 1, &rfds, &wfds, NULL, &tv);
 	if (ret == -1)
 	{
-		std::perror("select Error = ");
+		//std::perror("select Error = ");
 		throw SelectException();
 	}
 	else if (ret)
@@ -55,26 +55,24 @@ void		Service::doSelect(Socket& soc, std::map<int, Socket>& mSockets)
 	}
 }
 
-void		Service::handleAccept(Socket& soc, std::map<int, Socket>& mSockets)
+void		Service::handleAccept(Socket& soc, std::map<int, User>& mSockets)
 {
-	std::pair<int, Socket>	p;
+	std::pair<int, User>	p;
 
-	p.first = accept(soc.s(), (struct sockaddr*)&(p.second.sin()), &(p.second.len()));
+	p.first = accept(soc.s(), (struct sockaddr*)&(p.second.soc().sin()), &(p.second.soc().len()));
 	if (p.first == -1)
 	{
 		throw AcceptException();
 	}
 	mSockets.insert(p);
 	FD_SET(p.first, &rfds);
-	FD_SET(p.first, &wfds);
-	//FD_SET(p.first, &except);
 	if (max < p.first)
 		max = p.first;
 }
 
-void		Service::set(Socket& soc, std::map<int, Socket>& mSockets)
+void		Service::set(Socket& soc, std::map<int, User>& mSockets)
 {
-	std::map<int, Socket>::const_iterator	it;
+	std::map<int, User>::const_iterator		it;
 
 	FD_ZERO(&rfds);
 	FD_ZERO(&wfds);
@@ -83,29 +81,25 @@ void		Service::set(Socket& soc, std::map<int, Socket>& mSockets)
 	tv.tv_usec = 0;
 	max = soc.s();
 	FD_SET(soc.s(), &rfds);
-	FD_SET(soc.s(), &wfds);
-	//FD_SET(soc.s(), &except);
 	for (it = mSockets.begin(); it != mSockets.end(); it++)
 	{
 		std::cout << "it = " << it->first << std::endl;
-		FD_SET((*it).first, &rfds);
-		FD_SET((*it).first, &wfds);
-		//FD_SET((*it).first, &except);
-		if ((*it).first > max)
-			max = (*it).first;
+		FD_SET(it->first, &rfds);
+		if (it->first > max)
+			max = it->first;
 	}
 }
 
-void		Service::check_rfds(Socket& soc, std::map<int, Socket>& mSockets)
+void		Service::check_rfds(Socket& soc, std::map<int, User>& mSockets)
 {
-	int		i;
 	char	buf[1024];
+	int		i;
 
+	std::cout << "Check_rfds\n";
 	for (i = 0; i < max + 1; i++)
 	{
 		if (FD_ISSET(i, &rfds))
 		{
-			std::cout << "i = " << i << ", max = " << max << std::endl;
 			if (i == soc.s())
 			{
 				handleAccept(soc, mSockets);
@@ -115,16 +109,16 @@ void		Service::check_rfds(Socket& soc, std::map<int, Socket>& mSockets)
 				memset(buf, 0, 1024);
 				if (recv(i, buf, 1024, 0) <= 0)
 				{
-					FD_CLR(i, &rfds);
+					close(mSockets.find(i)->second.soc().s());
 					mSockets.erase(i);
 					continue ;
 				}
 				std::cout << "Message = " << buf << std::endl;
-				send(i, "end", 1024, 0);
-				//FD_SET(i, &wfds);
+				//send(i, "end", 1024, 0);
+				FD_SET(i, &wfds);
 				if (strncmp(buf, "quit", 4) == 0)
 				{
-					FD_CLR(i, &rfds);
+					close(mSockets.find(i)->second.soc().s());
 					mSockets.erase(i);
 				}
 			}
@@ -132,26 +126,26 @@ void		Service::check_rfds(Socket& soc, std::map<int, Socket>& mSockets)
 	}
 }
 
-void		Service::check_wfds(Socket& soc, std::map<int, Socket>& mSockets)
+void		Service::check_wfds(Socket& soc, std::map<int, User>& mSockets)
 {
 	int		i;
-	char	buf[1024];
 
+	std::cout << "Check_wfds\n";
 	for (i = 0; i < max + 1; i++)
 	{
 		if (FD_ISSET(i, &wfds))
 		{
+			/*
 			if (i == soc.s())
 			{
-				std::cout << "wfds = " << i << std::endl;
+				std::cout << "wfds soc = " << soc.s() << std::endl;
 			}
 			else
 			{
-				std::cout << "wfds = " << i << std::endl;
-				//memset(buf, 0, 1024);
-				//recv(i, buf, 1024, 0);
-				send(i, "end", 1024, 0);
-			}
+			*/
+			std::cout << "wfds = " << i << std::endl;
+			send(i, "end", 1024, 0);
+			//}
 		}
 	}
 }
