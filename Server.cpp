@@ -29,6 +29,8 @@ Server::~Server()
 
 void		Server::makeServer()
 {
+	//if (_soc.port() != port)
+	//	_soc = Socket(port);
 	if (bind(_soc.s(), (const sockaddr *)&(_soc.sin()), sizeof(_soc.sin())) == -1)
 	{
 		throw BindException();
@@ -43,6 +45,7 @@ Socket&		Server::soc()
 {
 	return _soc;
 }
+
 /*
 class	Server::BindException : public std::exception
 {

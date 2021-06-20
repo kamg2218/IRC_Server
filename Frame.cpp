@@ -2,16 +2,12 @@
 
 Frame::Frame()
 {
-	svi = Service(sev.soc());
 }
 
 Frame::Frame(int port)
 {
-	if (port != sev.soc().port())
-	{
+	if (sev.soc().port() != port)
 		sev = Server(port);
-		svi = Service(sev.soc());
-	}
 }
 
 Frame::Frame(const Frame& other)
@@ -34,8 +30,8 @@ void	Frame::start()
 	sev.makeServer();
 	while (1)
 	{
-		svi.doSelect(sev.soc(), mSockets);
 		svi.set(sev.soc(), mSockets);
+		svi.doSelect(sev.soc(), mSockets);
 	}
 }
 

@@ -17,10 +17,7 @@ class		Server
 		Server&		operator=(const Server& other);
 		~Server();
 		void		makeServer();
-		void		handleAccept();
 		Socket&		soc();
-		//class	BindException;
-		//class	ListenException;
 		class	BindException : public std::exception
 		{
 			public:

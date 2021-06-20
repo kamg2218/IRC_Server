@@ -21,7 +21,6 @@ class		Service
 		fd_set			except;
 	public:
 		Service();
-		Service(Socket& soc);
 		Service(const Service& other);
 		Service&	operator=(const Service& other);
 		~Service();
@@ -30,6 +29,7 @@ class		Service
 		void		handleAccept(Socket& soc, std::map<int, Socket>& mSockets);
 		void		set(Socket& soc, std::map<int, Socket>& mSockets);
 		void		check_rfds(Socket& soc, std::map<int, Socket>& mSockets);
+		void		check_wfds(Socket& soc, std::map<int, Socket>& mSockets);
 		//class		AcceptException;
 		//class		SelectException;
 		class		AcceptException : public std::exception
