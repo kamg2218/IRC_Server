@@ -2,12 +2,14 @@
 
 Frame::Frame()
 {
+	//sev.soc().makeSocket(80);
 }
 
 Frame::Frame(int port)
 {
-	if (sev.soc().port() != port)
-		sev = Server(port);
+	//sev.soc().makeSocket(port);
+	//if (sev.soc().port() != port)
+	//	sev = Server(port);
 }
 
 Frame::Frame(const Frame& other)
@@ -37,4 +39,5 @@ void	Frame::start()
 
 Frame::~Frame()
 {
+	//close(sev.soc());
 }

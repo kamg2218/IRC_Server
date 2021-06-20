@@ -2,12 +2,13 @@
 
 Server::Server()
 {
+	_soc.makeSocket(80);
 }
 
 Server::Server(int port)
 {
 	if (_soc.port() != port)
-		_soc = Socket(port);
+		_soc.makeSocket(port);
 }
 
 Server::Server(const Server& other)

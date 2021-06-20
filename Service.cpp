@@ -119,17 +119,9 @@ void		Service::check_rfds(Socket& soc, std::map<int, Socket>& mSockets)
 					mSockets.erase(i);
 					continue ;
 				}
-				/*
-				if (read(i, buf, 1024) <= 0)
-				{
-					FD_CLR(i, &rfds);
-					mSockets.erase(i);
-					continue ;
-				}*/
 				std::cout << "Message = " << buf << std::endl;
-				//write(i, "end", 1024);
-				//send(i, "end", 1024, 0);
-				FD_SET(i, &wfds);
+				send(i, "end", 1024, 0);
+				//FD_SET(i, &wfds);
 				if (strncmp(buf, "quit", 4) == 0)
 				{
 					FD_CLR(i, &rfds);

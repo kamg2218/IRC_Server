@@ -21,12 +21,13 @@ class Socket
 		protoent*		_proto;
 	public:
 		Socket();
-		Socket(int port);
-		Socket(int port, unsigned long addr);
+		//Socket(int port);
+		//Socket(int port, unsigned long addr);
 		Socket(const Socket& other);
 		Socket&		operator=(const Socket& other);
 		~Socket();
-		//void			makeSocket(int port);
+		void			makeSocket(int port);
+		void			makeSocket(int port, unsigned long addr);
 		int&			s();
 		int&			port();
 		unsigned int&	len();

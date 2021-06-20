@@ -1,25 +1,11 @@
 #include "Socket.hpp"
 
 Socket::Socket()
-	: _s(0)
+	: _s(-1)
 {
-	_proto = getprotobyname("tcp");
-	if (!_proto)
-	{
-		throw ProtoException();
-	}
-	_s = socket(AF_INET, SOCK_STREAM, _proto->p_proto);
-	if (_s == -1)
-	{
-		throw SocketException();
-	}
-	_sin.sin_family = AF_INET;
-	_sin.sin_port = htons(80);
-	_sin.sin_addr.s_addr = htonl(INADDR_ANY);
 }
 
-Socket::Socket(int port)
-	: _s(0)
+void		Socket::makeSocket(int port)
 {
 	_proto = getprotobyname("tcp");
 	if (!_proto)
@@ -36,8 +22,7 @@ Socket::Socket(int port)
 	_sin.sin_addr.s_addr = htonl(INADDR_ANY);
 }
 
-Socket::Socket(int port, unsigned long addr)
-	: _s(0)
+void		Socket::makeSocket(int port, unsigned long addr)
 {
 	_proto = getprotobyname("tcp");
 	if (!_proto)
