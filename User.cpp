@@ -56,9 +56,10 @@ std::string		User::msgHeader() const
 	return (std::string(":" + sNickname + "!" + sNickname + "@" + sHost+ " "));
 }
 
-void			User::cmdNick(std::string const& s)
+void			User::cmdNick(std::vector<std::string> const& sets)
 {
 	bool res;
+	std::string s = sets[1];
 
 	res = Frame::instance()->doesNicknameExists(s);
 	if (res)
@@ -70,16 +71,17 @@ void			User::cmdNick(std::string const& s)
 	return ; //success
 }
 
-void			User::cmdUser()
+void			User::cmdUser(std::vector<std::string> const& sets)
 {
 	//write
 	didUser = true;
 }
 
-void			User::cmdJoin(std::string const& s)
+void			User::cmdJoin(std::vector<std::string> const& sets)
 {
 	//write
 	bool	res;
+	std::string s = sets[1];
 	
 	res = Frame::instance()->doesChannelExists(s);
 	if (res)
@@ -93,17 +95,17 @@ void			User::cmdJoin(std::string const& s)
 	}
 }
 
-void			User::cmdKick()
+void			User::cmdKick(std::vector<std::string> const& sets)
 {
 	//write
 }
 
-void			User::cmdPart()
+void			User::cmdPart(std::vector<std::string> const& sets)
 {
 	//write
 }
 
-void			User::cmdQuit()
+void			User::cmdQuit(std::vector<std::string> const& sets)
 {
 	//write
 }

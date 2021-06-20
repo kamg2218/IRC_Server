@@ -2,7 +2,7 @@
 # define FT_USER_HPP
 
 #include <string>
-
+#include <vector>
 class Session;
 class User;
 #include "Channel.hpp"
@@ -23,12 +23,12 @@ class User
 	public:
 		User(Session* ms);
 		~User();
-		void	cmdNick(std::string const& s);
-		void	cmdUser();
-		void	cmdJoin(std::string const& s);
-		void	cmdKick();
-		void	cmdPart();
-		void	cmdQuit();
+		void	cmdNick(std::vector<std::string> const& sets);
+		void	cmdUser(std::vector<std::string> const& sets);
+		void	cmdJoin(std::vector<std::string> const& sets);
+		void	cmdKick(std::vector<std::string> const& sets);
+		void	cmdPart(std::vector<std::string> const& sets);
+		void	cmdQuit(std::vector<std::string> const& sets);
 		void		setName(std::string const& s);
 		void		setNick(std::string const& s);
 		void		setHost(std::string const& s);
