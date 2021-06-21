@@ -17,7 +17,8 @@ class Session
 {
 	private:
 		User	user;
-		int		fd;
+		Socket	soc;
+		//int		fd;
 		//std::string buffer;
 		Executor		request;
 		//std::string		buffer;
