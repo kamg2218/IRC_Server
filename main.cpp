@@ -2,6 +2,7 @@
 
 int		main(void)
 {
+	//Frame 서버
 	try
 	{
 		Frame	mainFrame;
