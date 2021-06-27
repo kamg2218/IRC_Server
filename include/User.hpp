@@ -12,7 +12,7 @@ typedef std::map<std::string, Channel*>  Channelmap;
 class User
 {
 	private:
-		Session			*mysession;
+		//Session			*mysession;
 		std::string		sRealname;
 		std::string		sNickname;
 		std::string		sHost;

@@ -18,12 +18,8 @@ class Session
 	private:
 		User	user;
 		Socket	_soc;
-		//int		fd;
-		//std::string buffer;
 		Executor		request;
-		//std::string		buffer;
-		//std::string	msg;
-		Service*	service;
+		//Service*	service;
 
 	public:
 		typedef Session*	pointer;
