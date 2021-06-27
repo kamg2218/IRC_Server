@@ -53,3 +53,5 @@ void	Session::reply(std::string const& str)
 	res += "\r\n";
 	send(fd, res.c_str(), res.length(), 0);
 }
+
+Socket&	Session::soc() { return _soc; }

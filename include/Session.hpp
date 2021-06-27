@@ -17,7 +17,7 @@ class Session
 {
 	private:
 		User	user;
-		Socket	soc;
+		Socket	_soc;
 		//int		fd;
 		//std::string buffer;
 		Executor		request;
@@ -31,6 +31,7 @@ class Session
 		Session(Service* svc);
 		static pointer	create(Service* svc, int);
 		int		socket() const;
+		Socket&	soc();
 		bool	handleRead(std::map<int, Session*> & ms);
 		void	reply(std::string const& str);
 };

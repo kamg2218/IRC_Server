@@ -35,6 +35,7 @@ void	Service::do_service(Server & sv)
 		newclient = sv.handleAccept(this);
 		std::map<int, Session*>::value_type res(newclient->socket(), newclient);
 		mSessions.insert(res);
+		newclient.soc().makeNonBlocking();
 	}
 	for (std::map<int, Session*>::iterator it = mSessions.begin(); it != mSessions.end() ; )
 	{

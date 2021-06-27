@@ -15,7 +15,7 @@ class Session;
 class Server
 {
 	private:
-		int sockfd;
+		int		sockfd;
 	public:
 		class BindException : public std::exception
 		{

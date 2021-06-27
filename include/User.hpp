@@ -16,7 +16,7 @@ class User
 		std::string		sRealname;
 		std::string		sNickname;
 		std::string		sHost;
-		Channelmap		mChannels;
+		ChannelMap		mChannels;
 		bool	didNick;
 		bool	didUser;
 		bool	is_properly_quit;

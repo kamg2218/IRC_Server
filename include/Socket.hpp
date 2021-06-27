@@ -19,6 +19,7 @@ class	Socket
 		unsigned int	len();
 		sockaddr_in&	sin();
 		protoent*		proto();
+		void			makeNonBlocking();
 		void			makeSocket(int port);
 		void			makeSocket(int port, unsigned long addr);
 		class			ProtoException;

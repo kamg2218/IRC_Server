@@ -52,6 +52,8 @@ protoent*		Socket::proto()
 
 void			Socekt::makeSocket(int port)
 {
+	int			on;
+
 	_proto = getprotobyname("tcp");
 	if (!_proto)
 	{
@@ -59,6 +61,11 @@ void			Socekt::makeSocket(int port)
 	}
 	_s = socket(AF_INET, SOCK_STREAM, _proto->p_proto);
 	if (_s == -1)
+	{
+		throw SocketException();
+	}
+	on = 1;
+	if (setsockopt(_s, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on)) == -1)
 	{
 		throw SocketException();
 	}
@@ -69,6 +76,8 @@ void			Socekt::makeSocket(int port)
 
 void			Socekt::makeSocket(int port, unsigned long addr)
 {
+	int			on;
+
 	_proto = getprotobyname("tcp");
 	if (!_proto)
 	{
@@ -79,9 +88,25 @@ void			Socekt::makeSocket(int port, unsigned long addr)
 	{
 		throw SocketException();
 	}
+	on = 1;
+	if (setsockopt(_s, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on)) == -1)
+	{
+		throw SocketException();
+	}
 	_sin.sin_family = AF_INET;
 	_sin.sin_port = htons(port);
 	_sin.sin_addr.s_addr = htonl(addr);
+}
+
+void			Socket::makeNonBlocking()
+{
+	int			flag;
+
+	flag = fcntl(_s, F_GETFL, 0);
+	if (fcntl(_s, F_SETFL, flag | O_NONBLOCK) == -1)
+	{
+		throw SocketException();
+	}
 }
 
 class			Socket::ProtoException : public std::exception

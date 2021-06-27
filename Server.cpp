@@ -26,24 +26,37 @@ Server::Server() {}
 
 void	Server::create(unsigned int port)
 {
+	int		on;
 	struct	protoent	*pe;
 	struct	sockaddr_in	sin;
 
 	pe = getprotobyname("tcp");
 	sockfd = ::socket(PF_INET, SOCK_STREAM, pe->p_proto);
 	if (!sockfd)
-		throw (SocketException());
+	{
+		throw SocketException();
+	}
+	on = 1;
+	if (setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on)) == -1)
+	{
+		throw SocketException();
+	}
 	sin.sin_family = AF_INET;
 	sin.sin_addr.s_addr = htonl(INADDR_ANY);
 	sin.sin_port = htons(port);
-	if ((bind(sockfd, (struct sockaddr *)&sin, sizeof(sin))) == -1)
-		throw (BindException());
-	if (listen(sockfd, 42) < 0)
-		throw (ListenException());
+	if ((bind(_soc.s(), (struct sockaddr *)&_soc.sin(), sizeof(_soc.sin()))) == -1)
+	{
+		throw BindException();
+	}
+	if (listen(_soc.s(), 42) < 0)
+	{
+		throw ListenException();
+	}
 }
 
 Session*	Server::handleAccept(Service* p)
 {
+	int		on;
 	int		cs;
 	struct	sockaddr_in	csin;
 	socklen_t	csin_len;
@@ -51,7 +64,14 @@ Session*	Server::handleAccept(Service* p)
 	csin_len = sizeof(csin);
 	cs = accept(sockfd, (struct sockaddr*)&csin, &csin_len);
 	if (cs < 0)
-		throw (AcceptException());
+	{
+		throw AcceptException();
+	}
+	on = 1;
+	if (setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on)) == -1)
+	{
+		throw AcceptException();
+	}
 	std::cout << inet_ntoa(csin.sin_addr) << ":" << ntohs(csin.sin_port) << " is connected\n";
 	return (new Session(cs, p));
 }
