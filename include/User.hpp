@@ -7,7 +7,7 @@ class Session;
 class User;
 #include "Channel.hpp"
 
-typedef std::map<std::string, Channel*>  Channelmap;
+typedef std::map<std::string, Channel*>  ChannelMap;
 
 class User
 {

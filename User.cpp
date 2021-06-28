@@ -3,7 +3,7 @@
 #include "include/Frame.hpp"
 
 User::User(Session*	ms)
-	: mysession(ms), didUser(false), didNick(false), is_properly_quit(false)
+	: didUser(false), didNick(false), is_properly_quit(false)
 {}
 
 User::~User()

@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+#include <map>
 #include "User.hpp"
 
 class Executor
@@ -16,7 +17,7 @@ class Executor
 		bool	gotFullMsg() const;
 		int		msglen();
 		void	reset();
-		void	execute(User *user);
+		void	execute(std::map<int, Session*>& ms, Session* ss);
 		std::string		getMessage();
 };
 

@@ -16,6 +16,7 @@ bool	Message::gotFullMsg() const
 {
 	std::string::size_type res;
 	res = buff.find("\r\n");
+	std::cout << "Msg = " << res << std::endl;
 	if (res == std::string::npos)
 		return (false);
 	return (true);

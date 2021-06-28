@@ -1,3 +1,5 @@
+#include "include/Socket.hpp"
+
 Socket::Socket()
 	: _fd(0), _port(0), _len(0), _proto(0)
 {
@@ -25,7 +27,7 @@ Socket::~Socket()
 {
 }
 
-int			Socket::fd()
+int			Socket::fd() const
 {
 	return _fd;
 }
@@ -40,7 +42,7 @@ unsigned int	Socket::len()
 	return _len;
 }
 
-sockaddr_in&	Soket::sin()
+sockaddr_in&	Socket::sin()
 {
 	return _sin;
 }
@@ -50,7 +52,7 @@ protoent*		Socket::proto()
 	return _proto;
 }
 
-void			Socekt::makeSocket(int port)
+void			Socket::makeSocket(int port)
 {
 	int			on;
 
@@ -59,13 +61,13 @@ void			Socekt::makeSocket(int port)
 	{
 		throw ProtoException();
 	}
-	_s = socket(AF_INET, SOCK_STREAM, _proto->p_proto);
-	if (_s == -1)
+	_fd = socket(AF_INET, SOCK_STREAM, _proto->p_proto);
+	if (_fd == -1)
 	{
 		throw SocketException();
 	}
 	on = 1;
-	if (setsockopt(_s, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on)) == -1)
+	if (setsockopt(_fd, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on)) == -1)
 	{
 		throw SocketException();
 	}
@@ -74,7 +76,7 @@ void			Socekt::makeSocket(int port)
 	_sin.sin_addr.s_addr = htonl(INADDR_ANY);
 }
 
-void			Socekt::makeSocket(int port, unsigned long addr)
+void			Socket::makeSocket(int port, unsigned long addr)
 {
 	int			on;
 
@@ -83,13 +85,13 @@ void			Socekt::makeSocket(int port, unsigned long addr)
 	{
 		throw ProtoException();
 	}
-	_s = socket(AF_INET, SOCK_STREAM, _proto->p_proto);
-	if (_s == -1)
+	_fd = socket(AF_INET, SOCK_STREAM, _proto->p_proto);
+	if (_fd == -1)
 	{
 		throw SocketException();
 	}
 	on = 1;
-	if (setsockopt(_s, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on)) == -1)
+	if (setsockopt(_fd, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on)) == -1)
 	{
 		throw SocketException();
 	}
@@ -102,13 +104,13 @@ void			Socket::makeNonBlocking()
 {
 	int			flag;
 
-	flag = fcntl(_s, F_GETFL, 0);
-	if (fcntl(_s, F_SETFL, flag | O_NONBLOCK) == -1)
+	flag = fcntl(_fd, F_GETFL, 0);
+	if (fcntl(_fd, F_SETFL, flag | O_NONBLOCK) == -1)
 	{
 		throw SocketException();
 	}
 }
-
+/*
 class			Socket::ProtoException : public std::exception
 {
 	public:
@@ -126,3 +128,4 @@ class			Socket::SocketException : public std::exception
 			return "Socket Error\n";
 		}
 };
+*/

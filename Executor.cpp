@@ -59,7 +59,7 @@ void	Executor::split(std::vector<std::string> & v)
 	}
 }
 
-void	Executor::execute(User *user)
+void	Executor::execute(std::map<int, Session*>& ms, Session* ss)
 {
 	std::vector<std::string>	splited_cmd;
 
@@ -76,6 +76,10 @@ void	Executor::execute(User *user)
 		/*
 		user->cmdUser();
 		*/
+	}
+	else if (splited_cmd[0] == "QUIT")
+	{
+		ms.erase(ss->soc().fd());
 	}
 	/*
 	// print splited cmd vector

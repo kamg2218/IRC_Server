@@ -44,11 +44,11 @@ void	Server::create(unsigned int port)
 	sin.sin_family = AF_INET;
 	sin.sin_addr.s_addr = htonl(INADDR_ANY);
 	sin.sin_port = htons(port);
-	if ((bind(_soc.s(), (struct sockaddr *)&_soc.sin(), sizeof(_soc.sin()))) == -1)
+	if ((bind(sockfd, (struct sockaddr *)&sin, sizeof(sin))) == -1)
 	{
 		throw BindException();
 	}
-	if (listen(_soc.s(), 42) < 0)
+	if (listen(sockfd, 42) < 0)
 	{
 		throw ListenException();
 	}
