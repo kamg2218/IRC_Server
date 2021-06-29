@@ -62,20 +62,40 @@ Session*	Server::handleAccept(Service* p)
 	socklen_t	csin_len;
 
 	csin_len = sizeof(csin);
+	std::cout << "sockfd = " << sockfd << std::endl;
 	cs = accept(sockfd, (struct sockaddr*)&csin, &csin_len);
+	std::cout << "cs = " << cs << std::endl;
 	if (cs < 0)
 	{
 		throw AcceptException();
 	}
 	on = 1;
-	if (setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on)) == -1)
+	if (setsockopt(cs, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on)) == -1)
 	{
 		throw AcceptException();
 	}
 	std::cout << inet_ntoa(csin.sin_addr) << ":" << ntohs(csin.sin_port) << " is connected\n";
-	return (new Session(cs, p));
+
+	//return (new Session(cs, p));
+	Session		*se;
+	se = new Session(cs, p);
+	se->soc().makeNonBlocking();
+	p->users().insert(std::pair<int, Session*>(cs, se));
+	return NULL;
+}
+/*
+void		Server::handleDecline(User& usr)
+{
 }
 
+void		Server::handleDecline(Channel& chn)
+{
+}
+
+void		Server::handleDecline(Server& svr)
+{
+}
+*/
 int 	Server::socket() const
 {
 	return (sockfd);

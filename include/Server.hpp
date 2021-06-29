@@ -40,6 +40,9 @@ class Server
 		Server();
 		void	create(unsigned int port);
 		Session*	handleAccept(Service *p);
+		//void		handleDecline(User& usr);
+		//void		handleDecline(Server& srv);
+		//void		handleDecline(Channel& chn);
 		int		socket() const;
 };
 

@@ -28,6 +28,11 @@ class	Socket
 		unsigned int	len();
 		sockaddr_in&	sin();
 		protoent*		proto();
+		void			setFd(int fd);
+		void			setPort(int port);
+		void			setLen(unsigned int len);
+		void			setSockaddr(sockaddr_in sin);
+		void			setProto(protoent* proto);
 		void			makeNonBlocking();
 		void			makeSocket(int port);
 		void			makeSocket(int port, unsigned long addr);

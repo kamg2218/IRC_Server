@@ -33,7 +33,7 @@ class Session
 		static pointer	create(Service* svc, int);
 		int		socket() const;
 		Socket&	soc();
-		bool	handleRead(std::map<int, Session*> & ms);
+		bool	handleRead(std::map<int, Session*> & ms, int fd);
 		void	reply(std::string const& str);
 };
 
