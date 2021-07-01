@@ -118,22 +118,3 @@ void			Socket::makeNonBlocking()
 		throw SocketException();
 	}
 }
-/*
-class			Socket::ProtoException : public std::exception
-{
-	public:
-		virtual const char* what(void) const throw()
-		{
-			return "Proto Error\n";
-		}
-};
-
-class			Socket::SocketException : public std::exception
-{
-	public:
-		virtual const char* what(void) const throw()
-		{
-			return "Socket Error\n";
-		}
-};
-*/
