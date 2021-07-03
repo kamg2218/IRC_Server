@@ -6,6 +6,7 @@
 #include <map>
 #include "User.hpp"
 #include "Channel.hpp"
+#include "MainServer.hpp"
 #include "Server.hpp"
 #include "Service.hpp"
 
@@ -18,7 +19,7 @@ class Frame
 		static Frame*	pInstance;
 		UserMap			mUsers;
 		ChannelMap		mChannels;
-		Server			server;
+		MainServer		server;
 		Service			service;
 	public:
 		~Frame();

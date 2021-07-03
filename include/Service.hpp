@@ -6,7 +6,7 @@
 #include <sys/select.h>
 #include <sys/time.h>
 #include "Session.hpp"
-#include "Server.hpp"
+#include "MainServer.hpp"
 
 class Service
 {
@@ -21,8 +21,8 @@ class Service
 
 	public:
 		Service();
-		void	do_select(Server const& sv);
-		void	do_service(Server & sv);
+		void	do_select(MainServer const& sv);
+		void	do_service(MainServer & sv);
 		int		getMaxopen() const;
 		void	deleteSession(std::map<int, Session*>::iterator& pos);
 		std::map<int, Session*>&	users() { return mSessions; }

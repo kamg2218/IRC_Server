@@ -29,22 +29,18 @@ Socket::~Socket()
 }
 
 void		Socket::setSd(int sd) { _sd = sd; }
-void		Socket::setPort(int port) { _port = port; }
-void		Socket::setLen(unsigned int len) { _len = len; }
-void		Socket::setSockaddr(sockaddr_in sin) { _sin = sin; }
-void		Socket::setProto(protoent* proto) { _proto = proto; }
 
 int			Socket::sd() const
 {
 	return _sd;
 }
 
-int			Socket::port()
+unsigned int&	Socket::port()
 {
 	return _port;
 }
 
-unsigned int	Socket::len()
+unsigned int&	Socket::len()
 {
 	return _len;
 }
@@ -59,7 +55,7 @@ protoent*		Socket::proto()
 	return _proto;
 }
 
-void			Socket::makeSocket(int port)
+int				Socket::makeSocket(unsigned int port)
 {
 	int			on;
 
@@ -81,9 +77,10 @@ void			Socket::makeSocket(int port)
 	_sin.sin_family = AF_INET;
 	_sin.sin_port = htons(port);
 	_sin.sin_addr.s_addr = htonl(INADDR_ANY);
+	return _sd;
 }
 
-void			Socket::makeSocket(int port, unsigned long addr)
+int				Socket::makeSocket(unsigned int port, unsigned long addr)
 {
 	int			on;
 
@@ -105,6 +102,7 @@ void			Socket::makeSocket(int port, unsigned long addr)
 	_sin.sin_family = AF_INET;
 	_sin.sin_port = htons(port);
 	_sin.sin_addr.s_addr = htonl(addr);
+	return _sd;
 }
 
 void			Socket::makeNonBlocking()

@@ -2,19 +2,19 @@
 #include "include/Executor.hpp"
 #include "include/Frame.hpp"
 #include "include/User.hpp"
-
-void	Executor::operator +=(const char *str)
+/*
+void	Executor::operator +=(std::string& buff, const char *str)
 {
 	buff += str;
-}
+}*/
 
-void	Executor::insert(char *str, int r)
+void	Executor::insert(std::string& buff, char *str, int r)
 {
 	for (int i= 0 ; i < r ; i++)
 		buff += str[i];
 }
 
-bool	Executor::gotFullMsg() const
+bool	Executor::gotFullMsg(std::string& buff) const
 {
 	std::string::size_type res;
 	res = buff.find("\r\n");
@@ -23,26 +23,26 @@ bool	Executor::gotFullMsg() const
 	return (true);
 }
 
-std::string		Executor::getMessage()
+std::string		Executor::getMessage(std::string& buff)
 {
 	std::string res = (buff.substr(0,buff.find("\r\n")));
 	return (res);
 }
 
-void	Executor::reset()
+void	Executor::reset(std::string& buff)
 {
 	buff.erase(0, buff.find("\r\n") + 2);
 }
 
-int		Executor::msglen()
+int		Executor::msglen(std::string& buff)
 {
 	std::string res = (buff.substr(0,buff.find("\r\n")));
 	return (res.length());
 }
 
-void	Executor::split(std::vector<std::string> & v)
+void	Executor::split(std::string& buff, std::vector<std::string> & v)
 {
-	std::string msgline	= getMessage();
+	std::string msgline	= getMessage(buff);
 	std::string::size_type	pos;
 	
 	while ((pos = msgline.find(" ")) != std::string::npos)
@@ -59,11 +59,11 @@ void	Executor::split(std::vector<std::string> & v)
 	}
 }
 
-void	Executor::execute(std::map<int, Session*>& ms, Session* ss)
+void	Executor::execute(std::string& buff, std::map<int, Session*>& ms, Session* ss)
 {
 	std::vector<std::string>	splited_cmd;
 
-	split(splited_cmd);
+	split(buff, splited_cmd);
 	if (splited_cmd[0] == "NICK")
 	{
 		/*
@@ -79,7 +79,7 @@ void	Executor::execute(std::map<int, Session*>& ms, Session* ss)
 	}
 	else if (splited_cmd[0] == "QUIT")
 	{
-		ms.erase(ss->soc().fd());
+		ms.erase(ss->soc().sd());
 	}
 	/*
 	// print splited cmd vector

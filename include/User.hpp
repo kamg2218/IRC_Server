@@ -5,6 +5,7 @@
 #include <vector>
 class Session;
 class User;
+#include "Socket.hpp"
 #include "Channel.hpp"
 
 typedef std::map<std::string, Channel*>  ChannelMap;

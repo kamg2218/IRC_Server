@@ -9,7 +9,7 @@ Service::Service()
 	maxopen = rlp.rlim_cur;
 }
 
-void	Service::do_select(Server const& sv)
+void	Service::do_select(MainServer const& sv)
 {
 	res = 0;
 	FD_ZERO(&fd_read);
@@ -30,7 +30,7 @@ void	Service::do_select(Server const& sv)
 	}
 }
 
-void	Service::do_service(Server & sv)
+void	Service::do_service(MainServer & sv)
 {
 	Session	*newclient;
 

@@ -14,7 +14,7 @@ class	Socket
 {
 	private:
 		int				_sd;
-		int				_port;
+		unsigned int	_port;
 		unsigned int	_len;
 		sockaddr_in		_sin;
 		protoent*		_proto;
@@ -24,18 +24,14 @@ class	Socket
 		Socket&		operator=(Socket& other);
 		~Socket();
 		int				sd() const;
-		int				port();
-		unsigned int	len();
+		unsigned int&	port();
+		unsigned int&	len();
 		sockaddr_in&	sin();
 		protoent*		proto();
 		void			setSd(int sd);
-		void			setPort(int port);
-		void			setLen(unsigned int len);
-		void			setSockaddr(sockaddr_in sin);
-		void			setProto(protoent* proto);
 		void			makeNonBlocking();
-		void			makeSocket(int port);
-		void			makeSocket(int port, unsigned long addr);
+		int				makeSocket(unsigned int port);
+		int				makeSocket(unsigned int port, unsigned long addr);
 		class			ProtoException : public std::exception
 		{
 			public:

@@ -26,6 +26,7 @@ MainServer::MainServer() {}
 
 void	MainServer::create(unsigned int port)
 {
+	/*
 	int		on;
 	struct	protoent	*pe;
 	struct	sockaddr_in	sin;
@@ -44,11 +45,13 @@ void	MainServer::create(unsigned int port)
 	sin.sin_family = AF_INET;
 	sin.sin_addr.s_addr = htonl(INADDR_ANY);
 	sin.sin_port = htons(port);
-	if ((bind(sockfd, (struct sockaddr *)&sin, sizeof(sin))) == -1)
+	*/
+	_sd = _sock.makeSocket(port);
+	if ((bind(_sd, (struct sockaddr *)&(_sock.sin()), sizeof(_sock.sin()))) == -1)
 	{
 		throw BindException();
 	}
-	if (listen(sockfd, 42) < 0)
+	if (listen(_sd, 42) < 0)
 	{
 		throw ListenException();
 	}
@@ -60,25 +63,25 @@ Session*	MainServer::handleAccept(Service* p)
 	int		cs;
 	struct	sockaddr_in	csin;
 	socklen_t	csin_len;
+	Session		*se;
 
-	csin_len = sizeof(csin);
-	std::cout << "sockfd = " << sockfd << std::endl;
-	cs = accept(sockfd, (struct sockaddr*)&csin, &csin_len);
-	std::cout << "cs = " << cs << std::endl;
+	se = new Session();
+	//csin_len = sizeof(csin);
+	//std::cout << "sd = " << _sd << std::endl;
+	cs = accept(_sd, (struct sockaddr*)&(se->soc().sin()), &(se->soc().len()));
+	//std::cout << "cs = " << cs << std::endl;
 	if (cs < 0)
 	{
 		throw AcceptException();
 	}
+	se->soc().setSd(cs);
 	on = 1;
 	if (setsockopt(cs, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on)) == -1)
 	{
+		delete se;
 		throw AcceptException();
 	}
-	std::cout << inet_ntoa(csin.sin_addr) << ":" << ntohs(csin.sin_port) << " is connected\n";
-
-	//return (new Session(cs, p));
-	Session		*se;
-	se = new Session(cs, p);
+	std::cout << inet_ntoa(se->soc().sin().sin_addr) << ":" << ntohs(se->soc().sin().sin_port) << " is connected\n";
 	se->soc().makeNonBlocking();
 	p->users().insert(std::pair<int, Session*>(cs, se));
 	return NULL;
@@ -98,5 +101,5 @@ void		MainServer::handleDecline(MainServer& svr)
 */
 int 	MainServer::socket() const
 {
-	return (sockfd);
+	return (_sd);
 }

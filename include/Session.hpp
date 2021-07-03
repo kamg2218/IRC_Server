@@ -1,5 +1,5 @@
-#ifndef FT_SESSION_HPP
-# define FT_SESSION_HPP
+#ifndef SESSION_HPP
+# define SESSION_HPP
 
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -31,6 +31,7 @@ class Session
 
 	public:
 		typedef Session*	pointer;
+		Session();
 		Session(int csfd, Service* svc);
 		Session(Service* svc);
 		static pointer	create(Service* svc, int);
