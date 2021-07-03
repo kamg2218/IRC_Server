@@ -8,6 +8,7 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
+#include <map>
 class Service;
 class Session;
 #include "Socket.hpp"
@@ -41,7 +42,7 @@ class MainServer
 		MainServer();
 		void	create(unsigned int port);
 		Session*	handleAccept(Service *p);
-		//void		handleDecline(User& usr);
+		void		handleDecline(std::map<int, Session*>& mSessions, std::map<int, Session*>::iterator& pos);
 		//void		handleDecline(Server& srv);
 		//void		handleDecline(Channel& chn);
 		int		socket() const;

@@ -42,16 +42,8 @@ void	Service::do_service(MainServer & sv)
 	if (FD_ISSET(sv.socket(), &fd_read))
 	{
 		newclient = sv.handleAccept(this);
-		/*
-		newclient = sv.handleAccept(this);
-		std::map<int, Session*>::value_type res(newclient->soc().fd(), newclient);
-		newclient->soc().makeNonBlocking();
-		mSessions.insert(res);
-		std::cout << "client " << res.first << " is accepted\n";
-		*/
 		std::cout << "client is accepted\n";
 	}
-	//std::cout << "userMap = " << mSessions.size() << std::endl;
 	for (std::map<int, Session*>::iterator it = mSessions.begin(); it != mSessions.end() ; )
 	{
 		std::cout << "client " << it->first << " is still alive.\n";
@@ -60,11 +52,12 @@ void	Service::do_service(MainServer & sv)
 		{
 			std::cout << "Read = " << temp->first << std::endl;
 			if (temp->second->handleRead(mSessions, temp->first))
-				//std::cout << "handleRead returned TRUE\n";
-				deleteSession(temp);
+				sv.handleDecline(mSessions, temp);
+				//deleteSession(temp);
 		}
 	}
 }
+/*
 void	Service::deleteSession(std::map<int, Session*>::iterator& pos)
 {
 	Session* temp;
@@ -74,7 +67,7 @@ void	Service::deleteSession(std::map<int, Session*>::iterator& pos)
 	delete (temp);
 	std::cout << "client is removed\n";
 }
-
+*/
 int		Service::getMaxopen() const
 {
 	return (maxopen);

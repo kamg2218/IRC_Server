@@ -24,7 +24,7 @@ class Service
 		void	do_select(MainServer const& sv);
 		void	do_service(MainServer & sv);
 		int		getMaxopen() const;
-		void	deleteSession(std::map<int, Session*>::iterator& pos);
+		//void	deleteSession(std::map<int, Session*>::iterator& pos);
 		std::map<int, Session*>&	users() { return mSessions; }
 		class SelectException : public std::exception
 		{
