@@ -9,7 +9,7 @@
 class Executor
 {
 	private:
-		std::string	buff;
+		//std::string	buff;
 		void	split(std::vector<std::string>& v);
 	public:
 		void	operator +=(const char *str);

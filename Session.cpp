@@ -3,14 +3,14 @@
 #include "include/Service.hpp"
 
 Session::Session(int csfd, Service* svc)
-	: user(this)
+	: _user(0), _server(0)
 {
 	//std::cout << "csfd = " << csfd << std::endl;
 	_soc.setFd(csfd);
 }
 
 Session::Session(Service* svc)
-	: user(this)
+	: _user(0), _server(0)
 {
 	//_soc.makeSocket(80);
 	//fd = -1;

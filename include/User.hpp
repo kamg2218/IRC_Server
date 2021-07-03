@@ -13,6 +13,7 @@ class User
 {
 	private:
 		//Session			*mysession;
+		Socket			_soc;
 		std::string		sRealname;
 		std::string		sNickname;
 		std::string		sHost;

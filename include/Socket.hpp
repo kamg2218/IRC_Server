@@ -13,7 +13,7 @@
 class	Socket
 {
 	private:
-		int				_fd;
+		int				_sd;
 		int				_port;
 		unsigned int	_len;
 		sockaddr_in		_sin;
@@ -23,12 +23,12 @@ class	Socket
 		Socket(Socket& other);
 		Socket&		operator=(Socket& other);
 		~Socket();
-		int				fd() const;
+		int				sd() const;
 		int				port();
 		unsigned int	len();
 		sockaddr_in&	sin();
 		protoent*		proto();
-		void			setFd(int fd);
+		void			setSd(int sd);
 		void			setPort(int port);
 		void			setLen(unsigned int len);
 		void			setSockaddr(sockaddr_in sin);
@@ -36,7 +36,6 @@ class	Socket
 		void			makeNonBlocking();
 		void			makeSocket(int port);
 		void			makeSocket(int port, unsigned long addr);
-		//class			ProtoException;
 		class			ProtoException : public std::exception
 		{
 			public:
@@ -45,7 +44,6 @@ class	Socket
 					return "Proto Error\n";
 				}
 		};
-		//class			SocketException;
 		class			SocketException : public std::exception
 		{
 			public:

@@ -17,13 +17,16 @@ class Service;
 #include "User.hpp"
 #include "Service.hpp"
 #include "Socket.hpp"
+#include "Server.hpp"
 
 class Session
 {
 	private:
-		User	user;
-		Socket	_soc;
-		Executor		request;
+		Socket		_soc;
+		User*		_user;
+		Server*		_server;
+		Executor	request;
+		std::string	buff;
 		//Service*	service;
 
 	public:
