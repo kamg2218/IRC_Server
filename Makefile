@@ -1,19 +1,18 @@
-NAME = server
+SRC=main.cpp Executor.cpp Frame.cpp Session.cpp Service.cpp \
+	MainServer.cpp User.cpp Channel.cpp Socket.cpp 
 
-SRC = main.cpp\
-	  Frame.cpp\
-	  Socket.cpp\
-	  Server.cpp\
-	  Service.cpp
-
-DFLAGS = -Wall -Wextra -Werror
+OBJ=$(SRC.c=.o)
+NAME=ircserv
 
 all : $(NAME)
 
 $(NAME) :
-	clang++ -o $(NAME) $(SRC)
+	clang++ $(SRC) -o $(NAME)
 
-fclean :
-	/bin/rm -f $(NAME)
+clean :
+	rm -rf $(OBJ)
 
+fclean: clean
+	rm -rf $(NAME)
+	
 re : fclean all

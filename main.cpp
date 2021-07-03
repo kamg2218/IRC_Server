@@ -1,15 +1,14 @@
-#include "Frame.hpp"
+#include "include/Frame.hpp"
 
-int		main(void)
+int main()
 {
-	//Frame 서버
 	try
 	{
-		Frame	mainFrame;
-		mainFrame.start();
+		Frame *mainframe = Frame::instance();
+		mainframe->start();
 	}
 	catch(std::exception const& err)
 	{
-		std::cout << err.what();
+		std::cout << err.what() << "\n";
 	}
 }

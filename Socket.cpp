@@ -1,81 +1,48 @@
-#include "Socket.hpp"
+#include <iostream>
+#include "include/Socket.hpp"
 
 Socket::Socket()
-	: _s(-1)
+	: _sd(0), _port(0), _len(0), _proto(0)
 {
 }
 
-void		Socket::makeSocket(int port)
-{
-	_proto = getprotobyname("tcp");
-	if (!_proto)
-	{
-		throw ProtoException();
-	}
-	_s = socket(AF_INET, SOCK_STREAM, _proto->p_proto);
-	if (_s == -1)
-	{
-		throw SocketException();
-	}
-	_sin.sin_family = AF_INET;
-	_sin.sin_port = htons(port);
-	_sin.sin_addr.s_addr = htonl(INADDR_ANY);
-}
-
-void		Socket::makeSocket(int port, unsigned long addr)
-{
-	_proto = getprotobyname("tcp");
-	if (!_proto)
-	{
-		throw ProtoException();
-	}
-	_s = socket(AF_INET, SOCK_STREAM, _proto->p_proto);
-	if (_s == -1)
-	{
-		throw SocketException();
-	}
-	_sin.sin_family = AF_INET;
-	_sin.sin_port = htons(port);
-	_sin.sin_addr.s_addr = htonl(addr);
-}
-
-Socket::Socket(const Socket& other)
+Socket::Socket(Socket& other)
+	: _sd(0), _port(0), _len(0), _proto(0)
 {
 	*this = other;
 }
 
-Socket&		Socket::operator=(const Socket& other)
+Socket&		Socket::operator=(Socket& other)
 {
 	if (this == &other)
-	{
 		return *this;
-	}
-	/*
-	if (this->_s > 2)
-	{
-		std::cout << "close(" << this->_s << ")\n";
-		close(this->_s);
-	}
-	*/
-	this->_s = other._s;
+	this->_sd = other._sd;
+	this->_port = other._port;
+	this->_len = other._len;
 	this->_sin = other._sin;
 	this->_proto = other._proto;
 	return *this;
 }
 
-int&			Socket::s()
+Socket::~Socket()
 {
-	return _s;
+}
+
+void		Socket::setSd(int sd) { _sd = sd; }
+
+int			Socket::sd() const
+{
+	return _sd;
+}
+
+unsigned int&	Socket::port()
+{
+	return _port;
 }
 
 unsigned int&	Socket::len()
 {
 	return _len;
-}
-
-int&			Socket::port()
-{
-	return _port;
 }
 
 sockaddr_in&	Socket::sin()
@@ -88,32 +55,64 @@ protoent*		Socket::proto()
 	return _proto;
 }
 
-Socket::~Socket()
+int				Socket::makeSocket(unsigned int port)
 {
-	std::cout << "~socket\n";
-	//if (_s > 2)
-	//{
-	//	std::cout << "close(" << _s << ")\n";
-	//	close(_s);
-	//}
+	int			on;
+
+	_proto = getprotobyname("tcp");
+	if (!_proto)
+	{
+		throw ProtoException();
+	}
+	_sd = socket(AF_INET, SOCK_STREAM, _proto->p_proto);
+	if (_sd == -1)
+	{
+		throw SocketException();
+	}
+	on = 1;
+	if (setsockopt(_sd, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on)) == -1)
+	{
+		throw SocketException();
+	}
+	_sin.sin_family = AF_INET;
+	_sin.sin_port = htons(port);
+	_sin.sin_addr.s_addr = htonl(INADDR_ANY);
+	return _sd;
 }
 
-/*
-class	ProtoException : public std::exception
+int				Socket::makeSocket(unsigned int port, unsigned long addr)
 {
-	public:
-		virtual const char *what(void) const throw()
-		{
-			return "Proto Error\n";
-		}
-};
+	int			on;
 
-class	SocketException : public std::exception
+	_proto = getprotobyname("tcp");
+	if (!_proto)
+	{
+		throw ProtoException();
+	}
+	_sd = socket(AF_INET, SOCK_STREAM, _proto->p_proto);
+	if (_sd == -1)
+	{
+		throw SocketException();
+	}
+	on = 1;
+	if (setsockopt(_sd, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on)) == -1)
+	{
+		throw SocketException();
+	}
+	_sin.sin_family = AF_INET;
+	_sin.sin_port = htons(port);
+	_sin.sin_addr.s_addr = htonl(addr);
+	return _sd;
+}
+
+void			Socket::makeNonBlocking()
 {
-	public:
-		virtual const char *what(void) const throw()
-		{
-			return "Socket Error\n";
-		}
-};
-*/
+	int			flag;
+
+	std::cout << "sd = " << _sd << std::endl;
+	flag = fcntl(_sd, F_GETFL, 0);
+	if (fcntl(_sd, F_SETFL, flag | O_NONBLOCK) == -1)
+	{
+		throw SocketException();
+	}
+}

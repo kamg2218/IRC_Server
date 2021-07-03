@@ -1,152 +1,74 @@
-#include "Service.hpp"
+#include "include/Service.hpp"
+#include "include/User.hpp"
 
 Service::Service()
-	: max(0), ret(0)
 {
-	FD_ZERO(&rfds);
-	FD_ZERO(&wfds);
-	FD_ZERO(&except);
+	struct rlimit rlp;
+	
+	getrlimit(RLIMIT_NOFILE, &rlp);
+	maxopen = rlp.rlim_cur;
+}
+
+void	Service::do_select(MainServer const& sv)
+{
+	res = 0;
+	FD_ZERO(&fd_read);
+	FD_SET(sv.socket(), &fd_read);
 	tv.tv_sec = 5;
 	tv.tv_usec = 0;
-}
-
-Service::Service(const Service& other)
-{
-	*this = other;
-}
-
-Service&	Service::operator=(const Service& other)
-{
-	if (this == &other)
-		return *this;
-	this->max = other.max;
-	this->ret = other.ret;
-	this->rfds = other.rfds;
-	this->wfds = other.wfds;
-	this->except = other.except;
-	this->tv = other.tv;
-	return *this;
-}
-
-Service::~Service()
-{
-	FD_ZERO(&rfds);
-	FD_ZERO(&wfds);
-	FD_ZERO(&except);
-}
-
-void		Service::doSelect(Socket& soc, std::map<int, User>& mSockets)
-{
-	ret = select(max + 1, &rfds, &wfds, NULL, &tv);
-	if (ret == -1)
+	max = sv.socket();
+	for (std::map<int, Session*>::const_iterator it = mSessions.begin() ; it != mSessions.end() ; ++it)
 	{
-		//std::perror("select Error = ");
+		std::cout << "FD_SET " << it->first << std::endl;
+		FD_SET(it->first, &fd_read);
+		max = std::max(max, it->first);
+	}
+	res = select(max + 1, &fd_read, NULL, NULL, &tv);
+	if (res == -1)
+	{
 		throw SelectException();
 	}
-	else if (ret)
-	{
-		check_rfds(soc, mSockets);
-		check_wfds(soc, mSockets);
-		//check_except(soc, mSockets);
-	}
-	else
-	{
-		std::cout << "No data within five seconds.\n";
-	}
 }
 
-void		Service::handleAccept(Socket& soc, std::map<int, User>& mSockets)
+void	Service::do_service(MainServer & sv)
 {
-	std::pair<int, User>	p;
+	Session	*newclient;
 
-	p.first = accept(soc.s(), (struct sockaddr*)&(p.second.soc().sin()), &(p.second.soc().len()));
-	if (p.first == -1)
+	if (res <= 0)
 	{
-		throw AcceptException();
+		std::cout << "No data Exist\n";
+		return ;
 	}
-	mSockets.insert(p);
-	FD_SET(p.first, &rfds);
-	if (max < p.first)
-		max = p.first;
-}
-
-void		Service::set(Socket& soc, std::map<int, User>& mSockets)
-{
-	std::map<int, User>::const_iterator		it;
-
-	FD_ZERO(&rfds);
-	FD_ZERO(&wfds);
-	FD_ZERO(&except);
-	tv.tv_sec = 5;
-	tv.tv_usec = 0;
-	max = soc.s();
-	FD_SET(soc.s(), &rfds);
-	for (it = mSockets.begin(); it != mSockets.end(); it++)
+	if (FD_ISSET(sv.socket(), &fd_read))
 	{
-		std::cout << "it = " << it->first << std::endl;
-		FD_SET(it->first, &rfds);
-		if (it->first > max)
-			max = it->first;
+		newclient = sv.handleAccept(this);
+		std::cout << "client is accepted\n";
 	}
-}
-
-void		Service::check_rfds(Socket& soc, std::map<int, User>& mSockets)
-{
-	char	buf[1024];
-	int		i;
-
-	std::cout << "Check_rfds\n";
-	for (i = 0; i < max + 1; i++)
+	for (std::map<int, Session*>::iterator it = mSessions.begin(); it != mSessions.end() ; )
 	{
-		if (FD_ISSET(i, &rfds))
+		std::cout << "client " << it->first << " is still alive.\n";
+		std::map<int, Session*>::iterator temp = it++;
+		if (FD_ISSET(temp->first, &fd_read))
 		{
-			if (i == soc.s())
-			{
-				handleAccept(soc, mSockets);
-			}
-			else
-			{
-				memset(buf, 0, 1024);
-				if (recv(i, buf, 1024, 0) <= 0)
-				{
-					close(mSockets.find(i)->second.soc().s());
-					mSockets.erase(i);
-					continue ;
-				}
-				std::cout << "Message = " << buf << std::endl;
-				//send(i, "end", 1024, 0);
-				FD_SET(i, &wfds);
-				if (strncmp(buf, "quit", 4) == 0)
-				{
-					close(mSockets.find(i)->second.soc().s());
-					mSockets.erase(i);
-				}
-			}
+			std::cout << "Read = " << temp->first << std::endl;
+			if (temp->second->handleRead(mSessions, temp->first))
+				sv.handleDecline(mSessions, temp);
+				//deleteSession(temp);
 		}
 	}
 }
-
-void		Service::check_wfds(Socket& soc, std::map<int, User>& mSockets)
+/*
+void	Service::deleteSession(std::map<int, Session*>::iterator& pos)
 {
-	int		i;
+	Session* temp;
 
-	std::cout << "Check_wfds\n";
-	for (i = 0; i < max + 1; i++)
-	{
-		if (FD_ISSET(i, &wfds))
-		{
-			/*
-			if (i == soc.s())
-			{
-				std::cout << "wfds soc = " << soc.s() << std::endl;
-			}
-			else
-			{
-			*/
-			std::cout << "wfds = " << i << std::endl;
-			send(i, "end", 1024, 0);
-			//}
-		}
-	}
+	temp = (*pos).second;
+	mSessions.erase(pos);
+	delete (temp);
+	std::cout << "client is removed\n";
 }
-
+*/
+int		Service::getMaxopen() const
+{
+	return (maxopen);
+}
