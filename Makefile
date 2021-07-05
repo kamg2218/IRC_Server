@@ -7,7 +7,7 @@ NAME=ircserv
 all : $(NAME)
 
 $(NAME) :
-	clang++ $(SRC) -o $(NAME)
+	clang++ $(SRC) -g3 -o $(NAME)
 
 clean :
 	rm -rf $(OBJ)

@@ -21,6 +21,8 @@ class Service;
 
 class Session
 {
+	// void * + type varaible   ?? 
+
 	private:
 		Socket		_soc;
 		User*		_user;
@@ -39,6 +41,11 @@ class Session
 		Socket&	soc();
 		bool	handleRead(std::map<int, Session*> & ms, int fd);
 		void	reply(std::string const& str);
+
+		//new
+		bool	gotFullMsg();
+		void	reset();
+		void	insert(char *str, int r);
 };
 
 #endif
