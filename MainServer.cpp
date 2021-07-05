@@ -37,6 +37,12 @@ void	MainServer::create(unsigned int port)
 	}
 }
 
+void		MainServer::handleRead(std::map<int, Session*>::iterator temp)
+{
+	if (temp->second->handleRead(mSessions, temp->first))
+		handleDecline(temp);
+}
+
 Session*	MainServer::handleAccept(Service* p)
 {
 	int		on;
@@ -58,11 +64,12 @@ Session*	MainServer::handleAccept(Service* p)
 	}
 	std::cout << inet_ntoa(se->soc().sin().sin_addr) << ":" << ntohs(se->soc().sin().sin_port) << " is connected\n";
 	se->soc().makeNonBlocking();
-	p->users().insert(std::pair<int, Session*>(cs, se));
+	mSessions.insert(std::pair<int, Session*>(cs, se));
+	//p->users().insert(std::pair<int, Session*>(cs, se));
 	return NULL;
 }
 
-void		MainServer::handleDecline(std::map<int, Session*>& mSessions, std::map<int, Session*>::iterator& pos)
+void		MainServer::handleDecline(std::map<int, Session*>::iterator& pos)
 {
 	Session* temp;
 

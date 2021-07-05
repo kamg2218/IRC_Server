@@ -40,7 +40,10 @@ int main(int argc, char *argv[])
 	base a;
 	
 	if (argc > 4 || argc < 3)
+	{
+		std::cout << "Wrong Input" << std::endl;
 		return (1);
+	}
 	/*
 	* argv[1] parse
 	*/

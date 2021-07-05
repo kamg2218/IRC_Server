@@ -17,7 +17,7 @@ void	Service::do_select(MainServer const& sv)
 	tv.tv_sec = 5;
 	tv.tv_usec = 0;
 	max = sv.socket();
-	for (std::map<int, Session*>::const_iterator it = mSessions.begin() ; it != mSessions.end() ; ++it)
+	for (std::map<int, Session*>::const_iterator it = sv.users().begin() ; it != sv.users().end() ; ++it)
 	{
 		std::cout << "FD_SET " << it->first << std::endl;
 		FD_SET(it->first, &fd_read);
@@ -44,30 +44,18 @@ void	Service::do_service(MainServer & sv)
 		newclient = sv.handleAccept(this);
 		std::cout << "client is accepted\n";
 	}
-	for (std::map<int, Session*>::iterator it = mSessions.begin(); it != mSessions.end() ; )
+	for (std::map<int, Session*>::iterator it = sv.users().begin(); it != sv.users().end() ; )
 	{
 		std::cout << "client " << it->first << " is still alive.\n";
 		std::map<int, Session*>::iterator temp = it++;
 		if (FD_ISSET(temp->first, &fd_read))
 		{
 			std::cout << "Read = " << temp->first << std::endl;
-			if (temp->second->handleRead(mSessions, temp->first))
-				sv.handleDecline(mSessions, temp);
-				//deleteSession(temp);
+			sv.handleRead(temp);
 		}
 	}
 }
-/*
-void	Service::deleteSession(std::map<int, Session*>::iterator& pos)
-{
-	Session* temp;
 
-	temp = (*pos).second;
-	mSessions.erase(pos);
-	delete (temp);
-	std::cout << "client is removed\n";
-}
-*/
 int		Service::getMaxopen() const
 {
 	return (maxopen);

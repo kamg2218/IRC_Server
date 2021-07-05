@@ -11,7 +11,7 @@
 class Service
 {
 	private:
-		std::map<int, Session*>	mSessions;
+		//std::map<int, Session*>	mSessions;
 		fd_set			fd_read;
 		fd_set			fd_write;
 		int				max;
@@ -25,7 +25,6 @@ class Service
 		void	do_service(MainServer & sv);
 		int		getMaxopen() const;
 		//void	deleteSession(std::map<int, Session*>::iterator& pos);
-		std::map<int, Session*>&	users() { return mSessions; }
 		class SelectException : public std::exception
 		{
 			public:
