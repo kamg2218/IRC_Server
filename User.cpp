@@ -3,7 +3,7 @@
 #include "include/Frame.hpp"
 
 User::User(Session*	ms)
-	: didUser(false), didNick(false), is_properly_quit(false)
+	: mysession(ms), didUser(false), didNick(false), is_properly_quit(false)
 {}
 
 User::~User()
@@ -24,6 +24,12 @@ User::~User()
 		 */
 	}
 }
+
+User*			User::create(Session *ms)
+{
+	return new User(ms);
+}
+
 void			User::setName(std::string const& s)
 {
 	sRealname = s;

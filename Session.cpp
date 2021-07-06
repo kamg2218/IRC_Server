@@ -7,20 +7,15 @@ Session::Session()
 {
 }
 
-Session::Session(int csfd, Service* svc)
+Session::Session(int sd)
 	: _user(0), _server(0)
 {
-	_soc.setSd(csfd);
+	_soc.setSd(sd);
 }
 
-Session::Session(Service* svc)
-	: _user(0), _server(0)
+Session::pointer	Session::create()
 {
-}
-
-Session::pointer	Session::create(Service* svc, int nbr)
-{
-	return (new Session(svc));
+	return (new Session());
 }
 
 int		Session::socket() const

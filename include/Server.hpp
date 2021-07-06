@@ -13,7 +13,6 @@
 class Server
 {
 	private:
-		Socket		_soc;
 		std::string	_name;
 	public:
 		Server();

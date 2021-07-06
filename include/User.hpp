@@ -13,8 +13,7 @@ typedef std::map<std::string, Channel*>  ChannelMap;
 class User
 {
 	private:
-		//Session			*mysession;
-		Socket			_soc;
+		Session			*mysession;
 		std::string		sRealname;
 		std::string		sNickname;
 		std::string		sHost;
@@ -22,9 +21,11 @@ class User
 		bool	didNick;
 		bool	didUser;
 		bool	is_properly_quit;
+		//list - prev Nick 저장
 	public:
-		User(Session* ms);
+		User(Session *ms);
 		~User();
+		static User*	create(Session *ms);
 		void	cmdNick(std::vector<std::string> const& sets);
 		void	cmdUser(std::vector<std::string> const& sets);
 		void	cmdJoin(std::vector<std::string> const& sets);

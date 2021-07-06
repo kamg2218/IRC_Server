@@ -49,7 +49,7 @@ Session*	MainServer::handleAccept(Service* p)
 	int		cs;
 	Session		*se;
 
-	se = new Session();
+	se = Session().create();
 	cs = accept(_sd, (struct sockaddr*)&(se->soc().sin()), &(se->soc().len()));
 	if (cs < 0)
 	{

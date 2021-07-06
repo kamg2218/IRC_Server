@@ -27,14 +27,11 @@ class Session
 		Server*		_server;
 		Executor	request;
 		std::string	buff;
-		//Service*	service;
-
 	public:
 		typedef Session*	pointer;
 		Session();
-		Session(int csfd, Service* svc);
-		Session(Service* svc);
-		static pointer	create(Service* svc, int);
+		Session(int sd);
+		static pointer	create();
 		int		socket() const;
 		Socket&	soc();
 		bool	handleRead(std::map<int, Session*> & ms, int fd);
