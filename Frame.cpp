@@ -42,7 +42,7 @@ void	Frame::removeUser(std::string & nick)
 {
 	mUsers.erase(nick);
 }
-		
+
 bool	Frame::doesChannelExists(std::string const& name)
 {
 	return (mChannels.find(name) != mChannels.end());
@@ -58,7 +58,7 @@ void	Frame::removeChannel(std::string const& name)
 {
 	mChannels.erase(name);
 }
-	
+
 void	Frame::removeAllChannel()
 {
 	ChannelMap::iterator it;
@@ -67,4 +67,9 @@ void	Frame::removeAllChannel()
 	{
 		delete (it->second);
 	}
+}
+
+ChannelMap::iterator	Frame::findChannel(std::string const& name)
+{
+	return mChannels.find(name);
 }

@@ -45,8 +45,8 @@ void		MainServer::handleRead(std::map<int, Session*>::iterator temp)
 
 Session*	MainServer::handleAccept(Service* p)
 {
-	int		on;
-	int		cs;
+	int			on;
+	int			cs;
 	Session		*se;
 
 	se = Session().create();
@@ -77,15 +77,7 @@ void		MainServer::handleDecline(std::map<int, Session*>::iterator& pos)
 	delete (temp);
 	std::cout << "client is removed\n";
 }
-/*
-void		MainServer::handleDecline(Channel& chn)
-{
-}
 
-void		MainServer::handleDecline(MainServer& svr)
-{
-}
-*/
 int 	MainServer::socket() const
 {
 	return (_sd);

@@ -45,8 +45,6 @@ class MainServer
 		void		handleRead(std::map<int, Session*>::iterator temp);
 		Session*	handleAccept(Service *p);
 		void		handleDecline(std::map<int, Session*>::iterator& pos);
-		//void		handleDecline(Server& srv);
-		//void		handleDecline(Channel& chn);
 		int		socket() const;
 		std::map<int, Session*>&		users() { return mSessions; }
 		const std::map<int, Session*>&	users() const { return mSessions; }
