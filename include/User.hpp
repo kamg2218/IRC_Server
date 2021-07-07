@@ -22,8 +22,7 @@ class User
 		bool	didNick;
 		bool	didUser;
 		bool	is_properly_quit;
-		std::list<std::string>	_PastNick;
-		//list - prev Nick 저장
+		std::list<std::string>	_pastNick;
 	public:
 		User(Session *ms);
 		~User();
@@ -31,7 +30,6 @@ class User
 		void	cmdNick(std::vector<std::string> const& sets);
 		void	cmdUser(std::vector<std::string> const& sets);
 		void	cmdJoin(std::vector<std::string> const& sets);
-		void	cmdKick(std::vector<std::string> const& sets);
 		void	cmdPart(std::vector<std::string> const& sets);
 		void	cmdQuit(std::vector<std::string> const& sets);
 		void	setName(std::string const& s);
@@ -41,5 +39,7 @@ class User
 		std::string nick() const;
 		std::string Host() const;
 		std::string	msgHeader() const;
+		bool	CheckNick() const;
+		bool	CheckUser() const;
 };
 #endif
