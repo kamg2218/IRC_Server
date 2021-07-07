@@ -56,6 +56,7 @@ Session*	MainServer::handleAccept(Service* p)
 		throw AcceptException();
 	}
 	se->soc().setSd(cs);
+	se->soc().makeNonBlocking();
 	on = 1;
 	if (setsockopt(cs, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on)) == -1)
 	{
@@ -63,9 +64,7 @@ Session*	MainServer::handleAccept(Service* p)
 		throw AcceptException();
 	}
 	std::cout << inet_ntoa(se->soc().sin().sin_addr) << ":" << ntohs(se->soc().sin().sin_port) << " is connected\n";
-	se->soc().makeNonBlocking();
 	mSessions.insert(std::pair<int, Session*>(cs, se));
-	//p->users().insert(std::pair<int, Session*>(cs, se));
 	return NULL;
 }
 
