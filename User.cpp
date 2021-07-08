@@ -77,9 +77,6 @@ void			User::cmdNick(std::vector<std::string> const& sets)
 	bool res;
 	std::string s = sets[1];
 
-	res = Frame::instance()->doesNicknameExists(s);
-	if (res)
-		return ; // fail
 	if (sets[0] != "NICK")
 	{
 		if (&sets[0][1] != sNickname)
@@ -136,7 +133,7 @@ void			User::cmdKick(std::vector<std::string> const& sets)
 {
 	//write
 }
-
+/*
 void			User::cmdPart(std::vector<std::string> const& sets)
 {
 	ChannelMap::iterator	it;
@@ -154,3 +151,4 @@ void			User::cmdQuit(std::vector<std::string> const& sets)
 	mChannels.clear();
 	Frame::instance()->removeUser(sNickname);
 }
+*/

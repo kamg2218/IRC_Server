@@ -43,7 +43,7 @@ void		MainServer::handleRead(std::map<int, Session*>::iterator temp)
 		handleDecline(temp);
 }
 
-Session*	MainServer::handleAccept(Service* p)
+void	MainServer::handleAccept(Service* p)
 {
 	int			on;
 	int			cs;
@@ -65,7 +65,6 @@ Session*	MainServer::handleAccept(Service* p)
 	}
 	std::cout << inet_ntoa(se->soc().sin().sin_addr) << ":" << ntohs(se->soc().sin().sin_port) << " is connected\n";
 	mSessions.insert(std::pair<int, Session*>(cs, se));
-	return NULL;
 }
 
 void		MainServer::handleDecline(std::map<int, Session*>::iterator& pos)
