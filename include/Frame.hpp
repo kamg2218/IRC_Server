@@ -32,6 +32,7 @@ class Frame
 		void	addChannel(Channel* new_chan);
 		void	removeChannel(std::string const& name);
 		void	removeAllChannel();
+		ChannelMap::iterator	findChannel(std::string const& name);
 };
 
 #endif

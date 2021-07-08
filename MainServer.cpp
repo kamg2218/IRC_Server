@@ -43,10 +43,12 @@ void		MainServer::handleRead(std::map<int, Session*>::iterator temp)
 		handleDecline(temp);
 }
 
-Session*	MainServer::handleAccept(Service* p)
+
+void	MainServer::handleAccept(Service* p)
 {
-	int		on;
-	int		cs;
+	int			on;
+	int			cs;
+
 	Session		*se;
 
 	se = Session().create();
@@ -56,6 +58,9 @@ Session*	MainServer::handleAccept(Service* p)
 		throw AcceptException();
 	}
 	se->soc().setSd(cs);
+
+	se->soc().makeNonBlocking();
+
 	on = 1;
 	if (setsockopt(cs, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on)) == -1)
 	{
@@ -63,10 +68,9 @@ Session*	MainServer::handleAccept(Service* p)
 		throw AcceptException();
 	}
 	std::cout << inet_ntoa(se->soc().sin().sin_addr) << ":" << ntohs(se->soc().sin().sin_port) << " is connected\n";
-	se->soc().makeNonBlocking();
+
 	mSessions.insert(std::pair<int, Session*>(cs, se));
-	//p->users().insert(std::pair<int, Session*>(cs, se));
-	return NULL;
+
 }
 
 void		MainServer::handleDecline(std::map<int, Session*>::iterator& pos)
@@ -78,15 +82,7 @@ void		MainServer::handleDecline(std::map<int, Session*>::iterator& pos)
 	delete (temp);
 	std::cout << "client is removed\n";
 }
-/*
-void		MainServer::handleDecline(Channel& chn)
-{
-}
 
-void		MainServer::handleDecline(MainServer& svr)
-{
-}
-*/
 int 	MainServer::socket() const
 {
 	return (_sd);

@@ -27,6 +27,7 @@ class Session
 		Server*		_server;
 		Executor	request;
 		std::string	rstream;
+
 	public:
 		typedef Session*	pointer;
 		Session();

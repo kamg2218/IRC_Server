@@ -17,6 +17,7 @@ class Executor
 		int		msglen(std::string& buff);
 		void	reset(std::string& buff);
 		void	execute(std::string& buff, Session* ss);
+
 		std::string		getMessage(std::string& buff);
 };
 

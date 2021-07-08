@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+#include <list>
 class Session;
 class User;
 #include "Socket.hpp"
@@ -21,7 +22,7 @@ class User
 		bool	didNick;
 		bool	didUser;
 		bool	is_properly_quit;
-		//list - prev Nick 저장
+		std::list<std::string>	_pastNick;
 	public:
 		User(Session *ms);
 		~User();
@@ -39,5 +40,7 @@ class User
 		std::string nick() const;
 		std::string Host() const;
 		std::string	msgHeader() const;
+		bool	CheckNick() const;
+		bool	CheckUser() const;
 };
 #endif

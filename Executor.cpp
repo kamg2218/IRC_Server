@@ -10,6 +10,7 @@ void	Executor::insert(std::string& buff, char *str, int r)
 }
 
 bool	Executor::gotFullMsg(std::string const& buff) const
+
 {
 	std::string::size_type res;
 
@@ -75,6 +76,7 @@ int	Executor::split(std::string& buff, std::vector<std::string> & v)
 	}
 	return (i);
 }
+
 
 void	Executor::execute(std::string& buff, Session* ss)
 {

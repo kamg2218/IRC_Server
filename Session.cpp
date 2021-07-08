@@ -33,6 +33,7 @@ bool	Session::handleRead(std::map<int, Session*> & ms, int sd)
 	for (int i = 0; i < bufsize; i++)
 		buf[i] = 0;
 	r = recv(_soc.sd(), buf, bufsize, 0);
+
 	//std::cout << "r = " << r << ", buf = " << buf << std::endl;
 	if (r <= 0)
 	{

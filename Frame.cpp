@@ -42,7 +42,7 @@ void	Frame::removeUser(std::string & nick)
 {
 	mUsers.erase(nick);
 }
-		
+
 bool	Frame::doesChannelExists(std::string const& name)
 {
 	return (mChannels.find(name) != mChannels.end());
@@ -58,7 +58,7 @@ void	Frame::removeChannel(std::string const& name)
 {
 	mChannels.erase(name);
 }
-	
+
 void	Frame::removeAllChannel()
 {
 	ChannelMap::iterator it;
@@ -67,4 +67,28 @@ void	Frame::removeAllChannel()
 	{
 		delete (it->second);
 	}
+}
+
+ChannelMap::iterator	Frame::findChannel(std::string const& name)
+{
+	return mChannels.find(name);
+}
+
+
+void			Frame::cmdPart(Session *ss, std::vector<std::string> const& sets)
+{
+	ChannelMap::iterator	it;
+	
+	it = mChannels.find(sets[1]);
+	it->second->removeUser(&(ss->user()));
+	mChannels.erase(it);
+}
+
+void			Frame::cmdQuit(std::vector<std::string> const& sets)
+{
+	_pastNick.clear();
+	for (ChannelMap::iterator it = mChannels.begin(); it != mChannels.end(); it++)
+		it->second->removeUser(this);
+	mChannels.clear();
+	Frame::instance()->removeUser(sNickname);
 }
