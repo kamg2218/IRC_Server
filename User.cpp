@@ -129,20 +129,26 @@ void			User::cmdJoin(std::vector<std::string> const& sets)
 	}
 }
 
-void			User::cmdPart(std::vector<std::string> const& sets)
+void			User::cmdKick(std::vector<std::string> const& sets)
 {
 	//write
+}
+/*
+void			User::cmdPart(std::vector<std::string> const& sets)
+{
+	ChannelMap::iterator	it;
 	
-	mChannels.find(sets[1])->second->removeUser(this);
+	it = mChannels.find(sets[1]);
+	it->second->removeUser(this);
 	mChannels.erase(it);
 }
 
 void			User::cmdQuit(std::vector<std::string> const& sets)
 {
-	//write
 	_pastNick.clear();
 	for (ChannelMap::iterator it = mChannels.begin(); it != mChannels.end(); it++)
 		it->second->removeUser(this);
 	mChannels.clear();
 	Frame::instance()->removeUser(sNickname);
 }
+*/

@@ -68,3 +68,27 @@ void	Frame::removeAllChannel()
 		delete (it->second);
 	}
 }
+
+ChannelMap::iterator	Frame::findChannel(std::string const& name)
+{
+	return mChannels.find(name);
+}
+
+
+void			Frame::cmdPart(Session *ss, std::vector<std::string> const& sets)
+{
+	ChannelMap::iterator	it;
+	
+	it = mChannels.find(sets[1]);
+	it->second->removeUser(&(ss->user()));
+	mChannels.erase(it);
+}
+
+void			Frame::cmdQuit(std::vector<std::string> const& sets)
+{
+	_pastNick.clear();
+	for (ChannelMap::iterator it = mChannels.begin(); it != mChannels.end(); it++)
+		it->second->removeUser(this);
+	mChannels.clear();
+	Frame::instance()->removeUser(sNickname);
+}

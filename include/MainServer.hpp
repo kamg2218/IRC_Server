@@ -42,9 +42,9 @@ class MainServer
 		};
 		MainServer();
 		void	create(unsigned int port);
-		void		handleRead(std::map<int, Session*>::iterator temp);
-		Session*	handleAccept(Service *p);
-		void		handleDecline(std::map<int, Session*>::iterator& pos);
+		void	handleRead(std::map<int, Session*>::iterator temp);
+		void	handleAccept(Service *p);
+		void	handleDecline(std::map<int, Session*>::iterator& pos);
 		int		socket() const;
 		std::map<int, Session*>&		users() { return mSessions; }
 		const std::map<int, Session*>&	users() const { return mSessions; }
