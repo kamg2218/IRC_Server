@@ -19,7 +19,9 @@ void	Service::do_select(MainServer const& sv)
 	max = sv.socket();
 	for (std::map<int, Session*>::const_iterator it = sv.users().begin() ; it != sv.users().end() ; ++it)
 	{
+
 		std::cout << "FD_SET " << it->first << std::endl;
+
 		FD_SET(it->first, &fd_read);
 		max = std::max(max, it->first);
 	}
@@ -36,12 +38,15 @@ void	Service::do_service(MainServer & sv)
 
 	if (res <= 0)
 	{
+
 		std::cout << "No data Exist\n";
+
 		return ;
 	}
 	if (FD_ISSET(sv.socket(), &fd_read))
 	{
 		newclient = sv.handleAccept(this);
+
 		std::cout << "client is accepted\n";
 	}
 	for (std::map<int, Session*>::iterator it = sv.users().begin(); it != sv.users().end() ; )
@@ -51,6 +56,7 @@ void	Service::do_service(MainServer & sv)
 		if (FD_ISSET(temp->first, &fd_read))
 		{
 			std::cout << "Read = " << temp->first << std::endl;
+
 			sv.handleRead(temp);
 		}
 	}

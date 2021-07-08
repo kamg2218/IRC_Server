@@ -42,6 +42,7 @@ class MainServer
 		};
 		MainServer();
 		void	create(unsigned int port);
+
 		void	handleRead(std::map<int, Session*>::iterator temp);
 		void	handleAccept(Service *p);
 		void	handleDecline(std::map<int, Session*>::iterator& pos);

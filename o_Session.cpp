@@ -26,29 +26,26 @@ int		Session::socket() const
 bool	Session::handleRead(std::map<int, Session*> & ms, int sd)
 {
 	int		r;
-	int		bufsize = 512;
-	char	buf[bufsize];
+	char	buf[1024];
 
 	//std::cout << "handle Read\n";
-	for (int i = 0; i < bufsize; i++)
+	for (int i = 0; i < 101; i++)
 		buf[i] = 0;
-	r = recv(_soc.sd(), buf, bufsize, 0);
-
+	r = recv(_soc.sd(), buf, 1024, 0);
 	//std::cout << "r = " << r << ", buf = " << buf << std::endl;
 	if (r <= 0)
 	{
 		std::cout << "client gone\n";
-		// rstream 처리후에 종료:
-		// QUIT 메시지 대신 작성해야함. 
 		return (true);
 	}
 	else if (r)
 	{
-		rstream.append(buf, r);
-		if (!request.gotFullMsg(rstream))
+		request.insert(buff, buf, r);
+		if (!request.gotFullMsg(buff))
 			return (false);
-		request.execute(rstream, this);
-		request.reset(rstream);
+		request.execute(buff, ms, this);
+		request.reset(buff);
+		//reply("001");
 	}
 	return (false);
 }
