@@ -72,8 +72,22 @@ bool	User::CheckUser() const
 	return didUser;
 }
 
-void			User::cmdNick(std::vector<std::string> const& sets)
+bool	User::addNick(std::vector<std::string> const& sets)
 {
+	if (didNick)
+		return false;
+	sNickname = sets[1];
+	didNick = true;
+	return true;
+}
+
+void	User::cmdNick(std::vector<std::string> const& sets)
+{
+	_pastNick.insert(_pastNick.end(), sNickname);
+	for (ChannelMap::iterator it = mChannels.begin(); it != mChannels.end(); it++)
+		it->second->cmdNick(sNickname, sets[2]);
+	sNickname = sets[2];
+	/*
 	bool res;
 	std::string s = sets[1];
 
@@ -98,16 +112,20 @@ void			User::cmdNick(std::vector<std::string> const& sets)
 	//channel 에 있는 usermap의 키 닉네임도 바꿔야함. 
 	//frame에 있는 usermap의 키 닉네임도 바꿔야함. 
 	return ; //success
+	*/
 }
 
-void			User::cmdUser(std::vector<std::string> const& sets)
+bool		User::cmdUser()
 {
-	//write
+	if (didNick == false)
+		return false;
 	didUser = true;
+	return true;
 }
 
-void			User::cmdJoin(std::vector<std::string> const& sets)
+void			User::cmdJoin(std::pair<std::string, Channel *ch> it)
 {
+	/*
 	//write
 	bool	res;
 	std::string s = sets[1];
@@ -127,17 +145,19 @@ void			User::cmdJoin(std::vector<std::string> const& sets)
 		Channel *new_chan = new Channel(this, s);
 		Frame::instance()->addChannel(new_chan);
 	}
+	 */
+	mChannels.insert(it);
 }
 
 void			User::cmdKick(std::vector<std::string> const& sets)
 {
 	//write
 }
-/*
+
 void			User::cmdPart(std::vector<std::string> const& sets)
 {
 	ChannelMap::iterator	it;
-	
+
 	it = mChannels.find(sets[1]);
 	it->second->removeUser(this);
 	mChannels.erase(it);
@@ -149,6 +169,5 @@ void			User::cmdQuit(std::vector<std::string> const& sets)
 	for (ChannelMap::iterator it = mChannels.begin(); it != mChannels.end(); it++)
 		it->second->removeUser(this);
 	mChannels.clear();
-	Frame::instance()->removeUser(sNickname);
 }
-*/
+

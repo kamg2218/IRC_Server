@@ -33,6 +33,8 @@ class Frame
 		void	removeChannel(std::string const& name);
 		void	removeAllChannel();
 		ChannelMap::iterator	findChannel(std::string const& name);
+		void	cmdPart(Session *ss, std::vector<std::string> const& sets);
+		void	cmdQuit(Session *ss, std::vector<std::string> const& sets);
 };
 
 #endif

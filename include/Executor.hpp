@@ -9,15 +9,15 @@
 class Executor
 {
 	private:
-		//std::string	buff;
-		void	split(std::string& buff, std::vector<std::string>& v);
+		int	split(std::string& buff, std::vector<std::string>& v);
+		bool	IsPrefix(std::string const& s);
 	public:
-		//void	operator +=(std::string& buff, const char *str);
 		void	insert(std::string& buff, char *str, int r);
-		bool	gotFullMsg(std::string& buff) const;
+		bool	gotFullMsg(std::string const& buff) const;
 		int		msglen(std::string& buff);
 		void	reset(std::string& buff);
-		void	execute(std::string& buff, std::map<int, Session*>& ms, Session* ss);
+		void	execute(std::string& buff, Session* ss);
+
 		std::string		getMessage(std::string& buff);
 };
 

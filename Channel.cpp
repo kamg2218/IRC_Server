@@ -85,3 +85,15 @@ bool			Channel::hasPass() const
 	//write
 	return (false);
 }
+
+void	cmdNick(std::string const& name, std::string const& nick)
+{
+	for (Usermap::iterator it = mUser.begin(); it != end; it++)
+	{
+		if (it->first == name)
+		{
+			it->first = nick;
+			return ;
+		}
+	}
+}

@@ -27,9 +27,10 @@ class User
 		User(Session *ms);
 		~User();
 		static User*	create(Session *ms);
+		bool	addNick(std::vector<std::string> const& sets);
 		void	cmdNick(std::vector<std::string> const& sets);
-		void	cmdUser(std::vector<std::string> const& sets);
-		void	cmdJoin(std::vector<std::string> const& sets);
+		bool	cmdUser();
+		void	cmdJoin(std::pair<std::string, Channel *ch> const& it);
 		void	cmdKick(std::vector<std::string> const& sets);
 		void	cmdPart(std::vector<std::string> const& sets);
 		void	cmdQuit(std::vector<std::string> const& sets);
@@ -43,4 +44,5 @@ class User
 		bool	CheckNick() const;
 		bool	CheckUser() const;
 };
+
 #endif

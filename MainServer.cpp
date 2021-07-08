@@ -43,10 +43,12 @@ void		MainServer::handleRead(std::map<int, Session*>::iterator temp)
 		handleDecline(temp);
 }
 
+
 void	MainServer::handleAccept(Service* p)
 {
 	int			on;
 	int			cs;
+
 	Session		*se;
 
 	se = Session().create();
@@ -56,7 +58,9 @@ void	MainServer::handleAccept(Service* p)
 		throw AcceptException();
 	}
 	se->soc().setSd(cs);
+
 	se->soc().makeNonBlocking();
+
 	on = 1;
 	if (setsockopt(cs, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on)) == -1)
 	{
@@ -64,7 +68,9 @@ void	MainServer::handleAccept(Service* p)
 		throw AcceptException();
 	}
 	std::cout << inet_ntoa(se->soc().sin().sin_addr) << ":" << ntohs(se->soc().sin().sin_port) << " is connected\n";
+
 	mSessions.insert(std::pair<int, Session*>(cs, se));
+
 }
 
 void		MainServer::handleDecline(std::map<int, Session*>::iterator& pos)

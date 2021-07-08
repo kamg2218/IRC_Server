@@ -2,11 +2,6 @@
 #include "include/Executor.hpp"
 #include "include/Frame.hpp"
 #include "include/User.hpp"
-/*
-void	Executor::operator +=(std::string& buff, const char *str)
-{
-	buff += str;
-}*/
 
 void	Executor::insert(std::string& buff, char *str, int r)
 {
@@ -14,9 +9,11 @@ void	Executor::insert(std::string& buff, char *str, int r)
 		buff += str[i];
 }
 
-bool	Executor::gotFullMsg(std::string& buff) const
+bool	Executor::gotFullMsg(std::string const& buff) const
+
 {
 	std::string::size_type res;
+
 	res = buff.find("\r\n");
 	if (res == std::string::npos)
 		return (false);
@@ -25,7 +22,9 @@ bool	Executor::gotFullMsg(std::string& buff) const
 
 std::string		Executor::getMessage(std::string& buff)
 {
-	std::string res = (buff.substr(0,buff.find("\r\n")));
+	std::string res;
+
+	res = buff.substr(0, buff.find("\r\n"));
 	return (res);
 }
 
@@ -36,15 +35,29 @@ void	Executor::reset(std::string& buff)
 
 int		Executor::msglen(std::string& buff)
 {
-	std::string res = (buff.substr(0,buff.find("\r\n")));
-	return (res.length());
+	std::string::size_type	res;
+
+	res = buff.find("\r\n");
+	if (res == std::string::npos)
+		return (0);
+	return (res);
 }
 
-void	Executor::split(std::string& buff, std::vector<std::string> & v)
+bool	Executor::IsPrefix(std::string const& s)
 {
-	std::string msgline	= getMessage(buff);
+	if (*(s.begin()) == ':')
+		return (true);
+	return (false);
+}
+
+int	Executor::split(std::string& buff, std::vector<std::string> & v)
+{
+	int					i;
+	std::string			msgline;
 	std::string::size_type	pos;
+	std::string::iterator	it;
 	
+	msgline = getMessage(buff);
 	while ((pos = msgline.find(" ")) != std::string::npos)
 	{
 		v.push_back(msgline.substr(0, pos));
@@ -52,43 +65,85 @@ void	Executor::split(std::string& buff, std::vector<std::string> & v)
 	}
 	if (msgline.size())
 		v.push_back(msgline);
-	std::string::iterator it = v[0].begin();
-	for (; it != v[0].end() ; ++it)
+	if (IsPrefix(v[0]))
+		i = 1;
+	else
+		i = 0;
+	it = v[i].begin();
+	for (; it != v[i].end() ; ++it)
 	{
-		*it = toupper(*it);
+		(*it) = toupper(*it);
 	}
+	return (i);
 }
 
-void	Executor::execute(std::string& buff, std::map<int, Session*>& ms, Session* ss)
+
+void	Executor::execute(std::string& buff, Session* ss)
 {
+	int		i;
 	std::vector<std::string>	splited_cmd;
 
-	split(buff, splited_cmd);
-	if (splited_cmd[0] == "NICK")
+	i = split(buff, splited_cmd);
+	if (splited_cmd[i] == "NICK")
 	{
-		/*
-		user->cmdNick();
-		user->session->sendAsServer();
-		*/
+		// Frame().instance->cmdNick(ss, splited_cmd);
 	}
-	else if (splited_cmd[0] == "USER")
+	else if (splited_cmd[i] == "USER")
 	{
-		/*
-		user->cmdUser();
-		*/
+		// Frame().instance->cmdUser(ss, splited_cmd);
 	}
-	else if (splited_cmd[0] == "QUIT")
+	else if (splited_cmd[i] == "PASS")
 	{
-		ms.erase(ss->soc().sd());
+		// Frame().instance->cmdPass(ss, splited_cmd);
 	}
-	/*
-	// print splited cmd vector
-	std::cout << "CMD START--------\n";
-	while (it != splited_cmd.end())
+	// if !registered_user : error 451
+	if (splited_cmd[i] == "PRIVMSG")
 	{
-		std::cout << (*it) << std::endl;
-		++it;
+		// Frame().instance->cmdPrivmsg(ss, splited_cmd);
 	}
-	std::cout << "CMD END----------\n";
-	*/
+	else if (splited_cmd[i] == "QUIT")
+	{
+		// Frame().instance->cmdQuit(ss, splited_cmd);
+	}
+	else if (splited_cmd[i] == "JOIN")
+	{
+		// Frame().instance->cmdJoin(ss, splited_cmd);
+	}
+	else if (splited_cmd[i] == "PART")
+	{
+		// Frame().instance->cmdPart(ss, splited_cmd);
+	}
+	else if (splited_cmd[i] == "KICK")
+	{
+		// Frame().instance->cmdKick(ss, splited_cmd);
+	}
+	else if (splited_cmd[i] == "TOPIC")
+	{
+		// Frame().instance->cmdTopic(ss, splited_cmd);
+	}
+	else if (splited_cmd[i] == "LIST")
+	{
+		// Frame().instance->cmdList(ss, splited_cmd);
+	}
+	else if (splited_cmd[i] == "INVITE")
+	{
+		// Frame().instance->cmdInvite(ss, splited_cmd);
+	}
+	else if (splited_cmd[i] == "WHO")
+	{
+		// Frame().instance->cmdWho(ss, splited_cmd);
+	}
+	else if (splited_cmd[i] == "WHOIS")
+	{
+		// Frame().instance->cmdWhoi(ss, splited_cmd);
+	}
+	else if (splited_cmd[i] == "WHOWAS")
+	{
+		// Frame().instance->cmdWhowas(ss, splited_cmd);
+	}
+	else
+	{
+		// Error 421
+	}
+
 }

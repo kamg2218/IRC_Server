@@ -24,8 +24,10 @@ class Session
 	private:
 		Socket		_soc;
 		User*		_user;
+		Server*		_server;
 		Executor	request;
-		std::string	buff;
+		std::string	rstream;
+
 	public:
 		typedef Session*	pointer;
 		Session();
