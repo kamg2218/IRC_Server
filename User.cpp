@@ -84,6 +84,7 @@ bool	User::addNick(std::vector<std::string> const& sets)
 	sNickname = sets[1];
 	didNick = true;
 	return true;
+
 }
 
 void	User::cmdNick(std::vector<std::string> const& sets)
@@ -106,11 +107,6 @@ bool		User::cmdUser()
 void			User::cmdJoin(std::pair<std::string, Channel*> const& it)
 {
 	mChannels.insert(it);
-}
-
-void			User::cmdKick(std::vector<std::string> const& sets)
-{
-	//write
 }
 
 bool	User::cmdPart(std::vector<std::string> const& sets)
@@ -137,3 +133,42 @@ void	User::cmdOper()
 {
 	manager = true;
 }
+
+
+void			User::cmdKick(std::vector<std::string> const& sets, Session *ss)
+{
+	ChannelMap::const_iterator	ch;
+
+	if (sets.size() < 3)
+	{
+		//ss.reply("461"); //not enough parameter
+		return ;
+	}
+	if (!Frame().doesChannelExists(sets[1]))
+	{
+		//ss.reply("403"); //해당하는 채널없음
+		return ;
+	}
+	if (isMemOfChannel(sets[1]))
+	{
+		//ss.reply("442"); //조작하려는 유저가 해당 채널에 속하지 않음. 
+		return ;
+	}
+	ch = Frame().findChannel(sets[1]);
+	if (!(*ch).second->isOperator(nick()))
+	{
+		//ss.reply("482"); //명령어에 대한 권한 없음
+		return ;
+	}
+}
+
+bool	User::isMemOfChannel(std::string const& chname) const
+{
+	ChannelMap::const_iterator	res;
+
+	res = mChannels.find(chname);
+	if (res == mChannels.end())
+		return (false);
+	return (true);
+}
+

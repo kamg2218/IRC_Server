@@ -32,7 +32,6 @@ class User
 		void	cmdNick(std::vector<std::string> const& sets);
 		bool	cmdUser();
 		void	cmdJoin(std::pair<std::string, Channel*> const& it);
-		void	cmdKick(std::vector<std::string> const& sets);
 		bool	cmdPart(std::vector<std::string> const& sets);
 		void	cmdQuit(std::vector<std::string> const& sets);
 		void		setName(std::string const& s);
@@ -46,6 +45,9 @@ class User
 		bool	CheckUser() const;
 		bool	CheckManager() const;
 		void	cmdOper();
+		void	cmdKick(std::vector<std::string> const& sets, Session *ss);
+		bool	isMemOfChannel(std::string const& chname) const;
+
 };
 
 #endif
