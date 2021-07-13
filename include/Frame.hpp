@@ -41,6 +41,8 @@ class Frame
 		std::string	cmdNick(Session *ss, std::vector<std::string> const& sets);
 		std::string	cmdPass(Session *ss, std::vector<std::string> const& sets);
 		std::string	cmdOper(Session *ss, std::vector<std::string> const& sets);
+		std::string	cmdTopic(Session *ss, std::vector<std::string> const& sets);
+		std::string	cmdList(Session *ss, std::vector<std::string> const& sets);
 };
 
 #endif
