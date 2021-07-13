@@ -38,7 +38,7 @@ bool Frame::addUser(User *new_user)
 	return (true);
 }
 
-void	Frame::removeUser(std::string & nick)
+void	Frame::removeUser(std::string const& nick)
 {
 	mUsers.erase(nick);
 }
@@ -91,7 +91,7 @@ void	Frame::cmdJoin(Session *ss, std::vector<std::string> const& sets)
 	
 	if (doesChannelExists(sets[1]))
 	{
-		it = findChannel(s);
+		it = findChannel(sets[1]);
 		it->second->addUser(&(ss->user()));
 		ss->user().cmdJoin(*it);
 	}
@@ -103,7 +103,7 @@ void	Frame::cmdJoin(Session *ss, std::vector<std::string> const& sets)
 
 void	Frame::cmdKick(Session *ss, std::vector<std::string> const& sets)
 {
-	//write
+	//관리자 권한 확인 필요!
 }
 
 void	Frame::cmdNick(Session *ss, std::vector<std::string> const& sets)
@@ -124,7 +124,9 @@ void	Frame::cmdNick(Session *ss, std::vector<std::string> const& sets)
 		{
 			if (it->first == ss->user().nick())
 			{
-				it->first = sets[2];
+				mUsers.insert(std::pair<std::string, User*>(sets[2], it->second));
+				mUsers.erase(it);
+				//it->first = sets[2];
 				break ;
 			}
 		}
@@ -139,5 +141,5 @@ void	Frame::cmdUser(Session *ss, std::vector<std::string> const& sets)
 {
 	if (ss->user().cmdUser() == false)
 		return ;
-	didUser = true;
+	//didUser = true;
 }

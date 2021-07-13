@@ -86,13 +86,15 @@ bool			Channel::hasPass() const
 	return (false);
 }
 
-void	cmdNick(std::string const& name, std::string const& nick)
+void	Channel::cmdNick(std::string const& name, std::string const& nick)
 {
-	for (Usermap::iterator it = mUser.begin(); it != end; it++)
+	for (Usermap::iterator it = mUsers.begin(); it != mUsers.end(); it++)
 	{
 		if (it->first == name)
 		{
-			it->first = nick;
+			mUsers.insert(std::pair<std::string, User*>(nick, it->second));
+			//it->first = nick;
+			mUsers.erase(it);
 			return ;
 		}
 	}

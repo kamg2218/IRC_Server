@@ -123,7 +123,7 @@ bool		User::cmdUser()
 	return true;
 }
 
-void			User::cmdJoin(std::pair<std::string, Channel *ch> it)
+void			User::cmdJoin(std::pair<std::string, Channel*> const& it)
 {
 	/*
 	//write

@@ -30,7 +30,7 @@ class User
 		bool	addNick(std::vector<std::string> const& sets);
 		void	cmdNick(std::vector<std::string> const& sets);
 		bool	cmdUser();
-		void	cmdJoin(std::pair<std::string, Channel *ch> const& it);
+		void	cmdJoin(std::pair<std::string, Channel*> const& it);
 		void	cmdKick(std::vector<std::string> const& sets);
 		void	cmdPart(std::vector<std::string> const& sets);
 		void	cmdQuit(std::vector<std::string> const& sets);
