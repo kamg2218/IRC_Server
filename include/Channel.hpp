@@ -37,5 +37,7 @@ class Channel
 		int		userCount() const;
 		bool	hasPass() const;
 		bool	isOperator(std::string const& nick) const;
+		void	setTopic(std::string topic);
+
 };
 #endif

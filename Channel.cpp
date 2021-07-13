@@ -60,25 +60,13 @@ void		Channel::broadcast(std::string const& message)
 	}
 }
 
-std::string	Channel::password() const
-{
-	return (sPassword);
-}
+std::string		Channel::password() const { return sPassword; }
 
-std::string Channel::topic() const
-{
-	return (sTopic);
-}
+std::string		Channel::topic() const { return sTopic; }
 
-std::string		Channel::name() const
-{
-	return (sName);
-}
+std::string		Channel::name() const { return sName; }
 
-int				Channel::userCount() const
-{
-	return (mUsers.size());
-}
+int				Channel::userCount() const { return mUsers.size(); }
 
 bool			Channel::hasPass() const
 {
@@ -93,12 +81,12 @@ void	Channel::cmdNick(std::string const& name, std::string const& nick)
 		if (it->first == name)
 		{
 			mUsers.insert(std::pair<std::string, User*>(nick, it->second));
-			//it->first = nick;
 			mUsers.erase(it);
 			return ;
 		}
 	}
 }
+
 
 bool			Channel::isOperator(std::string const& nick) const
 {
@@ -108,4 +96,9 @@ bool			Channel::isOperator(std::string const& nick) const
 	if (res == mOperators.end())
 		return (false);
 	return (true);
+}
+void	Channel::setTopic(std::string const topic)
+{
+	sTopic = topic;
+
 }
