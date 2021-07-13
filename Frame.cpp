@@ -126,20 +126,18 @@ void	Frame::cmdNick(Session *ss, std::vector<std::string> const& sets)
 			{
 				mUsers.insert(std::pair<std::string, User*>(sets[2], it->second));
 				mUsers.erase(it);
-				//it->first = sets[2];
 				break ;
 			}
 		}
 		ss->user().cmdNick(sets);
-		//channel 에 있는 usermap의 키 닉네임도 바꿔야함. 
-		//frame에 있는 usermap의 키 닉네임도 바꿔야함. 
 	}
 	return ; //success
 }
 
 void	Frame::cmdUser(Session *ss, std::vector<std::string> const& sets)
 {
+	if (sets[0] != "USER")
+		return ; //서버 USER 명령어
 	if (ss->user().cmdUser() == false)
-		return ;
-	//didUser = true;
+		return ; //NICK 명령어 필요
 }
