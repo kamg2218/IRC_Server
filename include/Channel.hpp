@@ -35,5 +35,6 @@ class Channel
 		std::string name() const;
 		int		userCount() const;
 		bool	hasPass() const;
+		bool	isOperator(std::string const& nick) const;
 };
 #endif

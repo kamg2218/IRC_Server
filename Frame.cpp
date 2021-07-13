@@ -92,3 +92,4 @@ void			Frame::cmdQuit(std::vector<std::string> const& sets)
 	mChannels.clear();
 	Frame::instance()->removeUser(sNickname);
 }
+

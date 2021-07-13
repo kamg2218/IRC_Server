@@ -42,5 +42,7 @@ class User
 		std::string	msgHeader() const;
 		bool	CheckNick() const;
 		bool	CheckUser() const;
+		bool	isMemOfChannel(std::string const& chname) const;
+		void	cmdKick(std::vector<std::string> const& sets, Session *ss);
 };
 #endif

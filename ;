@@ -86,12 +86,6 @@ bool			Channel::hasPass() const
 	return (false);
 }
 
-bool			Channel::isOperator(std::string const& nick) const
+bool			Channel::isOpertor(std::string const& nick) const
 {
-	Usermap::const_iterator	res;
-
-	res = mOperators.find(nick);
-	if (res == mOperators.end())
-		return (false);
-	return (true);
 }
