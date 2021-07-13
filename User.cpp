@@ -3,7 +3,7 @@
 #include "include/Frame.hpp"
 
 User::User(Session*	ms)
-	: mysession(ms), didUser(false), didNick(false), is_properly_quit(false)
+	: mysession(ms), didUser(false), didNick(false), is_properly_quit(false), manager(false)
 {}
 
 User::~User()
@@ -72,6 +72,11 @@ bool	User::CheckUser() const
 	return didUser;
 }
 
+bool	User::CheckManager() const
+{
+	return manager;
+}
+
 bool	User::addNick(std::vector<std::string> const& sets)
 {
 	if (didNick)
@@ -115,10 +120,9 @@ void	User::cmdNick(std::vector<std::string> const& sets)
 	return ; //success
 }
 
-
 bool		User::cmdUser()
 {
-	if (didNick == false)
+	if (didUser == true)
 		return false;
 	didUser = true;
 	return true;
@@ -155,13 +159,16 @@ void			User::cmdKick(std::vector<std::string> const& sets)
 	//write
 }
 
-void			User::cmdPart(std::vector<std::string> const& sets)
+bool	User::cmdPart(std::vector<std::string> const& sets)
 {
 	ChannelMap::iterator	it;
 
 	it = mChannels.find(sets[1]);
+	if (it == mChannels.end())
+		return false;
 	it->second->removeUser(this);
 	mChannels.erase(it);
+	return true;
 }
 
 void			User::cmdQuit(std::vector<std::string> const& sets)
@@ -170,4 +177,9 @@ void			User::cmdQuit(std::vector<std::string> const& sets)
 	for (ChannelMap::iterator it = mChannels.begin(); it != mChannels.end(); it++)
 		it->second->removeUser(this);
 	mChannels.clear();
+}
+
+void	User::cmdOper()
+{
+	manager = true;
 }

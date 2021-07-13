@@ -74,9 +74,15 @@ ChannelMap::iterator	Frame::findChannel(std::string const& name)
 	return mChannels.find(name);
 }
 
-void	Frame::cmdPart(Session *ss, std::vector<std::string> const& sets)
+std::string		Frame::cmdPart(Session *ss, std::vector<std::string> const& sets)
 {
-	ss->user().cmdPart(sets);
+	if (sets.size() != 2)
+		return "461";	//NeedMoreParams
+	if (mChannels.find(sets[1]) == mChannels.end())
+		return "403";	//NoSuchChannel
+	if (ss->user().cmdPart(sets) == false)
+		return "442";	//NotOnChannel
+	return "";	//Success
 }
 
 void	Frame::cmdQuit(Session *ss, std::vector<std::string> const& sets)
@@ -85,10 +91,12 @@ void	Frame::cmdQuit(Session *ss, std::vector<std::string> const& sets)
 	removeUser(ss->user().nick());
 }
 
-void	Frame::cmdJoin(Session *ss, std::vector<std::string> const& sets)
+std::string	Frame::cmdJoin(Session *ss, std::vector<std::string> const& sets)
 {
 	ChannelMap::iterator	it;
 	
+	if (sets.size() < 2)
+		return "461";	//NeedMoreParams
 	if (doesChannelExists(sets[1]))
 	{
 		it = findChannel(sets[1]);
@@ -99,6 +107,7 @@ void	Frame::cmdJoin(Session *ss, std::vector<std::string> const& sets)
 	{
 		addChannel(new Channel(&(ss->user()), sets[1]));
 	}
+	return "";
 }
 
 void	Frame::cmdKick(Session *ss, std::vector<std::string> const& sets)
@@ -106,20 +115,26 @@ void	Frame::cmdKick(Session *ss, std::vector<std::string> const& sets)
 	//관리자 권한 확인 필요!
 }
 
-void	Frame::cmdNick(Session *ss, std::vector<std::string> const& sets)
+std::string	Frame::cmdNick(Session *ss, std::vector<std::string> const& sets)
 {
 	//sets 확인 필요
 	if (sets[0] == "NICK")
 	{
+		if (sets.size() != 2)
+			return "431";	//noNicknameGiven
+		//checkNickname
+		//return "432";	//ErroneusNickname
+		if (doesNicknameExists(sets[1]))
+			return "433";	//NicknameInUse
 		if (ss->user().addNick(sets) == false)
-			return ;	//already be registered
+			return "433";	//already be registered
 	}
 	else
 	{
 		if (doesNicknameExists(sets[2]))
-			return ;	//ignore
+			return "433";	//ignore
 		else if (&sets[0][1] != ss->user().nick())
-			return ;	//ERROR
+			return "";	//ERROR
 		for (UserMap::iterator it = mUsers.begin(); it != mUsers.end(); it++)
 		{
 			if (it->first == ss->user().nick())
@@ -131,13 +146,40 @@ void	Frame::cmdNick(Session *ss, std::vector<std::string> const& sets)
 		}
 		ss->user().cmdNick(sets);
 	}
-	return ; //success
+	return ""; //success
 }
 
-void	Frame::cmdUser(Session *ss, std::vector<std::string> const& sets)
+std::string		Frame::cmdUser(Session *ss, std::vector<std::string> const& sets)
 {
-	if (sets[0] != "USER")
-		return ; //서버 USER 명령어
+	if (sets.size() != 5)
+		return "461";	//needMoreParams
 	if (ss->user().cmdUser() == false)
-		return ; //NICK 명령어 필요
+		return "462";	//AlreadyRegistered
+	return "";	//Success
+}
+
+std::string		Frame::cmdPass(Session *ss, std::vector<std::string> const& sets)
+{
+	if (sets.size() != 2)
+		return "461";	//NeedMoreParams
+	if (server.checkPass(sets[2]))
+		return "462";	//AlreadyRegistred
+	return "";
+}
+
+std::string		Frame::cmdOper(Session *ss, std::vector<std::string> const& sets)
+{
+	if (sets.size() != 3)
+		return "461";	//NeedMoreParams
+	for (UserMap::iterator it = mUsers.begin(); it != mUsers.end(); it++)
+	{
+		if (it->first == sets[1])
+		{
+			if (server.checkPass(sets[2]) == false)
+				return "464";	//passwdMismatch
+			it->second->cmdOper();
+			return "381";	//RPL_YOUREOPER
+		}
+	}
+	return "491";	//NoOperHost
 }

@@ -33,12 +33,14 @@ class Frame
 		void	removeChannel(std::string const& name);
 		void	removeAllChannel();
 		ChannelMap::iterator	findChannel(std::string const& name);
-		void	cmdPart(Session *ss, std::vector<std::string> const& sets);
+		std::string	cmdPart(Session *ss, std::vector<std::string> const& sets);
 		void	cmdQuit(Session *ss, std::vector<std::string> const& sets);
-		void	cmdUser(Session *ss, std::vector<std::string> const& sets);
-		void	cmdJoin(Session *ss, std::vector<std::string> const& sets);
+		std::string	cmdUser(Session *ss, std::vector<std::string> const& sets);
+		std::string	cmdJoin(Session *ss, std::vector<std::string> const& sets);
 		void	cmdKick(Session *ss, std::vector<std::string> const& sets);
-		void	cmdNick(Session *ss, std::vector<std::string> const& sets);
+		std::string	cmdNick(Session *ss, std::vector<std::string> const& sets);
+		std::string	cmdPass(Session *ss, std::vector<std::string> const& sets);
+		std::string	cmdOper(Session *ss, std::vector<std::string> const& sets);
 };
 
 #endif
