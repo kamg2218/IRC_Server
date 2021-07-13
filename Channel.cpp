@@ -99,3 +99,13 @@ void	Channel::cmdNick(std::string const& name, std::string const& nick)
 		}
 	}
 }
+
+bool			Channel::isOperator(std::string const& nick) const
+{
+	Usermap::const_iterator	res;
+
+	res = mOperators.find(nick);
+	if (res == mOperators.end())
+		return (false);
+	return (true);
+}

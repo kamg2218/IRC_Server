@@ -83,7 +83,20 @@ void		MainServer::handleDecline(std::map<int, Session*>::iterator& pos)
 	std::cout << "client is removed\n";
 }
 
-int 	MainServer::socket() const
+int 	MainServer::socket() const { return _sd; }
+
+std::map<int, Session*>&	MainServer::users() { return mSessions; }
+
+const std::map<int, Session*>&	MainServer::users() const { return mSessions; }
+
+bool	MainServer::checkPass(std::string const& pass)
 {
-	return (_sd);
+	if (_pass == pass)
+		return true;
+	return false;
+}
+
+void	MainServer::setPass(std::string const& pass)
+{
+	_pass = pass;
 }

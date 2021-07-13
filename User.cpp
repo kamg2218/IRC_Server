@@ -3,7 +3,7 @@
 #include "include/Frame.hpp"
 
 User::User(Session*	ms)
-	: mysession(ms), didUser(false), didNick(false), is_properly_quit(false)
+	: mysession(ms), didUser(false), didNick(false), is_properly_quit(false), manager(false)
 {}
 
 User::~User()
@@ -72,6 +72,11 @@ bool	User::CheckUser() const
 	return didUser;
 }
 
+bool	User::CheckManager() const
+{
+	return manager;
+}
+
 bool	User::addNick(std::vector<std::string> const& sets)
 {
 	if (didNick)
@@ -83,42 +88,16 @@ bool	User::addNick(std::vector<std::string> const& sets)
 
 void	User::cmdNick(std::vector<std::string> const& sets)
 {
-	/*
 	_pastNick.insert(_pastNick.end(), sNickname);
 	for (ChannelMap::iterator it = mChannels.begin(); it != mChannels.end(); it++)
 		it->second->cmdNick(sNickname, sets[2]);
 	sNickname = sets[2];
-	*/
-	bool res;
-	std::string s = sets[1];
-
-	if (sets[0] != "NICK")
-	{
-		if (&sets[0][1] != sNickname)
-			return ;
-		s = sets[2];
-	}
-	res = Frame::instance()->doesNicknameExists(s);
-	if (res)
-		return ; // fail
-	if (didNick)
-	{
-		if (sets[0] == "NICK")
-			return ;
-		_pastNick.insert(_pastNick.end(), sNickname);
-		//이전 닉네임 저장
-	}
-	sNickname = s;
-	didNick = true;
-	//channel 에 있는 usermap의 키 닉네임도 바꿔야함. 
-	//frame에 있는 usermap의 키 닉네임도 바꿔야함. 
 	return ; //success
 }
 
-
 bool		User::cmdUser()
 {
-	if (didNick == false)
+	if (didUser == true)
 		return false;
 	didUser = true;
 	return true;
@@ -126,42 +105,19 @@ bool		User::cmdUser()
 
 void			User::cmdJoin(std::pair<std::string, Channel*> const& it)
 {
-	/*
-	//write
-	bool	res;
-	std::string s = sets[1];
-	ChannelMap::iterator	it;
-	
-	res = Frame::instance()->doesChannelExists(s);
-	if (res)
-	{
-		// channel 이미 존재 찾아서 user 추가
-		//Frame::instance()->findChannel(s)->second->addUser(this);
-		it = Frame::instance()->findChannel(s);
-		it->second->addUser(this);
-		mChannels.insert(*it);
-	}
-	else
-	{
-		Channel *new_chan = new Channel(this, s);
-		Frame::instance()->addChannel(new_chan);
-	}
-	 */
 	mChannels.insert(it);
 }
 
-void			User::cmdKick(std::vector<std::string> const& sets)
-{
-	//write
-}
-
-void			User::cmdPart(std::vector<std::string> const& sets)
+bool	User::cmdPart(std::vector<std::string> const& sets)
 {
 	ChannelMap::iterator	it;
 
 	it = mChannels.find(sets[1]);
+	if (it == mChannels.end())
+		return false;
 	it->second->removeUser(this);
 	mChannels.erase(it);
+	return true;
 }
 
 void			User::cmdQuit(std::vector<std::string> const& sets)
@@ -171,3 +127,46 @@ void			User::cmdQuit(std::vector<std::string> const& sets)
 		it->second->removeUser(this);
 	mChannels.clear();
 }
+
+void	User::cmdOper()
+{
+	manager = true;
+}
+
+void			User::cmdKick(std::vector<std::string> const& sets, Session *ss)
+{
+	ChannelMap::const_iterator	ch;
+
+	if (sets.size() < 3)
+	{
+		//ss.reply("461"); //not enough parameter
+		return ;
+	}
+	if (!Frame().doesChannelExists(sets[1]))
+	{
+		//ss.reply("403"); //해당하는 채널없음
+		return ;
+	}
+	if (isMemOfChannel(sets[1]))
+	{
+		//ss.reply("442"); //조작하려는 유저가 해당 채널에 속하지 않음. 
+		return ;
+	}
+	ch = Frame().findChannel(sets[1]);
+	if (!(*ch).second->isOperator(nick()))
+	{
+		//ss.reply("482"); //명령어에 대한 권한 없음
+		return ;
+	}
+}
+
+bool	User::isMemOfChannel(std::string const& chname) const
+{
+	ChannelMap::const_iterator	res;
+
+	res = mChannels.find(chname);
+	if (res == mChannels.end())
+		return (false);
+	return (true);
+}
+

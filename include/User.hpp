@@ -21,6 +21,7 @@ class User
 		ChannelMap		mChannels;
 		bool	didNick;
 		bool	didUser;
+		bool	manager;
 		bool	is_properly_quit;
 		std::list<std::string>	_pastNick;
 	public:
@@ -31,7 +32,7 @@ class User
 		void	cmdNick(std::vector<std::string> const& sets);
 		bool	cmdUser();
 		void	cmdJoin(std::pair<std::string, Channel*> const& it);
-		void	cmdPart(std::vector<std::string> const& sets);
+		bool	cmdPart(std::vector<std::string> const& sets);
 		void	cmdQuit(std::vector<std::string> const& sets);
 		void		setName(std::string const& s);
 		void		setNick(std::string const& s);
@@ -42,6 +43,8 @@ class User
 		std::string	msgHeader() const;
 		bool	CheckNick() const;
 		bool	CheckUser() const;
+		bool	CheckManager() const;
+		void	cmdOper();
 		void	cmdKick(std::vector<std::string> const& sets, Session *ss);
 		bool	isMemOfChannel(std::string const& chname) const;
 };
