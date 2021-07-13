@@ -38,7 +38,7 @@ bool Frame::addUser(User *new_user)
 	return (true);
 }
 
-void	Frame::removeUser(std::string & nick)
+void	Frame::removeUser(std::string const& nick)
 {
 	mUsers.erase(nick);
 }
@@ -74,21 +74,72 @@ ChannelMap::iterator	Frame::findChannel(std::string const& name)
 	return mChannels.find(name);
 }
 
+void	Frame::cmdPart(Session *ss, std::vector<std::string> const& sets)
+{
+	ss->user().cmdPart(sets);
+}
 
-void			Frame::cmdPart(Session *ss, std::vector<std::string> const& sets)
+void	Frame::cmdQuit(Session *ss, std::vector<std::string> const& sets)
+{
+	ss->user().cmdQuit(sets);
+	removeUser(ss->user().nick());
+}
+
+void	Frame::cmdJoin(Session *ss, std::vector<std::string> const& sets)
 {
 	ChannelMap::iterator	it;
 	
-	it = mChannels.find(sets[1]);
-	it->second->removeUser(&(ss->user()));
-	mChannels.erase(it);
+	if (doesChannelExists(sets[1]))
+	{
+		it = findChannel(sets[1]);
+		it->second->addUser(&(ss->user()));
+		ss->user().cmdJoin(*it);
+	}
+	else
+	{
+		addChannel(new Channel(&(ss->user()), sets[1]));
+	}
 }
 
-void			Frame::cmdQuit(std::vector<std::string> const& sets)
+void	Frame::cmdKick(Session *ss, std::vector<std::string> const& sets)
 {
-	_pastNick.clear();
-	for (ChannelMap::iterator it = mChannels.begin(); it != mChannels.end(); it++)
-		it->second->removeUser(this);
-	mChannels.clear();
-	Frame::instance()->removeUser(sNickname);
+	//관리자 권한 확인 필요!
+}
+
+void	Frame::cmdNick(Session *ss, std::vector<std::string> const& sets)
+{
+	//sets 확인 필요
+	if (sets[0] == "NICK")
+	{
+		if (ss->user().addNick(sets) == false)
+			return ;	//already be registered
+	}
+	else
+	{
+		if (doesNicknameExists(sets[2]))
+			return ;	//ignore
+		else if (&sets[0][1] != ss->user().nick())
+			return ;	//ERROR
+		for (UserMap::iterator it = mUsers.begin(); it != mUsers.end(); it++)
+		{
+			if (it->first == ss->user().nick())
+			{
+				mUsers.insert(std::pair<std::string, User*>(sets[2], it->second));
+				mUsers.erase(it);
+				//it->first = sets[2];
+				break ;
+			}
+		}
+		ss->user().cmdNick(sets);
+		//channel 에 있는 usermap의 키 닉네임도 바꿔야함. 
+		//frame에 있는 usermap의 키 닉네임도 바꿔야함. 
+	}
+	return ; //success
+}
+
+void	Frame::cmdUser(Session *ss, std::vector<std::string> const& sets)
+{
+	if (ss->user().cmdUser() == false)
+		return ;
+	//didUser = true;
 }

@@ -27,12 +27,18 @@ class Frame
 		void	start();
 		bool	doesNicknameExists(std::string const& name);
 		bool	addUser(User *new_user);
-		void	removeUser(std::string & nick);
+		void	removeUser(std::string const& nick);
 		bool	doesChannelExists(std::string const& name);
 		void	addChannel(Channel* new_chan);
 		void	removeChannel(std::string const& name);
 		void	removeAllChannel();
 		ChannelMap::iterator	findChannel(std::string const& name);
+		void	cmdPart(Session *ss, std::vector<std::string> const& sets);
+		void	cmdQuit(Session *ss, std::vector<std::string> const& sets);
+		void	cmdUser(Session *ss, std::vector<std::string> const& sets);
+		void	cmdJoin(Session *ss, std::vector<std::string> const& sets);
+		void	cmdKick(Session *ss, std::vector<std::string> const& sets);
+		void	cmdNick(Session *ss, std::vector<std::string> const& sets);
 };
 
 #endif
