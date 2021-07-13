@@ -88,35 +88,10 @@ bool	User::addNick(std::vector<std::string> const& sets)
 
 void	User::cmdNick(std::vector<std::string> const& sets)
 {
-	/*
 	_pastNick.insert(_pastNick.end(), sNickname);
 	for (ChannelMap::iterator it = mChannels.begin(); it != mChannels.end(); it++)
 		it->second->cmdNick(sNickname, sets[2]);
 	sNickname = sets[2];
-	*/
-	bool res;
-	std::string s = sets[1];
-
-	if (sets[0] != "NICK")
-	{
-		if (&sets[0][1] != sNickname)
-			return ;
-		s = sets[2];
-	}
-	res = Frame::instance()->doesNicknameExists(s);
-	if (res)
-		return ; // fail
-	if (didNick)
-	{
-		if (sets[0] == "NICK")
-			return ;
-		_pastNick.insert(_pastNick.end(), sNickname);
-		//이전 닉네임 저장
-	}
-	sNickname = s;
-	didNick = true;
-	//channel 에 있는 usermap의 키 닉네임도 바꿔야함. 
-	//frame에 있는 usermap의 키 닉네임도 바꿔야함. 
 	return ; //success
 }
 
@@ -130,27 +105,6 @@ bool		User::cmdUser()
 
 void			User::cmdJoin(std::pair<std::string, Channel*> const& it)
 {
-	/*
-	//write
-	bool	res;
-	std::string s = sets[1];
-	ChannelMap::iterator	it;
-	
-	res = Frame::instance()->doesChannelExists(s);
-	if (res)
-	{
-		// channel 이미 존재 찾아서 user 추가
-		//Frame::instance()->findChannel(s)->second->addUser(this);
-		it = Frame::instance()->findChannel(s);
-		it->second->addUser(this);
-		mChannels.insert(*it);
-	}
-	else
-	{
-		Channel *new_chan = new Channel(this, s);
-		Frame::instance()->addChannel(new_chan);
-	}
-	 */
 	mChannels.insert(it);
 }
 
