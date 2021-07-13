@@ -183,3 +183,66 @@ std::string		Frame::cmdOper(Session *ss, std::vector<std::string> const& sets)
 	}
 	return "491";	//NoOperHost
 }
+
+std::string		Frame::cmdTopic(Session *ss, std::vector<std::string> const& sets)
+{
+	ChannelMap::iterator	it;
+
+	if (sets.size() == 2)
+	{
+		it = mChannels.find(sets[1]);
+		if (it != mChannels.end()) 
+		{
+			if (it->second->topic() == "")
+				return "331";	//NoTopic
+			else if (it->second->hasUser(&(ss->user())))
+				return it->second->topic();
+			return "442";	//NotOnChannel
+		}
+		return "";
+	}
+	else if (sets.size() == 3)
+	{
+		it = mChannels.find(sets[1]);
+		if (it != mChannels.end())
+		{
+			if (it->second->isOperator(&(ss->user())) == false)
+				return "482";	//ChanOprivsNeeded
+			it->second->setTopic(sets[2]);
+			return "332";	//Topic
+		}
+		return "";
+	}
+	return "461";	//NeedMoreParams
+}
+
+std::string		Frame::cmdList(Session *ss, std::vector<std::string> const& sets)
+{
+	std::string				str;
+	ChannelMap::iterator	it;
+
+	str = "";
+	if (sets.size() == 1)
+	{
+		for (it = mChannels.begin(); it != mChannels.end(); it++)
+		{
+			str += it->first + "\n";
+			if (it->second->topic() != "")
+				str += it->second->topic() + "\n";
+		}
+		if (str == "")
+			return "323";	//ListEnd
+		return str;
+	}
+	else if (sets.size() == 2 || sets.size() == 3)
+	{
+		it = mChannels.find(sets[1]);
+		if (it == mChannels.end())
+			return "323";	//ListEnd
+		str += it->first + "\n";
+		if (it->second->topic() != "")
+			str += it->second->topic() + "\n";
+		return str;
+	}
+	return "461";	//NeedMoreParams
+}
