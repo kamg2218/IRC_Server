@@ -72,8 +72,23 @@ bool	User::CheckUser() const
 	return didUser;
 }
 
-void			User::cmdNick(std::vector<std::string> const& sets)
+bool	User::addNick(std::vector<std::string> const& sets)
 {
+	if (didNick)
+		return false;
+	sNickname = sets[1];
+	didNick = true;
+	return true;
+}
+
+void	User::cmdNick(std::vector<std::string> const& sets)
+{
+	/*
+	_pastNick.insert(_pastNick.end(), sNickname);
+	for (ChannelMap::iterator it = mChannels.begin(); it != mChannels.end(); it++)
+		it->second->cmdNick(sNickname, sets[2]);
+	sNickname = sets[2];
+	*/
 	bool res;
 	std::string s = sets[1];
 
@@ -100,14 +115,18 @@ void			User::cmdNick(std::vector<std::string> const& sets)
 	return ; //success
 }
 
-void			User::cmdUser(std::vector<std::string> const& sets)
+
+bool		User::cmdUser()
 {
-	//write
+	if (didNick == false)
+		return false;
 	didUser = true;
+	return true;
 }
 
-void			User::cmdJoin(std::vector<std::string> const& sets)
+void			User::cmdJoin(std::pair<std::string, Channel*> const& it)
 {
+	/*
 	//write
 	bool	res;
 	std::string s = sets[1];
@@ -127,39 +146,19 @@ void			User::cmdJoin(std::vector<std::string> const& sets)
 		Channel *new_chan = new Channel(this, s);
 		Frame::instance()->addChannel(new_chan);
 	}
+	 */
+	mChannels.insert(it);
 }
 
-void			User::cmdKick(std::vector<std::string> const& sets, Session *ss)
+void			User::cmdKick(std::vector<std::string> const& sets)
 {
-	ChannelMap::const_iterator	ch;
-
-	if (sets.size() < 3)
-	{
-		//ss.reply("461"); //not enough parameter
-		return ;
-	}
-	if (!Frame().doesChannelExists(sets[1]))
-	{
-		//ss.reply("403"); //해당하는 채널없음
-		return ;
-	}
-	if (isMemOfChannel(sets[1]))
-	{
-		//ss.reply("442"); //조작하려는 유저가 해당 채널에 속하지 않음. 
-		return ;
-	}
-	ch = Frame().findChannel(sets[1]);
-	if (!(*ch).second->isOperator(nick()))
-	{
-		//ss.reply("482"); //명령어에 대한 권한 없음
-		return ;
-	}
+	//write
 }
-/*
+
 void			User::cmdPart(std::vector<std::string> const& sets)
 {
 	ChannelMap::iterator	it;
-	
+
 	it = mChannels.find(sets[1]);
 	it->second->removeUser(this);
 	mChannels.erase(it);
@@ -171,16 +170,4 @@ void			User::cmdQuit(std::vector<std::string> const& sets)
 	for (ChannelMap::iterator it = mChannels.begin(); it != mChannels.end(); it++)
 		it->second->removeUser(this);
 	mChannels.clear();
-	Frame::instance()->removeUser(sNickname);
-}
-*/
-
-bool	User::isMemOfChannel(std::string const& chname) const
-{
-	ChannelMap::const_iterator	res;
-
-	res = mChannels.find(chname);
-	if (res == mChannels.end())
-		return (false);
-	return (true);
 }

@@ -34,7 +34,7 @@ void	Service::do_select(MainServer const& sv)
 
 void	Service::do_service(MainServer & sv)
 {
-	Session	*newclient;
+	//Session	*newclient;
 
 	if (res <= 0)
 	{
@@ -45,8 +45,7 @@ void	Service::do_service(MainServer & sv)
 	}
 	if (FD_ISSET(sv.socket(), &fd_read))
 	{
-		newclient = sv.handleAccept(this);
-
+		sv.handleAccept(this);
 		std::cout << "client is accepted\n";
 	}
 	for (std::map<int, Session*>::iterator it = sv.users().begin(); it != sv.users().end() ; )

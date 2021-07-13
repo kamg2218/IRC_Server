@@ -26,6 +26,7 @@ class Channel
 
 		*/
 		void	addUser(User *user);
+		void	cmdNick(std::string const& name, std::string const& nick);
 		void	removeUser(User *user);
 		bool	hasUser(User *user);
 		bool	isOperator(User *user);
@@ -35,6 +36,5 @@ class Channel
 		std::string name() const;
 		int		userCount() const;
 		bool	hasPass() const;
-		bool	isOperator(std::string const& nick) const;
 };
 #endif

@@ -86,12 +86,16 @@ bool			Channel::hasPass() const
 	return (false);
 }
 
-bool			Channel::isOperator(std::string const& nick) const
+void	Channel::cmdNick(std::string const& name, std::string const& nick)
 {
-	Usermap::const_iterator	res;
-
-	res = mOperators.find(nick);
-	if (res == mOperators.end())
-		return (false);
-	return (true);
+	for (Usermap::iterator it = mUsers.begin(); it != mUsers.end(); it++)
+	{
+		if (it->first == name)
+		{
+			mUsers.insert(std::pair<std::string, User*>(nick, it->second));
+			//it->first = nick;
+			mUsers.erase(it);
+			return ;
+		}
+	}
 }

@@ -61,3 +61,5 @@ void	Session::reply(std::string const& str)
 }
 
 Socket&	Session::soc() { return _soc; }
+
+User&	Session::user() { return *(_user); }
