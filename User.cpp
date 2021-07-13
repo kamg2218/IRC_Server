@@ -84,6 +84,7 @@ bool	User::addNick(std::vector<std::string> const& sets)
 	sNickname = sets[1];
 	didNick = true;
 	return true;
+
 }
 
 void	User::cmdNick(std::vector<std::string> const& sets)
@@ -132,6 +133,7 @@ void	User::cmdOper()
 {
 	manager = true;
 }
+
 
 void			User::cmdKick(std::vector<std::string> const& sets, Session *ss)
 {
