@@ -1,12 +1,12 @@
-#ifndef FT_USER_HPP
-# define FT_USER_HPP
+#ifndef USER_HPP
+# define USER_HPP
 
 #include <string>
 #include <vector>
 #include <list>
 class Session;
-class User;
 #include "Socket.hpp"
+class User;
 #include "Channel.hpp"
 
 typedef std::map<std::string, Channel*>  ChannelMap;
@@ -14,7 +14,6 @@ typedef std::map<std::string, Channel*>  ChannelMap;
 class User
 {
 	private:
-		Session			*mysession;
 		std::string		sRealname;
 		std::string		sNickname;
 		std::string		sHost;
@@ -25,14 +24,14 @@ class User
 		bool	is_properly_quit;
 		std::list<std::string>	_pastNick;
 	public:
-		User(Session *ms);
+		User();
 		~User();
-		static User*	create(Session *ms);
+		static User*	create();
 		bool	addNick(std::vector<std::string> const& sets);
 		void	cmdNick(std::vector<std::string> const& sets);
 		bool	cmdUser();
 		void	cmdJoin(std::pair<std::string, Channel*> const& it);
-		bool	cmdPart(std::vector<std::string> const& sets);
+		bool	cmdPart(Session *ss, std::vector<std::string> const& sets);
 		void	cmdQuit(std::vector<std::string> const& sets);
 		void		setName(std::string const& s);
 		void		setNick(std::string const& s);
@@ -44,6 +43,7 @@ class User
 		bool	CheckNick() const;
 		bool	CheckUser() const;
 		bool	CheckManager() const;
+		bool	IsConnected() const;
 		void	cmdOper();
 		void	cmdKick(std::vector<std::string> const& sets, Session *ss);
 		bool	isMemOfChannel(std::string const& chname) const;

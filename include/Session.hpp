@@ -17,14 +17,12 @@ class Service;
 #include "User.hpp"
 #include "Service.hpp"
 #include "Socket.hpp"
-#include "Server.hpp"
 
 class Session
 {
 	private:
 		Socket		_soc;
-		User*		_user;
-		Server*		_server;
+		User		_user;
 		Executor	request;
 		std::string	rstream;
 

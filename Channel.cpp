@@ -48,16 +48,13 @@ bool		Channel::isOperator(User *user)
 	return (true);
 }
 
-void		Channel::broadcast(std::string const& message)
+void		Channel::broadcast(Session *ss, std::string const& message)
 {
-	//write
 	Usermap::iterator it;
 
 	it = mUsers.begin();
 	for (; it != mUsers.end() ; ++it)
-	{
-		//(*it).second->session->sendAsUser(message);
-	}
+		ss->reply(message);
 }
 
 std::string		Channel::password() const { return sPassword; }

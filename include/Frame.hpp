@@ -7,7 +7,6 @@
 #include "User.hpp"
 #include "Channel.hpp"
 #include "MainServer.hpp"
-#include "Server.hpp"
 #include "Service.hpp"
 
 typedef std::map<std::string, User*> UserMap;
