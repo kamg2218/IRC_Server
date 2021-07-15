@@ -32,7 +32,7 @@ class Frame
 		void	addChannel(Channel* new_chan);
 		void	removeChannel(std::string const& name);
 		void	removeAllChannel();
-		ChannelMap::iterator	findChannel(std::string const& name);
+		Channel*	findChannel(std::string const& name);
 		std::string	cmdPart(Session *ss, std::vector<std::string> const& sets);
 		void	cmdQuit(Session *ss, std::vector<std::string> const& sets);
 		std::string	cmdUser(Session *ss, std::vector<std::string> const& sets);
@@ -43,6 +43,7 @@ class Frame
 		std::string	cmdOper(Session *ss, std::vector<std::string> const& sets);
 		std::string	cmdTopic(Session *ss, std::vector<std::string> const& sets);
 		std::string	cmdList(Session *ss, std::vector<std::string> const& sets);
+		User*	findUser(std::string const& name);
 };
 
 #endif

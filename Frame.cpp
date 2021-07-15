@@ -69,9 +69,14 @@ void	Frame::removeAllChannel()
 	}
 }
 
-ChannelMap::iterator	Frame::findChannel(std::string const& name)
+Channel*	Frame::findChannel(std::string const& name)
 {
-	return mChannels.find(name);
+	return ((*(mChannels.find(name))).second);
+}
+
+User*	Frame::findUser(std::string const& name)
+{
+	return mUsers.find(name)->second;
 }
 
 std::string		Frame::cmdPart(Session *ss, std::vector<std::string> const& sets)
@@ -246,3 +251,13 @@ std::string		Frame::cmdList(Session *ss, std::vector<std::string> const& sets)
 	}
 	return "461";	//NeedMoreParams
 }
+
+/*
+std::string		Frame::cmdInvite(Session *ss, std::vector<std::string> const& sets)
+{	if (sets.size() < 3)
+		return (""); //ERR_NEEDMOREPARAMS
+	if (!doesNicknameExists(sets[1]))
+		return (""); //ERR_NOSUCHNICK
+	if (!(ss->user()->isMemOfChannel(sets[2].substr(1))))
+		return (""); //ERR_NOTONCHANNEL
+}*/

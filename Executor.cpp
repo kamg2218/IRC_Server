@@ -82,64 +82,68 @@ void	Executor::execute(std::string& buff, Session* ss)
 {
 	int		i;
 	std::vector<std::string>	splited_cmd;
+	Frame *frame;
 
+	frame = Frame().instance();
 	i = split(buff, splited_cmd);
 	if (splited_cmd[i] == "NICK")
 	{
-		// Frame().instance->cmdNick(ss, splited_cmd);
+		//frame->cmdNick(ss, splited_cmd);
 	}
 	else if (splited_cmd[i] == "USER")
 	{
-		// Frame().instance->cmdUser(ss, splited_cmd);
+		//frame->cmdUser(ss, splited_cmd);
 	}
 	else if (splited_cmd[i] == "PASS")
 	{
-		// Frame().instance->cmdPass(ss, splited_cmd);
+		//frame->cmdPass(ss, splited_cmd);
 	}
 	// if !registered_user : error 451
 	if (splited_cmd[i] == "PRIVMSG")
 	{
-		// Frame().instance->cmdPrivmsg(ss, splited_cmd);
+		//frame->cmdPrivmsg(ss, splited_cmd);
 	}
 	else if (splited_cmd[i] == "QUIT")
 	{
-		// Frame().instance->cmdQuit(ss, splited_cmd);
+		//frame->cmdQuit(ss, splited_cmd);
 	}
 	else if (splited_cmd[i] == "JOIN")
 	{
-		// Frame().instance->cmdJoin(ss, splited_cmd);
+		//frame->cmdJoin(ss, splited_cmd);
 	}
 	else if (splited_cmd[i] == "PART")
 	{
-		// Frame().instance->cmdPart(ss, splited_cmd);
+		//frame->cmdPart(ss, splited_cmd);
 	}
 	else if (splited_cmd[i] == "KICK")
 	{
-		// Frame().instance->cmdKick(ss, splited_cmd);
+		std::cout << "KICK\n";
+		ss->user().cmdKick(splited_cmd, ss);
+		// frame->cmdKick(ss, splited_cmd);
 	}
 	else if (splited_cmd[i] == "TOPIC")
 	{
-		// Frame().instance->cmdTopic(ss, splited_cmd);
+		//frame->cmdTopic(ss, splited_cmd);
 	}
 	else if (splited_cmd[i] == "LIST")
 	{
-		// Frame().instance->cmdList(ss, splited_cmd);
+		//frame->cmdList(ss, splited_cmd);
 	}
 	else if (splited_cmd[i] == "INVITE")
 	{
-		// Frame().instance->cmdInvite(ss, splited_cmd);
+		// frame->cmdInvite(ss, splited_cmd);
 	}
 	else if (splited_cmd[i] == "WHO")
 	{
-		// Frame().instance->cmdWho(ss, splited_cmd);
+		// frame->cmdWho(ss, splited_cmd);
 	}
 	else if (splited_cmd[i] == "WHOIS")
 	{
-		// Frame().instance->cmdWhoi(ss, splited_cmd);
+		// frame->cmdWhoi(ss, splited_cmd);
 	}
 	else if (splited_cmd[i] == "WHOWAS")
 	{
-		// Frame().instance->cmdWhowas(ss, splited_cmd);
+		// frame->cmdWhowas(ss, splited_cmd);
 	}
 	else
 	{
