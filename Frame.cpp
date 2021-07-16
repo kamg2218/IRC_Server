@@ -69,9 +69,49 @@ void	Frame::removeAllChannel()
 	}
 }
 
-ChannelMap::iterator	Frame::findChannel(std::string const& name)
+Channel*	Frame::findChannel(std::string const& name)
 {
-	return mChannels.find(name);
+	return mChannels.find(name)->second;
+}
+
+bool		Frame::CheckNickname(std::string const& name)
+{
+	for (int i = 0; i < name.size(); i++)
+	{
+		if (name.size() > 9)
+			return false;
+		else if (name[i] == ' ' || name[i] == ',')
+			return false;
+		else if ((int)name[i] == 7)
+			return false;
+	}
+	return true;
+}
+
+bool		Frame::CheckChannelname(std::string const& name)
+{
+	for (int i = 0; i < name.size(); i++)
+	{
+		if (i == 0 && name[0] != '#' && name[0] != '!' && name[0] != '&' && name[0] != '+')
+			return false;
+		else if (name.size() > 50)
+			return false;
+		else if (name[i] == ' ' || name[i] == ',')
+			return false;
+		else if ((int)name[i] == 7)
+			return false;
+	}
+	return true;
+}
+
+std::string	Frame::MakeLower(std::string const& str)
+{
+	std::string	low;
+
+	low = "";
+	for (int i = 0; i < str.size(); i++)
+		low += std::tolower((char)str[i]);
+	return low;
 }
 
 void		Frame::cmdPart(Session *ss, std::vector<std::string> const& sets)
@@ -80,7 +120,7 @@ void		Frame::cmdPart(Session *ss, std::vector<std::string> const& sets)
 	std::string	str;
 
 	if (sets.size() != 2)
-		return "461";	//NeedMoreParams
+		return ss->reply("461");	//NeedMoreParams
 	str = sets[1];
 	while (1){
 		n = str.find(",");
@@ -93,11 +133,9 @@ void		Frame::cmdPart(Session *ss, std::vector<std::string> const& sets)
 
 std::string		Frame::doPart(Session *ss, std::string const& sets)
 {
-	//if (sets.size() != 2)
-	//	return "461";	//NeedMoreParams
-	if (mChannels.find(sets[1]) == mChannels.end())
+	if (mChannels.find(sets.substr(1)) == mChannels.end())
 		return "403";	//NoSuchChannel
-	if (ss->user().cmdPart(sets[1]) == false)
+	if (ss->user().cmdPart(ss, sets.substr(1)) == false)
 		return "442";	//NotOnChannel
 	return "";	//Success
 }
@@ -115,7 +153,9 @@ void	Frame::cmdJoin(Session *ss, std::vector<std::string> const& sets)
 	std::string		str;
 
 	if (sets.size() != 2)
-		return "461";	//NeedMoreParams
+		return ss->reply("461");	//NeedMoreParams
+	else if (!(CheckChannelname(sets[1])))
+		return ss->reply("403");	//NoSuchChannel
 	str = sets[1];
 	while (1){
 		n = str.find(",");
@@ -130,17 +170,15 @@ std::string	Frame::doJoin(Session *ss, std::string const& sets)
 {
 	ChannelMap::iterator	it;
 	
-	//if (sets.size() < 2)
-	//	return "461";	//NeedMoreParams
-	if (doesChannelExists(sets[1]))
+	if (doesChannelExists(MakeLower(sets.substr(1))))
 	{
-		it = findChannel(sets[1]);
+		it = mChannels.find(MakeLower(sets.substr(1)));
 		it->second->addUser(&(ss->user()));
 		ss->user().cmdJoin(*it);
 	}
 	else
-		addChannel(new Channel(&(ss->user()), sets[1]));
-	return ss->user().nick() + " joined to " + sets[1] + "\n";
+		addChannel(new Channel(&(ss->user()), MakeLower(sets.substr(1))));
+	return ss->user().nick() + " joined to " + MakeLower(sets.substr(1)) + "\n";
 }
 
 void	Frame::cmdKick(Session *ss, std::vector<std::string> const& sets)
@@ -154,11 +192,11 @@ void	Frame::cmdNick(Session *ss, std::vector<std::string> const& sets)
 	{
 		if (sets.size() != 2)
 			return ss->reply("431");	//noNicknameGiven
-		//checkNickname
-		//return "432";	//ErroneusNickname
-		if (doesNicknameExists(sets[1]))
+		else if (!(CheckNickname(sets[1])))
+			return ss->reply("432");	//ErroneusNickname
+		else if (doesNicknameExists(sets[1]))
 			return ss->reply("433");	//NicknameInUse
-		if (ss->user().addNick(sets) == false)
+		else if (ss->user().addNick(sets) == false)
 			return ss->reply("433");	//already be registered
 	}
 	else
@@ -185,7 +223,7 @@ void	Frame::cmdUser(Session *ss, std::vector<std::string> const& sets)
 {
 	if (sets.size() != 5)
 		return ss->reply("461");	//needMoreParams
-	if (ss->user().cmdUser() == false)
+	else if (ss->user().cmdUser() == false)
 		return ss->reply("462");	//AlreadyRegistered
 	return ss->reply("");	//Success
 }
@@ -194,7 +232,7 @@ void	Frame::cmdPass(Session *ss, std::vector<std::string> const& sets)
 {
 	if (sets.size() != 2)
 		return ss->reply("461");	//NeedMoreParams
-	if (server.checkPass(sets[2]))
+	else if (server.checkPass(sets[2]))
 		return ss->reply("462");	//AlreadyRegistred
 	return ss->reply("");
 }
@@ -222,7 +260,7 @@ void	Frame::cmdTopic(Session *ss, std::vector<std::string> const& sets)
 
 	if (sets.size() == 2)
 	{
-		it = mChannels.find(sets[1]);
+		it = mChannels.find(MakeLower(sets[1].substr(1)));
 		if (it != mChannels.end()) 
 		{
 			if (it->second->topic() == "")
@@ -235,7 +273,7 @@ void	Frame::cmdTopic(Session *ss, std::vector<std::string> const& sets)
 	}
 	else if (sets.size() == 3)
 	{
-		it = mChannels.find(sets[1]);
+		it = mChannels.find(MakeLower(sets[1].substr(1)));
 		if (it != mChannels.end())
 		{
 			if (it->second->isOperator(&(ss->user())) == false)
@@ -254,7 +292,7 @@ void	Frame::cmdList(Session *ss, std::vector<std::string> const& sets)
 	std::string		str;
 
 	if (sets.size() < 1 || sets.size() > 3)
-		return "461";	//NeedMoreParams
+		return ss->reply("461");	//NeedMoreParams
 	else if (sets.size() == 1)
 		return ss->reply(doList(ss, ""));
 	str = sets[1];
@@ -285,9 +323,9 @@ std::string		Frame::doList(Session *ss, std::string const& sets)
 			return "323";	//ListEnd
 		return str;
 	}
-	if (!(doesChannelExists(sets[1])))
+	if (!(doesChannelExists(MakeLower(sets.substr(1)))))
 		return "323";	//ListEnd
-	it = mChannels.find(sets[1]);
+	it = mChannels.find(MakeLower(sets.substr(1)));
 	str += it->first + "\n";
 	if (it->second->topic() != "")
 		str += it->second->topic() + "\n";
