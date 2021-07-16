@@ -1,4 +1,5 @@
 #include "include/Channel.hpp"
+#include "include/Session.hpp"
 
 Channel::Channel(User *creator, std::string const& name, std::string const& topic)
 	: sName(name), sTopic(topic)
