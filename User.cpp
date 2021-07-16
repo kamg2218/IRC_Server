@@ -146,12 +146,14 @@ void			User::cmdKick(std::vector<std::string> const& sets, Session *ss)
 	//ChannelMap::const_iterator	ch;
 	Channel	*ch;
 
+	/*
 	std::cout << "HERE\n";
 	for (std::vector<std::string>::const_iterator it = sets.begin(); it != sets.end() ; ++it)
 	{
 		std::cout << (*it) << std::endl;
 	}
 	std::cout << "size : " << sets.size() << " END\n";
+	*/
 	frame = Frame().instance();
 	if (sets.size() < 3)
 	{
@@ -179,6 +181,12 @@ void			User::cmdKick(std::vector<std::string> const& sets, Session *ss)
 		if ((*it).find(":") == std::string::npos)	//마지막 :를 확인해야함.
 			break;
 		targetlist.push_back((*it));
+	}
+	if (targetlist.empty())
+	{
+		std::cout << "Not enough parameter\n";
+		//ss->reply("461"); //not enough parameter
+		return ;
 	}
 	for (it = chlist.begin() ; it != chlist.end() ; ++it)
 	{

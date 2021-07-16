@@ -44,6 +44,7 @@ class Frame
 		std::string	cmdTopic(Session *ss, std::vector<std::string> const& sets);
 		std::string	cmdList(Session *ss, std::vector<std::string> const& sets);
 		User*	findUser(std::string const& name);
+		std::string	cmdKick(Session *ss, std::vector<std;:string> const& sets);
 };
 
 #endif
