@@ -1,8 +1,9 @@
-#ifndef FT_FRAME_HPP
-# define FT_FRAME_HPP
+#ifndef FRAME_HPP
+# define FRAME_HPP
 
 #include <string>
 #include <map>
+#include <cctype>
 #include "User.hpp"
 #include "Channel.hpp"
 #include "MainServer.hpp"
@@ -30,18 +31,24 @@ class Frame
 		void	addChannel(Channel* new_chan);
 		void	removeChannel(std::string const& name);
 		void	removeAllChannel();
+		bool	CheckNickname(std::string const& name);
+		bool	CheckChannelname(std::string const& name);
+		std::string	MakeLower(std::string const& str);
 		Channel*	findChannel(std::string const& name);
-		std::string	cmdPart(Session *ss, std::vector<std::string> const& sets);
+		void	cmdPart(Session *ss, std::vector<std::string> const& sets);
 		void	cmdQuit(Session *ss, std::vector<std::string> const& sets);
-		std::string	cmdUser(Session *ss, std::vector<std::string> const& sets);
-		std::string	cmdJoin(Session *ss, std::vector<std::string> const& sets);
-		std::string	cmdNick(Session *ss, std::vector<std::string> const& sets);
-		std::string	cmdPass(Session *ss, std::vector<std::string> const& sets);
-		std::string	cmdOper(Session *ss, std::vector<std::string> const& sets);
-		std::string	cmdTopic(Session *ss, std::vector<std::string> const& sets);
-		std::string	cmdList(Session *ss, std::vector<std::string> const& sets);
+		void	cmdUser(Session *ss, std::vector<std::string> const& sets);
+		void	cmdJoin(Session *ss, std::vector<std::string> const& sets);
+		void	cmdKick(Session *ss, std::vector<std::string> const& sets);
+		void	cmdNick(Session *ss, std::vector<std::string> const& sets);
+		void	cmdPass(Session *ss, std::vector<std::string> const& sets);
+		void	cmdOper(Session *ss, std::vector<std::string> const& sets);
+		void	cmdTopic(Session *ss, std::vector<std::string> const& sets);
+		void	cmdList(Session *ss, std::vector<std::string> const& sets);
+		std::string	doPart(Session *ss, std::string const& sets);
+		std::string	doJoin(Session *ss, std::string const& sets);
+		std::string	doList(Session *ss, std::string const& sets);
 		User*	findUser(std::string const& name);
-		std::string cmdKick(Session *ss, std::vector<std::string> const& sets);
 };
 
 #endif

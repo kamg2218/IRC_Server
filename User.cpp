@@ -116,15 +116,15 @@ void			User::cmdJoin(std::pair<std::string, Channel*> const& it)
 	mChannels.insert(it);
 }
 
-bool	User::cmdPart(Session *ss, std::vector<std::string> const& sets)
+bool	User::cmdPart(Session *ss, std::string const& sets)
 {
 	ChannelMap::iterator	it;
 
-	it = mChannels.find(sets[1]);
+	it = mChannels.find(sets.substr(1));
 	if (it == mChannels.end())
 		return false;
 	it->second->removeUser(this);
-	it->second->broadcast(ss, name() + " left " + it->first + "\n");
+	it->second->broadcast(ss, nick() + " left " + it->first + "\n");
 	mChannels.erase(it);
 	return true;
 }

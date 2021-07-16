@@ -1,5 +1,5 @@
-#ifndef FT_EXECUTOR_HPP
-# define FT_EXECUTOR_HPP
+#ifndef EXECUTOR_HPP
+# define EXECUTOR_HPP
 
 #include <string>
 #include <vector>

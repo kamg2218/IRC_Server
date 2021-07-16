@@ -1,5 +1,5 @@
-#ifndef FT_SERVICE_HPP
-# define FT_SERVICE_HPP
+#ifndef SERVICE_HPP
+# define SERVICE_HPP
 
 #include <map>
 #include <sys/resource.h>
