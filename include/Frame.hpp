@@ -1,7 +1,6 @@
 #ifndef FT_FRAME_HPP
 # define FT_FRAME_HPP
 
-
 #include <string>
 #include <map>
 #include "User.hpp"
@@ -36,13 +35,13 @@ class Frame
 		void	cmdQuit(Session *ss, std::vector<std::string> const& sets);
 		std::string	cmdUser(Session *ss, std::vector<std::string> const& sets);
 		std::string	cmdJoin(Session *ss, std::vector<std::string> const& sets);
-		void	cmdKick(Session *ss, std::vector<std::string> const& sets);
 		std::string	cmdNick(Session *ss, std::vector<std::string> const& sets);
 		std::string	cmdPass(Session *ss, std::vector<std::string> const& sets);
 		std::string	cmdOper(Session *ss, std::vector<std::string> const& sets);
 		std::string	cmdTopic(Session *ss, std::vector<std::string> const& sets);
 		std::string	cmdList(Session *ss, std::vector<std::string> const& sets);
 		User*	findUser(std::string const& name);
+		std::string cmdKick(Session *ss, std::vector<std::string> const& sets);
 };
 
 #endif

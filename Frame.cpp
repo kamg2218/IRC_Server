@@ -118,11 +118,6 @@ std::string	Frame::cmdJoin(Session *ss, std::vector<std::string> const& sets)
 	return "";
 }
 
-void	Frame::cmdKick(Session *ss, std::vector<std::string> const& sets)
-{
-	//관리자 권한 확인 필요!
-}
-
 std::string	Frame::cmdNick(Session *ss, std::vector<std::string> const& sets)
 {
 	//sets 확인 필요
@@ -256,3 +251,6 @@ std::string		Frame::cmdInvite(Session *ss, std::vector<std::string> const& sets)
 	if (!(ss->user()->isMemOfChannel(sets[2].substr(1))))
 		return (""); //ERR_NOTONCHANNEL
 }*/
+
+
+#include "n_Frame.ipp"
