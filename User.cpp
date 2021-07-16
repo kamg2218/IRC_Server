@@ -2,8 +2,8 @@
 #include "include/Session.hpp"
 #include "include/Frame.hpp"
 
-User::User(Session*	ms)
-	: mysession(ms), didUser(false), didNick(false), is_properly_quit(false), manager(false)
+User::User()
+	: didUser(false), didNick(false), is_properly_quit(false), manager(false)
 {}
 
 User::~User()
@@ -25,9 +25,9 @@ User::~User()
 	}
 }
 
-User*			User::create(Session *ms)
+User*			User::create()
 {
-	return new User(ms);
+	return new User();
 }
 
 void			User::setName(std::string const& s)
@@ -72,6 +72,13 @@ bool	User::CheckUser() const
 	return didUser;
 }
 
+bool	User::IsConnected() const
+{
+	if (CheckNick() && CheckUser())
+		return true;
+	return false;
+}
+
 bool	User::CheckManager() const
 {
 	return manager;
@@ -109,7 +116,7 @@ void			User::cmdJoin(std::pair<std::string, Channel*> const& it)
 	mChannels.insert(it);
 }
 
-bool	User::cmdPart(std::vector<std::string> const& sets)
+bool	User::cmdPart(Session *ss, std::vector<std::string> const& sets)
 {
 	ChannelMap::iterator	it;
 
@@ -117,6 +124,7 @@ bool	User::cmdPart(std::vector<std::string> const& sets)
 	if (it == mChannels.end())
 		return false;
 	it->second->removeUser(this);
+	it->second->broadcast(ss, name() + " left " + it->first + "\n");
 	mChannels.erase(it);
 	return true;
 }
@@ -146,14 +154,12 @@ void			User::cmdKick(std::vector<std::string> const& sets, Session *ss)
 	//ChannelMap::const_iterator	ch;
 	Channel	*ch;
 
-	/*
 	std::cout << "HERE\n";
 	for (std::vector<std::string>::const_iterator it = sets.begin(); it != sets.end() ; ++it)
 	{
 		std::cout << (*it) << std::endl;
 	}
 	std::cout << "size : " << sets.size() << " END\n";
-	*/
 	frame = Frame().instance();
 	if (sets.size() < 3)
 	{
@@ -181,12 +187,6 @@ void			User::cmdKick(std::vector<std::string> const& sets, Session *ss)
 		if ((*it).find(":") == std::string::npos)	//마지막 :를 확인해야함.
 			break;
 		targetlist.push_back((*it));
-	}
-	if (targetlist.empty())
-	{
-		std::cout << "Not enough parameter\n";
-		//ss->reply("461"); //not enough parameter
-		return ;
 	}
 	for (it = chlist.begin() ; it != chlist.end() ; ++it)
 	{

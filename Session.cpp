@@ -3,12 +3,10 @@
 #include "include/Service.hpp"
 
 Session::Session()
-	: _user(0), _server(0)
 {
 }
 
 Session::Session(int sd)
-	: _user(0), _server(0)
 {
 	_soc.setSd(sd);
 }
@@ -63,4 +61,4 @@ void	Session::reply(std::string const& str)
 
 Socket&	Session::soc() { return _soc; }
 
-User&	Session::user() { return *(_user); }
+User&	Session::user() { return _user; }

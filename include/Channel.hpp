@@ -1,5 +1,5 @@
-#ifndef FT_CHANNEL_HPP
-#define FT_CHANNEL_HPP
+#ifndef CHANNEL_HPP
+#define CHANNEL_HPP
 
 #include <string>
 #include <map>
@@ -30,7 +30,7 @@ class Channel
 		void	removeUser(User *user);
 		bool	hasUser(User *user);
 		bool	isOperator(User *user);
-		void	broadcast(std::string const& message);
+		void	broadcast(Session *ss, std::string const& message);
 		std::string password() const;
 		std::string topic() const;
 		std::string name() const;

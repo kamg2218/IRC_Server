@@ -83,9 +83,9 @@ std::string		Frame::cmdPart(Session *ss, std::vector<std::string> const& sets)
 {
 	if (sets.size() != 2)
 		return "461";	//NeedMoreParams
-	if (mChannels.find(sets[1]) == mChannels.end())
+	else if (doesChannelExists(sets[1]) == false)
 		return "403";	//NoSuchChannel
-	if (ss->user().cmdPart(sets) == false)
+	else if (ss->user().cmdPart(ss, sets) == false)
 		return "442";	//NotOnChannel
 	return "";	//Success
 }
@@ -98,19 +98,22 @@ void	Frame::cmdQuit(Session *ss, std::vector<std::string> const& sets)
 
 std::string	Frame::cmdJoin(Session *ss, std::vector<std::string> const& sets)
 {
-	ChannelMap::iterator	it;
+	Channel*	ch;
 	
 	if (sets.size() < 2)
 		return "461";	//NeedMoreParams
 	if (doesChannelExists(sets[1]))
 	{
-		it = findChannel(sets[1]);
-		it->second->addUser(&(ss->user()));
-		ss->user().cmdJoin(*it);
+		ch = findChannel(sets[1]);
+		ch->addUser(&(ss->user()));
+		ss->user().cmdJoin(std::pair<std::string, Channel*>(ch->name(), ch));
+		ch->broadcast(ss, ss->user().name() + " joined " + ch->name() + "\n");
 	}
 	else
 	{
-		addChannel(new Channel(&(ss->user()), sets[1]));
+		ch = new Channel(&(ss->user()), sets[1]);
+		addChannel(ch);
+		ch->broadcast(ss, ss->user().name() + " joined " + ch->name() + "\n");
 	}
 	return "";
 }
@@ -191,34 +194,26 @@ std::string		Frame::cmdOper(Session *ss, std::vector<std::string> const& sets)
 
 std::string		Frame::cmdTopic(Session *ss, std::vector<std::string> const& sets)
 {
-	ChannelMap::iterator	it;
+	Channel*	ch;
 
+	if (sets.size() != 2 && sets.size() != 3)
+		return "461";	//NeedMoreParams
+	else if (!(doesChannelExists(sets[1])))
+		return "";
+	ch = findChannel(sets[1]);
 	if (sets.size() == 2)
 	{
-		it = mChannels.find(sets[1]);
-		if (it != mChannels.end()) 
-		{
-			if (it->second->topic() == "")
-				return "331";	//NoTopic
-			else if (it->second->hasUser(&(ss->user())))
-				return it->second->topic();
-			return "442";	//NotOnChannel
-		}
-		return "";
+		if (ch->topic() == "")
+			return "331";	//NoTopic
+		else if (ch->hasUser(&(ss->user())))
+			return ch->topic();
+		return "442";	//NotOnChannel
 	}
-	else if (sets.size() == 3)
-	{
-		it = mChannels.find(sets[1]);
-		if (it != mChannels.end())
-		{
-			if (it->second->isOperator(&(ss->user())) == false)
-				return "482";	//ChanOprivsNeeded
-			it->second->setTopic(sets[2]);
-			return "332";	//Topic
-		}
-		return "";
-	}
-	return "461";	//NeedMoreParams
+	//if (sets.size() == 3)
+	if (ch->isOperator(&(ss->user())) == false)
+		return "482";	//ChanOprivsNeeded
+	ch->setTopic(sets[2]);
+	return "332";	//Topic
 }
 
 std::string		Frame::cmdList(Session *ss, std::vector<std::string> const& sets)
@@ -241,9 +236,9 @@ std::string		Frame::cmdList(Session *ss, std::vector<std::string> const& sets)
 	}
 	else if (sets.size() == 2 || sets.size() == 3)
 	{
-		it = mChannels.find(sets[1]);
-		if (it == mChannels.end())
+		if (!(doesChannelExists(sets[1])))
 			return "323";	//ListEnd
+		it = mChannels.find(sets[1]);
 		str += it->first + "\n";
 		if (it->second->topic() != "")
 			str += it->second->topic() + "\n";
@@ -261,52 +256,3 @@ std::string		Frame::cmdInvite(Session *ss, std::vector<std::string> const& sets)
 	if (!(ss->user()->isMemOfChannel(sets[2].substr(1))))
 		return (""); //ERR_NOTONCHANNEL
 }*/
-
-
-void			Frame::cmdKick(Sessoin *ss, std::vector<std::string> const& sets)
-{
-	Channel	*channel;
-	std;:vector<std::string>	chlist;
-	std::vector<std;:string>	tgtlist;
-	std::vector<std::string>::const_iterator	it;
-
-	if (sets.size() < 3)
-	{
-		return ("461"); // ERR_NEEDMOREPARAMS
-	}
-	for (it = sets.begin() ; it != sets.end() ; ++it)
-	{
-		if ((*it).find("#") != std::string::npos ||
-			(*it).find("&") != std;:String::npos)
-			chlist.push_back((*it).substr(1));
-		else if ((*it) != "KICK")
-			break ;
-	}
-	for (; it != sets.end() ; ++it)
-	{
-		if ((*it).find(":") != std::string::npos)
-			break;
-		tgtlist.push_back(*it);
-	}
-	if (chlist.empty() || tgtlist.empty())
-	{
-		return ("461"); // ERR_NEEDMOREPARAMS
-	}
-	for (it = chlist.begin() ; it != chlist.end() ; ++it)
-	{
-		if (!doesChannelExists(*it))
-		{
-			return ("403"); //ERR_NOSUCHCHANNEL
-		}
-		if (!(ss->user()->isMemOfChannel((*it))))
-		{
-			return ("442");	//ERR_NOTONCHANNEL
-		}
-		channel = findChannel((*it));
-		if (!(channel->isOperator(ss->user())))
-		{
-			return ("482"); //ERR_CHANOPRIVSNEEDED
-		}
-		// 실행PART
-	}
-}
