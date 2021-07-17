@@ -181,6 +181,21 @@ std::string	Frame::doJoin(Session *ss, std::string const& sets)
 	return ss->user().nick() + " joined to " + MakeLower(sets.substr(1)) + "\n";
 }
 
+std::string	Frame::doJoin(Session *ss, std::string const& sets)
+{
+	ChannelMap::iterator	it;
+	
+	if (doesChannelExists(MakeLower(sets.substr(1))))
+	{
+		it = mChannels.find(MakeLower(sets.substr(1)));
+		it->second->addUser(&(ss->user()));
+		ss->user().cmdJoin(*it);
+	}
+	else
+		addChannel(new Channel(&(ss->user()), MakeLower(sets.substr(1))));
+	return ss->user().nick() + " joined to " + MakeLower(sets.substr(1)) + "\n";
+}
+
 void	Frame::cmdNick(Session *ss, std::vector<std::string> const& sets)
 {
 	if (sets[0] == "NICK")
@@ -328,3 +343,4 @@ std::string		Frame::doList(Session *ss, std::string const& sets)
 }
 
 #include "j_Frame.ipp"
+
