@@ -39,7 +39,6 @@ class Frame
 		void	cmdQuit(Session *ss, std::vector<std::string> const& sets);
 		void	cmdUser(Session *ss, std::vector<std::string> const& sets);
 		void	cmdJoin(Session *ss, std::vector<std::string> const& sets);
-		void	cmdKick(Session *ss, std::vector<std::string> const& sets);
 		void	cmdNick(Session *ss, std::vector<std::string> const& sets);
 		void	cmdPass(Session *ss, std::vector<std::string> const& sets);
 		void	cmdOper(Session *ss, std::vector<std::string> const& sets);
@@ -49,6 +48,7 @@ class Frame
 		std::string	doJoin(Session *ss, std::string const& sets);
 		std::string	doList(Session *ss, std::string const& sets);
 		User*	findUser(std::string const& name);
+		void	cmdKick(Session *ss, std::vector<std::string> const& sets);
 };
 
 #endif

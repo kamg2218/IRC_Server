@@ -181,9 +181,19 @@ std::string	Frame::doJoin(Session *ss, std::string const& sets)
 	return ss->user().nick() + " joined to " + MakeLower(sets.substr(1)) + "\n";
 }
 
-void	Frame::cmdKick(Session *ss, std::vector<std::string> const& sets)
+std::string	Frame::doJoin(Session *ss, std::string const& sets)
 {
-	//관리자 권한 확인 필요!
+	ChannelMap::iterator	it;
+	
+	if (doesChannelExists(MakeLower(sets.substr(1))))
+	{
+		it = mChannels.find(MakeLower(sets.substr(1)));
+		it->second->addUser(&(ss->user()));
+		ss->user().cmdJoin(*it);
+	}
+	else
+		addChannel(new Channel(&(ss->user()), MakeLower(sets.substr(1))));
+	return ss->user().nick() + " joined to " + MakeLower(sets.substr(1)) + "\n";
 }
 
 void	Frame::cmdNick(Session *ss, std::vector<std::string> const& sets)
@@ -331,3 +341,6 @@ std::string		Frame::doList(Session *ss, std::string const& sets)
 		str += it->second->topic() + "\n";
 	return str;
 }
+
+#include "j_Frame.ipp"
+
