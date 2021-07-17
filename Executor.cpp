@@ -117,9 +117,7 @@ void	Executor::execute(std::string& buff, Session* ss)
 	}
 	else if (splited_cmd[i] == "KICK")
 	{
-		std::cout << "KICK\n";
-		ss->user().cmdKick(splited_cmd, ss);
-		// frame->cmdKick(ss, splited_cmd);
+		//frame->cmdKick(ss, splited_cmd);
 	}
 	else if (splited_cmd[i] == "TOPIC")
 	{
@@ -148,6 +146,7 @@ void	Executor::execute(std::string& buff, Session* ss)
 	else
 	{
 		// Error 421
+		ss->reply("421");
 	}
 
 }

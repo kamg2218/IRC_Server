@@ -181,11 +181,6 @@ std::string	Frame::doJoin(Session *ss, std::string const& sets)
 	return ss->user().nick() + " joined to " + MakeLower(sets.substr(1)) + "\n";
 }
 
-void	Frame::cmdKick(Session *ss, std::vector<std::string> const& sets)
-{
-	//관리자 권한 확인 필요!
-}
-
 void	Frame::cmdNick(Session *ss, std::vector<std::string> const& sets)
 {
 	if (sets[0] == "NICK")
@@ -331,3 +326,5 @@ std::string		Frame::doList(Session *ss, std::string const& sets)
 		str += it->second->topic() + "\n";
 	return str;
 }
+
+#include "j_Frame.ipp"
