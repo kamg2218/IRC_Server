@@ -14,19 +14,29 @@ std::vector<std::string> split_comma(std::string s)
 
 std::vector<std::vector<std::string> > kicklist(std::vector<std::string> const& sets)
 {
+	std::string					message;
 	std::vector<std::string>	chlist;
 	std::vector<std::string>	tgtlist;
 	std::vector<std::string>	subres;
 	std::vector<std::vector<std::string> >	res;
-	
+
 	chlist = split_comma(sets[1]);
 	tgtlist = split_comma(sets[2]);
+	for (int i = 3 ; i < sets.size() ; i++)
+	{
+		if (i == 3 && sets[i][0] != ':')
+			break ;
+		message += sets[i];
+	}
 	for (int i = 0 ; i < chlist.size() || i < tgtlist.size() ; i++)
 	{
-		if (i < chlist.size())
+		if (chlist.size() == 1)
+			subres.push_back(chlist[0]);
+		else if (i < chlist.size())
 			subres.push_back(chlist[i]);
 		if (i < tgtlist.size())
 			subres.push_back(tgtlist[i]);
+		subres.push_back(message);
 		res.push_back(subres);
 		subres.clear();
 	}
@@ -37,7 +47,7 @@ void	Frame::cmdKick(Session *ss, std::vector<std::string> const& sets)
 {
 	std::vector<std::vector<std::string> >	cmdsets;
 	std::vector<std::string>	cmd;
-	std::vector<std::string>	partcmd;
+	User	*target;
 	Channel *channel;
 
 	if (sets.size() < 3)
@@ -58,15 +68,10 @@ void	Frame::cmdKick(Session *ss, std::vector<std::string> const& sets)
 			ss->reply("482"); //ERR_CHANOPRIVSNEEDED
 		else
 		{
-			// process
-			partcmd.clear();
-			partcmd.push_back("PART");
-			partcmd.push_back(cmd[0]);
-			for (int i = 1 ; i < cmd.size() ; i++)
+			if (doesNicknameExists(cmd[1]))
 			{
-				partcmd.push_back(cmd[i]);
-				cmdPart(ss, partcmd);
-				partcmd.pop_back();
+				target = findUser(cmd[1]);
+				target->cmdPart(ss, cmd[0], cmd[2]);
 			}
 		}
 		cmdsets.pop_back();
@@ -97,11 +102,9 @@ void	Frame::cmdInvite(Session *ss, std::vector<std::string> const& sets)
 	else
 	{
 		// proces
-		/*
-		target->cmdJoin(mChannels.find(channel->name())); 
+		target->cmdJoin(channel); 
 		channel->addUser(target);
-		channel->broadcast(ss, "");
-		*/
+		channel->broadcast(ss, target->nick() + " joined to " + channel->name());
 		rpl.append(channel->name());
 		rpl.append(" ");
 		rpl.append(target->nick());
