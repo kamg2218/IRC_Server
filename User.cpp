@@ -136,13 +136,20 @@ bool	User::cmdPart(Session *ss, std::string const& sets, std::string const& msg)
 
 void			User::cmdQuit(Session *ss, std::vector<std::string> const& sets)
 {
+	std::string	str;
+
 	_pastNick.clear();
 	for (ChannelMap::iterator it = mChannels.begin(); it != mChannels.end(); it++)
 	{
 		it->second->removeUser(this);
-		if (sets.size() == 3 && sets[1] == ":")
-			it->second->broadcast(ss, sets[2]);
-		else	
+		if (sets.size() > 2)
+		{
+			str = sets[2].substr(1);
+			for (int i = 3; i < sets.size(); i++)
+				str += " " + sets[i];
+			it->second->broadcast(ss, str);
+		}
+		else
 			it->second->broadcast(ss, name() + " left\n");
 	}
 	mChannels.clear();

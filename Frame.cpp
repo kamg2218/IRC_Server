@@ -253,33 +253,31 @@ void	Frame::cmdOper(Session *ss, std::vector<std::string> const& sets)
 void	Frame::cmdTopic(Session *ss, std::vector<std::string> const& sets)
 {
 	ChannelMap::iterator	it;
+	std::string				str;
 
+	if (sets.size() < 2)
+		return ss->reply("461");	//NeedMoreParams
+	it = mChannels.find(MakeLower(sets[1].substr(1)));
+	if (it == mChannels.end())
+		return ss->reply("442");	//NotOnChannel
 	if (sets.size() == 2)
 	{
-		it = mChannels.find(MakeLower(sets[1].substr(1)));
-		if (it != mChannels.end()) 
-		{
-			if (it->second->topic() == "")
-				return ss->reply("331");	//NoTopic
-			else if (it->second->hasUser(&(ss->user())))
-				return ss->reply(it->second->topic());
-			return ss->reply("442");	//NotOnChannel
-		}
-		return ss->reply("");
+		if (it->second->topic() == "")
+			return ss->reply("331");	//NoTopic
+		else if (it->second->hasUser(&(ss->user())))
+			return ss->reply(it->second->topic());
+		return ss->reply("442");	//NotOnChannel
 	}
-	else if (sets.size() == 3)
+	else
 	{
-		it = mChannels.find(MakeLower(sets[1].substr(1)));
-		if (it != mChannels.end())
-		{
-			if (it->second->isOperator(&(ss->user())) == false)
-				return ss->reply("482");	//ChanOprivsNeeded
-			it->second->setTopic(sets[2]);
-			return ss->reply("332");	//Topic
-		}
-		return ss->reply("");
+		str = sets[2].substr(1);
+		for (int i = 3; i < sets.size(); i++)
+			str += " " + sets[i];
+		if (it->second->isOperator(ss->user().nick()) == false)
+			return ss->reply("482");	//ChanOprivsNeeded
+		it->second->setTopic(str);
+		return ss->reply("332");	//Topic
 	}
-	return ss->reply("461");	//NeedMoreParams
 }
 
 void	Frame::cmdList(Session *ss, std::vector<std::string> const& sets)

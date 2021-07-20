@@ -37,18 +37,6 @@ bool		Channel::hasUser(User *user)
 	return (true);
 }
 
-bool		Channel::isOperator(User *user)
-{
-	//write	
-	Usermap::iterator it;
-
-	it = mOperators.find(user->nick());
-	if (it == mOperators.end())
-		return (false);
-
-	return (true);
-}
-
 void		Channel::broadcast(Session *ss, std::string const& message)
 {
 	Usermap::iterator it;
