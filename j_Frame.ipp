@@ -72,3 +72,39 @@ void	Frame::cmdKick(Session *ss, std::vector<std::string> const& sets)
 		cmdsets.pop_back();
 	}
 }
+
+void	Frame::cmdInvite(Session *ss, std::vector<std::string> const& sets)
+{
+	Channel *channel;
+	User	*target;
+	std::string	rpl;
+
+	if (sets.size() < 3)
+	{
+		ss->reply("461"); // NOT ENOUGH PARAM
+		return ;
+	}
+	if (sets[1].find("#") == std::string::npos && sets[1].find("&") == std::string::npos)
+		ss->reply("461"); //NOT ENOUGH PARAM
+	else if (!doesChannelExists(sets[1].substr(1)))
+		ss->reply("403"); //NO SUCH CHANNEL
+	else if (!(ss->user().isMemOfChannel(sets[1].substr(1))))
+		ss->reply("442"); //ERR_NOTONCHANNEL;
+	else if (!doesNicknameExists(sets[2]))
+		ss->reply("401"); //ERR_NOSUCHNICK
+	else if (!((target = findUser(sets[2]))->isMemOfChannel(channel->name())))
+		ss->reply("443"); //ERR_USERONCHANNEL;
+	else
+	{
+		// proces
+		/*
+		target->cmdJoin(mChannels.find(channel->name())); 
+		channel->addUser(target);
+		channel->broadcast(ss, "");
+		*/
+		rpl.append(channel->name());
+		rpl.append(" ");
+		rpl.append(target->nick());
+		ss->reply(rpl);
+	}
+}
