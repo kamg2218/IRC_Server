@@ -70,7 +70,6 @@ void	MainServer::handleAccept(Service* p)
 	std::cout << inet_ntoa(se->soc().sin().sin_addr) << ":" << ntohs(se->soc().sin().sin_port) << " is connected\n";
 
 	mSessions.insert(std::pair<int, Session*>(cs, se));
-
 }
 
 void		MainServer::handleDecline(std::map<int, Session*>::iterator& pos)
