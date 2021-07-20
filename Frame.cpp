@@ -73,6 +73,10 @@ Channel*	Frame::findChannel(std::string const& name)
 {
 	return mChannels.find(name)->second;
 }
+User*	Frame::findUser(std::string const& name)
+{
+	return mUsers.find(name)->second;
+}
 
 bool		Frame::CheckNickname(std::string const& name)
 {
