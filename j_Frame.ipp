@@ -94,7 +94,7 @@ void	Frame::cmdInvite(Session *ss, std::vector<std::string> const& sets)
 		ss->reply("403"); //NO SUCH CHANNEL
 	else if (!(ss->user().isMemOfChannel(sets[1].substr(1))))
 		ss->reply("442"); //ERR_NOTONCHANNEL;
-	else if (!doesNicknameExRists(sets[2]))
+	else if (!doesNicknameExists(sets[2]))
 		ss->reply("401"); //ERR_NOSUCHNICK
 	else if (!((target = findUser(sets[2]))->isMemOfChannel(channel->name())))
 		ss->reply("443"); //ERR_USERONCHANNEL;
