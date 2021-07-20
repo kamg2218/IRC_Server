@@ -111,29 +111,47 @@ bool		User::cmdUser()
 	return true;
 }
 
-void			User::cmdJoin(std::pair<std::string, Channel*> const& it)
+void			User::cmdJoin(Channel* ch)
 {
-	mChannels.insert(it);
+	mChannels.insert(std::pair<std::string, Channel*>(ch->name(), ch));
 }
 
-bool	User::cmdPart(Session *ss, std::string const& sets)
+bool	User::cmdPart(Session *ss, std::string const& sets, std::string const& msg)
 {
 	ChannelMap::iterator	it;
+	std::string				str;
 
+	str = nick() + " left " + it->first + "\n";
 	it = mChannels.find(sets.substr(1));
 	if (it == mChannels.end())
 		return false;
 	it->second->removeUser(this);
-	it->second->broadcast(ss, nick() + " left " + it->first + "\n");
+	if (msg == "")
+		it->second->broadcast(ss, str);
+	else
+		it->second->broadcast(ss, msg);
 	mChannels.erase(it);
 	return true;
 }
 
-void			User::cmdQuit(std::vector<std::string> const& sets)
+void			User::cmdQuit(Session *ss, std::vector<std::string> const& sets)
 {
+	std::string	str;
+
 	_pastNick.clear();
 	for (ChannelMap::iterator it = mChannels.begin(); it != mChannels.end(); it++)
+	{
 		it->second->removeUser(this);
+		if (sets.size() > 2)
+		{
+			str = sets[2].substr(1);
+			for (int i = 3; i < sets.size(); i++)
+				str += " " + sets[i];
+			it->second->broadcast(ss, str);
+		}
+		else
+			it->second->broadcast(ss, name() + " left\n");
+	}
 	mChannels.clear();
 }
 

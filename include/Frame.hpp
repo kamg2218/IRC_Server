@@ -49,7 +49,6 @@ class Frame
 		std::string	doList(Session *ss, std::string const& sets);
 		User*	findUser(std::string const& name);
 		void	cmdKick(Session *ss, std::vector<std::string> const& sets);
-		void	cmdInvite(Session *ss, std::vector<std::string> const& sets);
 };
 
 #endif

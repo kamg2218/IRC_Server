@@ -29,7 +29,6 @@ class Channel
 		void	cmdNick(std::string const& name, std::string const& nick);
 		void	removeUser(User *user);
 		bool	hasUser(User *user);
-		bool	isOperator(User *user);
 		void	broadcast(Session *ss, std::string const& message);
 		std::string password() const;
 		std::string topic() const;

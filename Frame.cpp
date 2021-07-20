@@ -73,10 +73,6 @@ Channel*	Frame::findChannel(std::string const& name)
 {
 	return mChannels.find(name)->second;
 }
-User*	Frame::findUser(std::string const& name)
-{
-	return mUsers.find(name)->second;
-}
 
 bool		Frame::CheckNickname(std::string const& name)
 {
@@ -139,14 +135,14 @@ std::string		Frame::doPart(Session *ss, std::string const& sets)
 {
 	if (mChannels.find(sets.substr(1)) == mChannels.end())
 		return "403";	//NoSuchChannel
-	if (ss->user().cmdPart(ss, sets.substr(1)) == false)
+	if (ss->user().cmdPart(ss, sets.substr(1), "") == false)
 		return "442";	//NotOnChannel
 	return "";	//Success
 }
 
 void	Frame::cmdQuit(Session *ss, std::vector<std::string> const& sets)
 {
-	ss->user().cmdQuit(sets);
+	ss->user().cmdQuit(ss, sets);
 	removeUser(ss->user().nick());
 	ss->reply(ss->user().nick() + " left\n");
 }
@@ -156,7 +152,7 @@ void	Frame::cmdJoin(Session *ss, std::vector<std::string> const& sets)
 	int				n;
 	std::string		str;
 
-	if (sets.size() != 2)
+	if (sets.size() < 2)
 		return ss->reply("461");	//NeedMoreParams
 	else if (!(CheckChannelname(sets[1])))
 		return ss->reply("403");	//NoSuchChannel
@@ -178,7 +174,8 @@ std::string	Frame::doJoin(Session *ss, std::string const& sets)
 	{
 		it = mChannels.find(MakeLower(sets.substr(1)));
 		it->second->addUser(&(ss->user()));
-		ss->user().cmdJoin(*it);
+		it->second->broadcast(ss, ss->user().name() + " joined to " + it->first + "\n");
+		ss->user().cmdJoin(it->second);
 	}
 	else
 		addChannel(new Channel(&(ss->user()), MakeLower(sets.substr(1))));
@@ -256,33 +253,31 @@ void	Frame::cmdOper(Session *ss, std::vector<std::string> const& sets)
 void	Frame::cmdTopic(Session *ss, std::vector<std::string> const& sets)
 {
 	ChannelMap::iterator	it;
+	std::string				str;
 
+	if (sets.size() < 2)
+		return ss->reply("461");	//NeedMoreParams
+	it = mChannels.find(MakeLower(sets[1].substr(1)));
+	if (it == mChannels.end())
+		return ss->reply("442");	//NotOnChannel
 	if (sets.size() == 2)
 	{
-		it = mChannels.find(MakeLower(sets[1].substr(1)));
-		if (it != mChannels.end()) 
-		{
-			if (it->second->topic() == "")
-				return ss->reply("331");	//NoTopic
-			else if (it->second->hasUser(&(ss->user())))
-				return ss->reply(it->second->topic());
-			return ss->reply("442");	//NotOnChannel
-		}
-		return ss->reply("");
+		if (it->second->topic() == "")
+			return ss->reply("331");	//NoTopic
+		else if (it->second->hasUser(&(ss->user())))
+			return ss->reply(it->second->topic());
+		return ss->reply("442");	//NotOnChannel
 	}
-	else if (sets.size() == 3)
+	else
 	{
-		it = mChannels.find(MakeLower(sets[1].substr(1)));
-		if (it != mChannels.end())
-		{
-			if (it->second->isOperator(&(ss->user())) == false)
-				return ss->reply("482");	//ChanOprivsNeeded
-			it->second->setTopic(sets[2]);
-			return ss->reply("332");	//Topic
-		}
-		return ss->reply("");
+		str = sets[2].substr(1);
+		for (int i = 3; i < sets.size(); i++)
+			str += " " + sets[i];
+		if (it->second->isOperator(ss->user().nick()) == false)
+			return ss->reply("482");	//ChanOprivsNeeded
+		it->second->setTopic(str);
+		return ss->reply("332");	//Topic
 	}
-	return ss->reply("461");	//NeedMoreParams
 }
 
 void	Frame::cmdList(Session *ss, std::vector<std::string> const& sets)
