@@ -135,14 +135,14 @@ std::string		Frame::doPart(Session *ss, std::string const& sets)
 {
 	if (mChannels.find(sets.substr(1)) == mChannels.end())
 		return "403";	//NoSuchChannel
-	if (ss->user().cmdPart(ss, sets.substr(1)) == false)
+	if (ss->user().cmdPart(ss, sets.substr(1), "") == false)
 		return "442";	//NotOnChannel
 	return "";	//Success
 }
 
 void	Frame::cmdQuit(Session *ss, std::vector<std::string> const& sets)
 {
-	ss->user().cmdQuit(sets);
+	ss->user().cmdQuit(ss, sets);
 	removeUser(ss->user().nick());
 	ss->reply(ss->user().nick() + " left\n");
 }
@@ -152,7 +152,7 @@ void	Frame::cmdJoin(Session *ss, std::vector<std::string> const& sets)
 	int				n;
 	std::string		str;
 
-	if (sets.size() != 2)
+	if (sets.size() < 2)
 		return ss->reply("461");	//NeedMoreParams
 	else if (!(CheckChannelname(sets[1])))
 		return ss->reply("403");	//NoSuchChannel
@@ -174,22 +174,8 @@ std::string	Frame::doJoin(Session *ss, std::string const& sets)
 	{
 		it = mChannels.find(MakeLower(sets.substr(1)));
 		it->second->addUser(&(ss->user()));
-		ss->user().cmdJoin(*it);
-	}
-	else
-		addChannel(new Channel(&(ss->user()), MakeLower(sets.substr(1))));
-	return ss->user().nick() + " joined to " + MakeLower(sets.substr(1)) + "\n";
-}
-
-std::string	Frame::doJoin(Session *ss, std::string const& sets)
-{
-	ChannelMap::iterator	it;
-	
-	if (doesChannelExists(MakeLower(sets.substr(1))))
-	{
-		it = mChannels.find(MakeLower(sets.substr(1)));
-		it->second->addUser(&(ss->user()));
-		ss->user().cmdJoin(*it);
+		it->second->broadcast(ss, ss->user().name() + " joined to " + it->first + "\n");
+		ss->user().cmdJoin(it->second);
 	}
 	else
 		addChannel(new Channel(&(ss->user()), MakeLower(sets.substr(1))));
