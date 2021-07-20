@@ -25,11 +25,12 @@ bool	Session::handleRead(std::map<int, Session*> & ms, int sd)
 {
 	int		r;
 	int		bufsize = 512;
-	char	buf[bufsize];
+	char	buf[512] = {0,};
+	//char	buf[bufsize];
 
 	//std::cout << "handle Read\n";
-	for (int i = 0; i < bufsize; i++)
-		buf[i] = 0;
+	//for (int i = 0; i < bufsize; i++)
+	//	buf[i] = 0;
 	r = recv(_soc.sd(), buf, bufsize, 0);
 
 	//std::cout << "r = " << r << ", buf = " << buf << std::endl;
@@ -43,11 +44,14 @@ bool	Session::handleRead(std::map<int, Session*> & ms, int sd)
 	else if (r)
 	{
 		rstream.append(buf, r);
-		if (!request.gotFullMsg(rstream))
-			return (false);
-		std::cout << "Got full msg\n";
-		request.execute(rstream, this);
-		request.reset(rstream);
+	//	if (!request.gotFullMsg(rstream))
+	//		return (false);
+		while (request.gotFullMsg(rstream))
+		{
+			std::cout << "Got msg : " << request.getMessage(rstream) << std::endl;
+			request.execute(rstream, this);
+			request.reset(rstream);
+		}
 	}
 	return (false);
 }
@@ -55,6 +59,7 @@ bool	Session::handleRead(std::map<int, Session*> & ms, int sd)
 void	Session::reply(std::string const& str)
 {
 	std::string res = str;	
+	std::cout << "replied : " << str << "\n";
 	res += "\r\n";
 	send(_soc.sd(), res.c_str(), res.length(), 0);
 }
