@@ -158,13 +158,13 @@ void	Frame::cmdJoin(Session *ss, std::vector<std::string> const& sets)
 
 	if (sets.size() < 2)
 		return ss->reply("461");	//NeedMoreParams
-	else if (!(CheckChannelname(sets[1])))
-		return ss->reply("403");	//NoSuchChannel
 	str = sets[1];
 	while (1){
 		n = str.find(",");
 		if (std::string::npos == n)
 			break ;
+		else if (!(CheckChannelname(str.substr(0, n))))
+			return ss->reply("403");	//NoSuchChannel
 		ss->reply(doJoin(ss, str.substr(0, n)));
 		str = str.substr(n + 1);
 	}

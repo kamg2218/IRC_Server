@@ -20,6 +20,12 @@ int		Session::socket() const
 {
 	return (_soc.sd());
 }
+
+bool	Session::IsReady() const
+{
+	return (request.gotFullMsg(rstream));
+}
+
 void	Session::StreamAppend(char *str, int r)
 {
 	char ctrld = 4;
@@ -53,7 +59,7 @@ bool	Session::handleRead(std::map<int, Session*> & ms, int sd)
 	}
 	else if (r)
 	{
-		//rstream.append(buf, r);
+	//	rstream.append(buf, r);
 	//	if (!request.gotFullMsg(rstream))
 	//		return (false);
 		StreamAppend(buf, r);
@@ -75,10 +81,6 @@ void	Session::reply(std::string const& str)
 	send(_soc.sd(), res.c_str(), res.length(), 0);
 }
 
-bool	Session::IsReady() const
-{
-	return (request.gotFullMsg(rstream));
-}
 Socket&	Session::soc() { return _soc; }
 
 User&	Session::user() { return _user; }
