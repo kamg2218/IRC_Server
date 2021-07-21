@@ -21,6 +21,22 @@ int		Session::socket() const
 	return (_soc.sd());
 }
 
+bool	Session::IsReady() const
+{
+	return (request.gotFullMsg(rstream));
+}
+
+void	Session::StreamAppend(char *str, int r)
+{
+	char ctrld = 4;
+
+	for (int i = 0 ; i < r ; i++)
+	{
+		if (str[i] != ctrld)
+			rstream += str[i];
+	}
+}
+
 bool	Session::handleRead(std::map<int, Session*> & ms, int sd)
 {
 	int		r;
@@ -43,9 +59,10 @@ bool	Session::handleRead(std::map<int, Session*> & ms, int sd)
 	}
 	else if (r)
 	{
-		rstream.append(buf, r);
+	//	rstream.append(buf, r);
 	//	if (!request.gotFullMsg(rstream))
 	//		return (false);
+		StreamAppend(buf, r);
 		while (request.gotFullMsg(rstream))
 		{
 			std::cout << "Got msg : " << request.getMessage(rstream) << std::endl;
