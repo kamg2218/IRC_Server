@@ -225,7 +225,7 @@ void	Frame::cmdUser(Session *ss, std::vector<std::string> const& sets)
 		return ss->reply("461");	//needMoreParams
 	else if (ss->user().cmdUser() == false)
 		return ss->reply("462");	//AlreadyRegistered
-	return ss->reply("");	//Success
+	return ss->reply("001");	//Success
 }
 
 void	Frame::cmdPass(Session *ss, std::vector<std::string> const& sets)

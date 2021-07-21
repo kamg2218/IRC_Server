@@ -36,6 +36,8 @@ class Session
 		User&	user();
 		bool	handleRead(std::map<int, Session*> & ms, int fd);
 		void	reply(std::string const& str);
+		void	StreamAppend(char *str, int r);
+		bool	IsReady() const;
 };
 
 #endif
