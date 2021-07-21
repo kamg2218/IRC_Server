@@ -50,6 +50,8 @@ class Frame
 		User*	findUser(std::string const& name);
 		void	cmdKick(Session *ss, std::vector<std::string> const& sets);
 		void	cmdInvite(Session *ss, std::vector<std::string> const& sets);
+		bool	checkMask(std::string const& str, std::string const& name, int wild);
+		std::vector<std::string>	getMask(std::string const& str);
 };
 
 #endif

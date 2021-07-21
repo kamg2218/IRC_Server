@@ -296,9 +296,9 @@ void	Frame::cmdList(Session *ss, std::vector<std::string> const& sets)
 	str = sets[1];
 	while (1){
 		n = str.find(",");
+		ss->reply(doList(ss, str.substr(0, n)));
 		if (std::string::npos == n)
 			break ;
-		ss->reply(doList(ss, str.substr(0, n)));
 		str = str.substr(n + 1);
 	}
 }
@@ -442,4 +442,49 @@ void	Frame::cmdInvite(Session *ss, std::vector<std::string> const& sets)
 		rpl.append(target->nick());
 		ss->reply(rpl);
 	}
+}
+
+bool		Frame::checkMask(std::string const& str, std::string const& name, int wild)
+{
+	int		s;
+
+	s = str.size() - wild - 1;
+	if (str.substr(0, wild) != name.substr(0, wild))
+		return false;
+	else if (str.substr(wild + 1, s) != name.substr(name.size() - s, s))
+		return false;
+	return true;
+}
+
+std::vector<std::string>	Frame::getMask(std::string const& str)
+{
+	int		wild;
+	std::vector<std::string>	v;
+
+	wild = -1;
+	for (int i = 0; i < str.size(); i++)
+	{
+		if (str[i] == '*')
+			wild = i;
+	}
+	//checkChannelName
+	for (ChannelMap::iterator it = mChannels.begin(); it != mChannels.end(); it++)
+	{
+		if (checkMask(str, it->first, wild))
+			v.insert(v.end(), it->first);
+	}
+	//checkServerName - Not Exist
+	for (UserMap::iterator it = mUsers.begin(); it != mUsers.end(); it++)
+	{
+		//checkUserNickName
+		if (checkMask(str, it->first, wild))
+			v.insert(v.end(), it->first);
+		//checkUserHost
+		else if (checkMask(str, it->second->Host(), wild))
+			v.insert(v.end(), it->first);
+		//checkUserRealName
+		else if (checkMask(str, it->second->name(), wild))
+			v.insert(v.end(), it->first);
+	}
+	return v;
 }
