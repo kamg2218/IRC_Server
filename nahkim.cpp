@@ -1,9 +1,10 @@
 #include <iostream>
+#include "Frame.hpp"
 // 일치하는 정보 목록 반환
 // <name> 매개 변수와 일치하는 정보 목록을 반환하는 쿼리를 생성하는 데 사용
-std::string		Frame::cmdWho(Session *ss, std::vector<std::string> const& sets)
+void		Frame::cmdWho(Session *ss, std::vector<std::string> const& sets)
 {
-    // error 402, 352, 315
+    // error 402, 352, 318
     // name 에 매개 변수가 없으면 표시되는 모든 사용자(보이지않는 사용자 모드 + i)와
     // 요청 클라이언트와 공통 채널이 없는 사용자)가 나열됨
     // 동일한 결과는 가능한 모든 항목과 일치하는 name 또는 와일드카드를 사용하여 얻음
@@ -11,100 +12,127 @@ std::string		Frame::cmdWho(Session *ss, std::vector<std::string> const& sets)
     // "o" 매개 변수가 전달되면 제공된 이름 마스크에 따라 연산자만 변환
 
     // 채널 유저호스트
-    UserMap::iterator it;
+    UserMap::iterator itu;
+    ChannelMap::iterator itc;
+    std::vector<std::string> v;
     std::string res;
     std::string eol;
 
-
-    // channel user host server nick realname
-    if (sets.size() == 1)
+    itu = mUsers.begin();
+    itc = mChannels.begin();
+    if (sets.size() > 3)    // error
     {
-        while (it != it.end())
-        {
-            res += mUsers.nick();
-            ss->reply();
-            it++;
-        }
-        // 모든 유저 리스트 리턴
-        
+        ss->reply("Error :too many arguments");    // reply로 해도됨?
     }
     eol = sets[1] + " :End of /WHO list";
+    // channel user host server nick realname
+    if (sets.size() == 1)   // 모든 유저 리스트 리턴
+    {
+        for (; itu != itu.end(); itu++,itc++)
+        {
+            res = itc->second->Sname;
+            res += "user이름이 무엇임..? " + itu->second->sHost + " " + "server " + "0 " + itu->second->Realname + "\n";
+            //RPL_WHOREPLY
+            //"<channel> <user> <host> <server> <nick> \ <H|G>[*][@|+] :<hopcount>(0) <real name>"
+            ss->reply(res);
+            res.clear();
+        }
+        return ss->reply(eol);
+        return ;
+    }
+    
+    v = getMask(sets[1]);
     if (sets[2] == "o") // 옵션이 있을 경우
     {
         // 관리자 리스트만 리턴
+        for (;itu != itu.end(); itu++, itc++)
+        {
+            if (itu->second->manager == 1)
+            {
+                res = mChannels.Sname;
+                res += "user이름이 무엇임..? " + mUsers.sHost + " " + "server " + "0 " + mUsers.Realname + "\n";
+                //RPL_WHOREPLYß
+                //"<channel> <user> <host> <server> <nick> \ <H|G>[*][@|+] :<hopcount>(0) <real name>"
+                ss->reply(res);
+                res.clear();
+            }
+        }
+        // wild card 있을 경우
     }
     else
     {
-        if (doesChannelExists(sets[1]))     // findChannel 사용?
+        if (v == NULL)  // wild card 없을 경우
         {
-
+            if (doesChannelExists(sets[1]))     // channel
+            {
+            }
+            if (userhost.find(sets[1]) == userhost.end())   // host
+            {
+            }
+            if (server.find(sets[1]) == server.end())       // server
+                return ss->reply("402");   // ERR_NOSUCHSERVER
+            if (mUsers.find(sets[1]) == mUsers.end())       // real name
+            {
+            }
+            if (doesNicknameExists(sets[1]))            // nick name
+            {
+            }
         }
-        if (userhost.find(sets[1]) == userhost.end())
+        else
         {
-
-        }
-        if (server.find(sets[1]) == server.end())
-            return ss->reply("402");   //NOSUCHSERVER
-        if (mUsers.find(sets[1]) == mUsers.end())
-        {
-
-        }
-        if (doesNicknameExists(sets[1]))
-        {
-
         }
     }
     //RPL_WHOREPLY
-    "<channel> <user> <host> <server> <nick> \ <H|G>[*][@|+] :<hopcount>(0) <real name>"
+    //"<channel> <user> <host> <server> <nick> \ <H|G>[*][@|+] :<hopcount>(0) <real name>"
 
     return ss->reply(eol);
     //RPL_ENDOFWHO
     //"<name> :End of /WHO list"
 }
 
-std::string		Frame::cmdWhoi(Session *ss, std::vector<std::string> const& sets)
+void		Frame::cmdWhoi(Session *ss, std::vector<std::string> const& sets)
 {
     // error 402 431 311 312 313 317 318 319 301 401
     if (server.find(set[1]) == server.end())
-        return "402";   //NOSUCHSERVER
+        ss->reply("402");   // ERR_NOSUCHSERVER
     if (mUsers.find(sets[0]) == mUsers.end())
-        return "431";
+        ss->reply("431");   // ERR_NONICKNAMEGIVEN
     
 }
 
-std::string		Frame::cmdWhowas(Session *ss, std::vector<std::string> const& sets)
+void		Frame::cmdWhowas(Session *ss, std::vector<std::string> const& sets)
 {
     // ERROR 369 431
     std::string res;
-    if (sets.size() == 1 || )   // 닉네임 처음이 숫자 가능?
+    if (sets.size() == 1 || )
     {
-        ss->reply("431");
+        ss->reply("431");   // ERR_NONICKNAMEGIVEN
     }
-    if (mUsers.find(sets[0]) == mUsers.end())
-        return "369";
-    "<nick> :End of WHOWAS"
+    if (mUsers.second->Sname.find(sets[0]) == mUsers.second->Sname.end())
+        ss->reply(sets[1] + " :End of WHOWAS");   // RPL_ENDOFWHOWAS
+    //"<nick> :End of WHOWAS"
 
 }
 
-std::string		Frame::cmdPrivmsg(Session *ss, std::vector<std::string> const& sets)
+void		Frame::cmdPrivmsg(Session *ss, std::vector<std::string> const& sets)
 {
-    // ERROR 301 401 407 411 412 413 414 
+    // ERROR 301 -401 407 -411 -412 413 414 -404
 
     int i = 2;
     std::string res;
-    iterator it = sets.begin();
+    std::vector<std::string>::iterator it = sets.begin();
     std::vector<std::string> receiver;
-    iterator receiverit = receiver.begin();
-    std::vector<std:string> msg;
-    iterator msgit = msg.begin();
+    std::vector<std::string>::iterator receiverit = receiver.begin();
+    std::vector<std::string> msg;
+    std::vector<std::string>::iterator msgit = msg.begin();
 
     if (sets[1][0] == ':')   // receiver가 없을 경우
     {
-        return "411";   // ERR_NORECIPIENT
+        ss->reply("411");   // ERR_NORECIPIENT
     }
     else if (sets[2][0] != ':')
     {
-        return "412";   // ERR_NOSUCHSERVER
+        ss->reply("412");   // ERR_NOSUCHSERVER
     }
     // receiver에 콤마로 split해서 저장하기
 
@@ -112,10 +140,10 @@ std::string		Frame::cmdPrivmsg(Session *ss, std::vector<std::string> const& sets
     // 메세지 전까지 확인하기
     while (receiverit != receiver.end())
     {
-        if (nickname.find(sets[i]) == nickname.end())   // nickname이 어디에 들어있나유 mUser->sNickname??
-            return "401";       // 401 : 닉네임
-        if (mChannels.find(sets[i]) == mChannels.end())
-            return "404";   // 404 : 채널이 없음
+        if (mUsers.second->sNickname.find(sets[i]) == mUsers.second->sNickname.end())   // mUsers.second->sNickname
+            ss->reply("401");       // ERR_NOSUCHNICK
+        if (mChannels.second->Sname.find(sets[i]) == mChannels.second->Sname.end()) // mChannels.second->Sname
+            ss->reply("404");   // ERR_CANNOTSENDTOCHAN
 
         // ?중복 수신자인지 확인
     }
@@ -136,6 +164,6 @@ std::string		Frame::cmdPrivmsg(Session *ss, std::vector<std::string> const& sets
         ss->reply(receiverit + " " + res);
         receiverit++;
     }
-    //return "<nick> :<away message>";
+    //ss->reply("<nick> :<away message>";
 
 }
