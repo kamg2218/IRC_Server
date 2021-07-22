@@ -158,18 +158,20 @@ void	Frame::cmdJoin(Session *ss, std::vector<std::string> const& sets)
 
 	if (sets.size() < 2)
 		return ss->reply("461");	//NeedMoreParams
+	else if (sets.size() == 2 && sets[1] == "O")
+		return ss->user().optionJoin(ss, sets);
 	str = sets[1];
 	while (1){
 		n = str.find(",");
-		if (std::string::npos == n)
-			break ;
-		else if (!(CheckChannelname(str.substr(0, n))))
+		if (!(CheckChannelname(str.substr(0, n))))
 			return ss->reply("403");	//NoSuchChannel
 		ss->reply(doJoin(ss, str.substr(0, n)));
+		if (std::string::npos == n)
+			break ;
 		str = str.substr(n + 1);
 	}
 }
-
+//reply check
 std::string	Frame::doJoin(Session *ss, std::string const& sets)
 {
 	ChannelMap::iterator	it;
@@ -180,10 +182,11 @@ std::string	Frame::doJoin(Session *ss, std::string const& sets)
 		it->second->addUser(&(ss->user()));
 		it->second->broadcast(ss, ss->user().name() + " joined to " + it->first + "\n");
 		ss->user().cmdJoin(it->second);
+		//Topic
 	}
 	else
 		addChannel(new Channel(&(ss->user()), MakeLower(sets.substr(1))));
-	return ss->user().nick() + " joined to " + MakeLower(sets.substr(1)) + "\n";
+	return "353";	//RPL_NAMREPLY
 }
 
 void	Frame::cmdNick(Session *ss, std::vector<std::string> const& sets)
@@ -221,11 +224,11 @@ void	Frame::cmdNick(Session *ss, std::vector<std::string> const& sets)
 
 void	Frame::cmdUser(Session *ss, std::vector<std::string> const& sets)
 {
-	if (sets.size() != 5)
+	if (sets.size() < 5)
 		return ss->reply("461");	//needMoreParams
-	else if (ss->user().cmdUser() == false)
+	else if (ss->user().cmdUser(sets) == false)
 		return ss->reply("462");	//AlreadyRegistered
-	return ss->reply("");	//Success
+	return ss->reply("001");	//Success
 }
 
 void	Frame::cmdPass(Session *ss, std::vector<std::string> const& sets)
@@ -480,7 +483,7 @@ std::vector<std::string>	Frame::getMask(std::string const& str)
 		if (checkMask(str, it->first, wild))
 			v.insert(v.end(), it->first);
 		//checkUserHost
-		else if (checkMask(str, it->second->Host(), wild))
+		else if (checkMask(str, it->second->host(), wild))
 			v.insert(v.end(), it->first);
 		//checkUserRealName
 		else if (checkMask(str, it->second->name(), wild))

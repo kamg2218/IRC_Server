@@ -22,7 +22,6 @@ void		Channel::addUser(User *user)
 
 void		Channel::removeUser(User *user)
 {
-	//write
 	mUsers.erase(mUsers.find(user->nick()));
 }
 
