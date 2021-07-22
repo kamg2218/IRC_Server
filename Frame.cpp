@@ -476,6 +476,8 @@ std::vector<std::string>	Frame::getMask(std::string const& str)
 		if (checkMask(str, it->first, wild))
 			v.insert(v.end(), it->first);
 	}
+	if (v.size() != 0)
+		return v;
 	//checkServerName - Not Exist
 	for (UserMap::iterator it = mUsers.begin(); it != mUsers.end(); it++)
 	{
