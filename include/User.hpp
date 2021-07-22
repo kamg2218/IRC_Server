@@ -16,7 +16,8 @@ class User
 	private:
 		std::string		sRealname;
 		std::string		sNickname;
-		std::string		sHost;
+		std::string		sHostname;
+		std::string		sUsername;
 		ChannelMap		mChannels;
 		bool	didNick;
 		bool	didUser;
@@ -29,16 +30,19 @@ class User
 		static User*	create();
 		bool	addNick(std::vector<std::string> const& sets);
 		void	cmdNick(std::vector<std::string> const& sets);
-		bool	cmdUser();
+		bool	cmdUser(std::vector<std::string> const& sets);
 		void	cmdJoin(Channel* ch);
+		void	optionJoin(Session *ss, std::vector<std::string> const& sets);
 		bool	cmdPart(Session *ss, std::string const& sets, std::string const& msg);
 		void	cmdQuit(Session *ss, std::vector<std::string> const& sets);
 		void		setName(std::string const& s);
 		void		setNick(std::string const& s);
 		void		setHost(std::string const& s);
+		void		setUser(std::string const& s);
 		std::string	name() const;
 		std::string nick() const;
-		std::string Host() const;
+		std::string host() const;
+		std::string user() const;
 		std::string	msgHeader() const;
 		bool	CheckNick() const;
 		bool	CheckUser() const;
