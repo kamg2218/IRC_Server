@@ -14,7 +14,7 @@ bool	Executor::gotFullMsg(std::string const& buff) const
 {
 	std::string::size_type res;
 
-	res = buff.find("\r\n");
+	res = buff.find("\n");
 	if (res == std::string::npos)
 		return (false);
 	return (true);
@@ -24,20 +24,20 @@ std::string		Executor::getMessage(std::string& buff)
 {
 	std::string res;
 
-	res = buff.substr(0, buff.find("\r\n"));
+	res = buff.substr(0, buff.find("\n"));
 	return (res);
 }
 
 void	Executor::reset(std::string& buff)
 {
-	buff.erase(0, buff.find("\r\n") + 2);
+	buff.erase(0, buff.find("\n") +1);
 }
 
 int		Executor::msglen(std::string& buff)
 {
 	std::string::size_type	res;
 
-	res = buff.find("\r\n");
+	res = buff.find("\n");
 	if (res == std::string::npos)
 		return (0);
 	return (res);
