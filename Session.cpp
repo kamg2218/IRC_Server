@@ -62,8 +62,7 @@ bool	Session::handleRead(std::map<int, Session*> & ms, int sd)
 	//	rstream.append(buf, r);
 	//	if (!request.gotFullMsg(rstream))
 	//		return (false);
-		//StreamAppend(buf, r);
-		rstream.append(buf, r);
+		StreamAppend(buf, r);
 		while (request.gotFullMsg(rstream))
 		{
 			std::cout << "Got msg : " << request.getMessage(rstream) << std::endl;
