@@ -74,12 +74,29 @@ bool	Session::handleRead(std::map<int, Session*> & ms, int sd)
 	return (false);
 }
 
+//void	Session::replyAsServer(std::string const& str)
 void	Session::reply(std::string const& str)
 {
+	std::string msg;
+
+	msg += ":";
+	msg += "server.hostnema "; //temp;
+	msg += str;
+
 	std::string res = str;	
 	std::cout << "replied : " << str << "\n";
 	res += "\n";
 	send(_soc.sd(), res.c_str(), res.length(), 0);
+}
+
+void	Session::replyAsUser(Session *target, std::string const& str)
+{
+	std::string msg;
+
+	msg += ":";
+	msg += target->user().msgHeader();
+	msg += str;
+	send(target->soc().sd(), msg.c_str(), msg.length(), 0);
 }
 
 Socket&	Session::soc() { return _soc; }
