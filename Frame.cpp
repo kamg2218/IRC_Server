@@ -121,25 +121,35 @@ std::string	Frame::MakeLower(std::string const& str)
 void		Frame::cmdPart(Session *ss, std::vector<std::string> const& sets)
 {
 	int			n;
+	std::string	re;
 	std::string	str;
 
-	if (sets.size() != 2)
+	if (sets.size() < 2)
 		return ss->reply("461");	//NeedMoreParams
+	re = "";
+	if (sets.size() > 2)
+	{
+		re = sets[2];
+		if (re[0] == ':')
+			re = re.substr(1);
+		for (int i = 3; i < sets.size(); i++)
+			re += " " + sets[i];
+	}
 	str = sets[1];
 	while (1){
 		n = str.find(",");
+		ss->reply(doPart(ss, str.substr(0, n), re));
 		if (n == std::string::npos)
 			break ;
-		ss->reply(doPart(ss, str.substr(0, n)));
 		str = str.substr(n + 1);
 	}
 }
 
-std::string		Frame::doPart(Session *ss, std::string const& sets)
+std::string		Frame::doPart(Session *ss, std::string const& sets, std::string const& re)
 {
 	if (mChannels.find(sets.substr(1)) == mChannels.end())
 		return "403";	//NoSuchChannel
-	if (ss->user().cmdPart(ss, sets.substr(1), "") == false)
+	else if (ss->user().cmdPart(ss, sets.substr(1), re) == false)
 		return "442";	//NotOnChannel
 	return "";	//Success
 }
@@ -292,7 +302,7 @@ void	Frame::cmdList(Session *ss, std::vector<std::string> const& sets)
 	int				n;
 	std::string		str;
 
-	if (sets.size() < 1 || sets.size() > 3)
+	if (sets.size() < 1)
 		return ss->reply("461");	//NeedMoreParams
 	else if (sets.size() == 1)
 		return ss->reply(doList(ss, ""));

@@ -44,7 +44,7 @@ class Frame
 		void	cmdOper(Session *ss, std::vector<std::string> const& sets);
 		void	cmdTopic(Session *ss, std::vector<std::string> const& sets);
 		void	cmdList(Session *ss, std::vector<std::string> const& sets);
-		std::string	doPart(Session *ss, std::string const& sets);
+		std::string	doPart(Session *ss, std::string const& sets, std::string const& re);
 		std::string	doJoin(Session *ss, std::string const& sets);
 		std::string	doList(Session *ss, std::string const& sets);
 		User*	findUser(std::string const& name);
