@@ -1,11 +1,11 @@
 #include "include/Channel.hpp"
 #include "include/Session.hpp"
 
-Channel::Channel(User *creator, std::string const& name, std::string const& topic)
+Channel::Channel(Session *creator, std::string const& name, std::string const& topic)
 	: sName(name), sTopic(topic)
 {
-	mUsers[creator->nick()] = creator;
-	mOperators[creator->nick()] = creator;
+	mUsers[creator->user().nick()] = creator;
+	mOperators[creator->user().nick()] = creator;
 }
 
 Channel::~Channel()
@@ -13,10 +13,10 @@ Channel::~Channel()
 	//write
 }
 
-void		Channel::addUser(User *user)
+void		Channel::addUser(Session *user)
 {
 	//write
-	mUsers[user->nick()] = user;
+	mUsers[user->user().nick()] = user;
 	
 }
 
@@ -42,7 +42,7 @@ void		Channel::broadcast(Session *ss, std::string const& message)
 
 	it = mUsers.begin();
 	for (; it != mUsers.end() ; ++it)
-		ss->reply(message);
+		ss->replyAsUser(it->second, message);
 }
 
 std::string		Channel::password() const { return sPassword; }
@@ -65,7 +65,7 @@ void	Channel::cmdNick(std::string const& name, std::string const& nick)
 	{
 		if (it->first == name)
 		{
-			mUsers.insert(std::pair<std::string, User*>(nick, it->second));
+			mUsers.insert(std::pair<std::string, Session*>(nick, it->second));
 			mUsers.erase(it);
 			return ;
 		}
@@ -85,5 +85,4 @@ bool			Channel::isOperator(std::string const& nick) const
 void	Channel::setTopic(std::string const topic)
 {
 	sTopic = topic;
-
 }
