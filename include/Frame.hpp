@@ -9,7 +9,7 @@
 #include "MainServer.hpp"
 #include "Service.hpp"
 
-typedef std::map<std::string, User*> UserMap;
+typedef std::map<std::string, Session*> UserMap;
 typedef std::map<std::string, Channel*> ChannelMap;
 
 class Frame
@@ -25,7 +25,7 @@ class Frame
 		static Frame*	instance();
 		void	start();
 		bool	doesNicknameExists(std::string const& name);
-		bool	addUser(User *new_user);
+		bool	addUser(Session *new_user);
 		void	removeUser(std::string const& nick);
 		bool	doesChannelExists(std::string const& name);
 		void	addChannel(Channel* new_chan);
@@ -34,6 +34,7 @@ class Frame
 		bool	CheckNickname(std::string const& name);
 		bool	CheckChannelname(std::string const& name);
 		std::string	MakeLower(std::string const& str);
+		Session*	findUser(std::string const& name);
 		Channel*	findChannel(std::string const& name);
 		void	cmdPart(Session *ss, std::vector<std::string> const& sets);
 		void	cmdQuit(Session *ss, std::vector<std::string> const& sets);
@@ -44,10 +45,9 @@ class Frame
 		void	cmdOper(Session *ss, std::vector<std::string> const& sets);
 		void	cmdTopic(Session *ss, std::vector<std::string> const& sets);
 		void	cmdList(Session *ss, std::vector<std::string> const& sets);
-		std::string	doPart(Session *ss, std::string const& sets);
+		std::string	doPart(Session *ss, std::string const& sets, std::string const& re);
 		std::string	doJoin(Session *ss, std::string const& sets);
 		std::string	doList(Session *ss, std::string const& sets);
-		User*	findUser(std::string const& name);
 		void	cmdKick(Session *ss, std::vector<std::string> const& sets);
 		void	cmdInvite(Session *ss, std::vector<std::string> const& sets);
 		bool	checkMask(std::string const& str, std::string const& name, int wild);
