@@ -41,6 +41,7 @@ class Session
 		void	StreamAppend(char *str, int r);
 		void	Err_401(std::string const& nick);
 		void	Err_402(std::string const& name);
+		void	Err_403(std::string const& chname);
 		void	Err_404(std::string const& chname);
 		void	Err_406(std::string const& nick);
 		void	Err_407(std::string const& nicl);

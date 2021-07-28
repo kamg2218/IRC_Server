@@ -403,15 +403,15 @@ void	Frame::cmdKick(Session *ss, std::vector<std::string> const& sets)
 	Channel *channel;
 
 	if (sets.size() < 3)
-		ss->replyAsServer("461"); // NOT ENOUGH PARAM
+		ss->Err_461("KICK"); //ERR_NEEDMOREPARAMS
 	cmdsets = kicklist(sets);
 	while(cmdsets.size())
 	{
 		cmd = cmdsets[0];
 		if (cmd.size() < 2)
-			ss->replyAsServer("461"); //ERR_NEEDMOREPARAMS
+			ss->Err_461("KICK"); //ERR_NEEDMOREPARAMS
 		else if (cmd[0].find("#") == std::string::npos || cmd[0].find("&") == std::string::npos)
-			ss->replyAsServer("461"); //NOT ENOUGH PARAM
+			ss->Err_461("KICK"); //ERR_NEEDMOREPARAMS
 		else if (!doesChannelExists(cmd[0].substr(1)))
 			ss->replyAsServer("403"); //ERR_NOSUCHCHANNEL
 		else if (!(ss->user().isMemOfChannel(cmd[0].substr(1))))
