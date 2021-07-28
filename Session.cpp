@@ -45,11 +45,24 @@ bool	Session::handleRead(std::map<int, Session*> & ms, int sd)
 	//char	buf[bufsize];
 
 	//std::cout << "handle Read\n";
-	//for (int i = 0; i < bufsize; i++)
-	//	buf[i] = 0;
 	r = recv(_soc.sd(), buf, bufsize, 0);
 
-	//std::cout << "r = " << r << ", buf = " << buf << std::endl;
+	if (r)
+		StreamAppend(buf, r);
+	while (request.gotFullMsg(stream))
+	{
+		std::cout << "Got msg : " << request.getMessage(rstream) << std::endl;
+		request.execute(rstream, this);
+		request.reset(rstream);
+	}
+	if (r <= 0)
+	{
+		std::cout << "client gone\n";
+		return (true);
+	}
+	return (false);
+
+	/*
 	if (r <= 0)
 	{
 		std::cout << "client gone\n";
@@ -71,6 +84,7 @@ bool	Session::handleRead(std::map<int, Session*> & ms, int sd)
 		}
 	}
 	return (false);
+	*/
 }
 
 //void	Session::replyAsServer(std::string const& str)
