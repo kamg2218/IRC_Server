@@ -423,8 +423,8 @@ void	Frame::cmdKick(Session *ss, std::vector<std::string> const& sets)
 			if (doesNicknameExists(cmd[1]))
 			{
 				target = findUser(cmd[0]);
-				target->user().cmdPart(ss, cmd[0], cmd[2]);
 				channel->broadcast(ss, cmd[0] + cmd[1] + cmd[2]);
+				target->user().cmdPart(ss, cmd[0], cmd[2]);
 			}
 		}
 		cmdsets.erase(cmdsets.begin());
