@@ -56,6 +56,7 @@ class Frame
 		void	cmdWhois(Session *ss, std::vector<std::string> const& sets);
 		void	cmdWhowas(Session *ss, std::vector<std::string> const& sets);
 		void	cmdPrivmsg(Session *ss, std::vector<std::string> const& sets);
+
 };
 
 #endif

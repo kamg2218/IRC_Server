@@ -1,5 +1,6 @@
 #include <iostream>
 #include "./include/Frame.hpp"
+
 // 일치하는 정보 목록 반환
 // <name> 매개 변수와 일치하는 정보 목록을 반환하는 쿼리를 생성하는 데 사용
 
@@ -36,22 +37,6 @@ void		Frame::cmdWho(Session *ss, std::vector<std::string> const& sets)
             res.clear();
         }
     }
-    // if (sets[1] == "o") // 옵션이 있을 경우
-    // {
-    //     // 관리자 리스트만 리턴
-    //     for (;itu != mUsers.end(); itu++, itc++)
-    //     {
-    //         if (itu->second->manager == 1)
-    //         {
-    //             res = mChannels.sName;
-    //             res += itu->first + " " + mUsers.sHost + " " + "server " + "0 " + mUsers.Realname + "\n";
-    //             //RPL_WHOREPLY
-    //             //"<channel> <user> <host> <server> <nick> \ <H|G>[*][@|+] :<hopcount>(0) <real name>"
-    //             ss->reply(res);
-    //             res.clear();
-    //         }
-    //     }
-    // }
     else
     {
         v = getMask(sets[1]);
