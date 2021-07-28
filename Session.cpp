@@ -133,6 +133,15 @@ void	Session::Err_402(std::string const& name)
 	replyAsServer(msg);
 }
 
+void	Session::Err_403(std::string const& chname)
+{
+	std::string msg;
+
+	msg += chname;
+	msg += " :No such channel";
+	replyAsServer(msg);
+}
+
 void	Session::Err_404(std::string const& chname)
 {
 	std::string msg;
