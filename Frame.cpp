@@ -209,7 +209,7 @@ std::string	Frame::doJoin(Session *ss, std::string const& sets)
 	}
 	else
 		addChannel(new Channel(ss, MakeLower(sets.substr(1))));
-	return "353 =" + MakeLower(sets.substr(1)) + " :" + ss->user().nick();	//RPL_NAMREPLY
+	return ss->Rep_353(MakeLower(sets.substr(1)), ss->user().nick());	//RPL_NAMREPLY
 }
 
 void	Frame::cmdNick(Session *ss, std::vector<std::string> const& sets)
@@ -295,7 +295,7 @@ void	Frame::cmdTopic(Session *ss, std::vector<std::string> const& sets)
 	if (sets.size() == 2)
 	{
 		if (it->second->topic() == "")
-			return ss->replyAsServer("331");	//NoTopic
+			return ss->Rep_331(it->first);	//NoTopic
 		else if (it->second->hasUser(&(ss->user())))
 			return ss->replyAsServer(it->second->topic());
 		return ss->Err_442(it->first);	//NotOnChannel
@@ -308,7 +308,7 @@ void	Frame::cmdTopic(Session *ss, std::vector<std::string> const& sets)
 		if (it->second->isOperator(ss->user().nick()) == false)
 			return ss->Err_482(it->first);	//ChanOprivsNeeded
 		it->second->setTopic(str);
-		return ss->replyAsServer("332");	//Topic
+		return ss->Rep_332(it->first, str);	//Topic
 	}
 }
 
@@ -346,11 +346,11 @@ std::string		Frame::doList(Session *ss, std::string const& sets)
 				str += it->second->topic() + "\n";
 		}
 		if (str == "")
-			return "323";	//ListEnd
+			return ss->Rep_323();	//ListEnd
 		return str;
 	}
 	if (!(doesChannelExists(MakeLower(sets.substr(1)))))
-		return "323";	//ListEnd
+		return ss->Rep_323();	//ListEnd
 	it = mChannels.find(MakeLower(sets.substr(1)));
 	str += it->first + "\n";
 	if (it->second->topic() != "")
