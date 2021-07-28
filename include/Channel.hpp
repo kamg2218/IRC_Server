@@ -7,7 +7,7 @@
 class Channel;
 #include "User.hpp"
 
-typedef std::map<std::string, User*> Usermap;
+typedef std::map<std::string, Session*> Usermap;
 
 class Channel
 {
@@ -19,13 +19,13 @@ class Channel
 		Usermap 			mUsers;
 		Usermap				mOperators;
 	public:
-		Channel(User *creator, std::string const& name, std::string const& topic = "");
+		Channel(Session *creator, std::string const& name, std::string const& topic = "");
 		~Channel();
 		/*
 		void	cmdTopic(std::string const& topic);
 
 		*/
-		void	addUser(User *user);
+		void	addUser(Session *user);
 		void	cmdNick(std::string const& name, std::string const& nick);
 		void	removeUser(User *user);
 		bool	hasUser(User *user);
