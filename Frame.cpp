@@ -129,7 +129,7 @@ void		Frame::cmdPart(Session *ss, std::vector<std::string> const& sets)
 	std::string	str;
 
 	if (sets.size() < 2)
-		return ss->reply("461");	//NeedMoreParams
+		return ss->replyAsServer("461");	//NeedMoreParams
 	re = "";
 	if (sets.size() > 2)
 	{
@@ -142,7 +142,7 @@ void		Frame::cmdPart(Session *ss, std::vector<std::string> const& sets)
 	str = sets[1];
 	while (1){
 		n = str.find(",");
-		ss->reply(doPart(ss, str.substr(0, n), re));
+		ss->replyAsServer(doPart(ss, str.substr(0, n), re));
 		if (n == std::string::npos)
 			break ;
 		str = str.substr(n + 1);
@@ -162,7 +162,7 @@ void	Frame::cmdQuit(Session *ss, std::vector<std::string> const& sets)
 {
 	ss->user().cmdQuit(ss, sets);
 	removeUser(ss->user().nick());
-	ss->reply(ss->user().nick() + " left\n");
+	ss->replyAsServer(ss->user().nick() + " left\n");
 }
 
 void	Frame::cmdJoin(Session *ss, std::vector<std::string> const& sets)
@@ -171,15 +171,15 @@ void	Frame::cmdJoin(Session *ss, std::vector<std::string> const& sets)
 	std::string		str;
 
 	if (sets.size() < 2)
-		return ss->reply("461");	//NeedMoreParams
+		return ss->replyAsServer("461");	//NeedMoreParams
 	else if (sets.size() == 2 && sets[1] == "O")
 		return ss->user().optionJoin(ss, sets);
 	str = sets[1];
 	while (1){
 		n = str.find(",");
 		if (!(CheckChannelname(str.substr(0, n))))
-			return ss->reply("403");	//NoSuchChannel
-		ss->reply(doJoin(ss, str.substr(0, n)));
+			return ss->replyAsServer("403");	//NoSuchChannel
+		ss->replyAsServer(doJoin(ss, str.substr(0, n)));
 		if (std::string::npos == n)
 			break ;
 		str = str.substr(n + 1);
@@ -208,20 +208,20 @@ void	Frame::cmdNick(Session *ss, std::vector<std::string> const& sets)
 	if (sets[0] == "NICK")
 	{
 		if (sets.size() != 2)
-			return ss->reply("431");	//noNicknameGiven
+			return ss->replyAsServer("431");	//noNicknameGiven
 		else if (!(CheckNickname(sets[1])))
-			return ss->reply("432");	//ErroneusNickname
+			return ss->replyAsServer("432");	//ErroneusNickname
 		else if (doesNicknameExists(sets[1]))
-			return ss->reply("433");	//NicknameInUse
+			return ss->replyAsServer("433");	//NicknameInUse
 		else if (ss->user().addNick(sets) == false)
-			return ss->reply("433");	//already be registered
+			return ss->replyAsServer("433");	//already be registered
 	}
 	else
 	{
 		if (doesNicknameExists(sets[2]))
-			return ss->reply("433");	//ignore
+			return ss->replyAsServer("433");	//ignore
 		else if (&sets[0][1] != ss->user().nick())
-			return ss->reply("");	//ERROR
+			return ss->replyAsServer("");	//ERROR
 		for (UserMap::iterator it = mUsers.begin(); it != mUsers.end(); it++)
 		{
 			if (it->first == ss->user().nick())
@@ -233,45 +233,45 @@ void	Frame::cmdNick(Session *ss, std::vector<std::string> const& sets)
 		}
 		ss->user().cmdNick(sets);
 	}
-	return ss->reply(""); //success
+	return ss->replyAsServer(""); //success
 }
 
 void	Frame::cmdUser(Session *ss, std::vector<std::string> const& sets)
 {
 	if (sets.size() < 5)
-		return ss->reply("461");	//needMoreParams
+		return ss->replyAsServer("461");	//needMoreParams
 	else if (ss->user().cmdUser(sets) == false)
-		return ss->reply("462");	//AlreadyRegistered
+		return ss->replyAsServer("462");	//AlreadyRegistered
 	//Frame mUsers에 저장
 	else if (addUser(ss) == false)
-		return ss->reply("462");	//AlreadyRegistered
-	return ss->reply("");	//Success
+		return ss->replyAsServer("462");	//AlreadyRegistered
+	return ss->replyAsServer("");	//Success
 }
 
 void	Frame::cmdPass(Session *ss, std::vector<std::string> const& sets)
 {
 	if (sets.size() != 2)
-		return ss->reply("461");	//NeedMoreParams
+		return ss->replyAsServer("461");	//NeedMoreParams
 	else if (server.checkPass(sets[2]))
-		return ss->reply("462");	//AlreadyRegistred
-	return ss->reply("");
+		return ss->replyAsServer("462");	//AlreadyRegistred
+	return ss->replyAsServer("");
 }
 
 void	Frame::cmdOper(Session *ss, std::vector<std::string> const& sets)
 {
 	if (sets.size() != 3)
-		return ss->reply("461");	//NeedMoreParams
+		return ss->replyAsServer("461");	//NeedMoreParams
 	for (UserMap::iterator it = mUsers.begin(); it != mUsers.end(); it++)
 	{
 		if (it->first == sets[1])
 		{
 			if (server.checkPass(sets[2]) == false)
-				return ss->reply("464");	//passwdMismatch
+				return ss->replyAsServer("464");	//passwdMismatch
 			it->second->user().cmdOper();
-			return ss->reply("381");	//RPL_YOUREOPER
+			return ss->replyAsServer("381");	//RPL_YOUREOPER
 		}
 	}
-	return ss->reply("491");	//NoOperHost
+	return ss->replyAsServer("491");	//NoOperHost
 }
 
 void	Frame::cmdTopic(Session *ss, std::vector<std::string> const& sets)
@@ -280,17 +280,17 @@ void	Frame::cmdTopic(Session *ss, std::vector<std::string> const& sets)
 	std::string				str;
 
 	if (sets.size() < 2)
-		return ss->reply("461");	//NeedMoreParams
+		return ss->replyAsServer("461");	//NeedMoreParams
 	it = mChannels.find(MakeLower(sets[1].substr(1)));
 	if (it == mChannels.end())
-		return ss->reply("442");	//NotOnChannel
+		return ss->replyAsServer("442");	//NotOnChannel
 	if (sets.size() == 2)
 	{
 		if (it->second->topic() == "")
-			return ss->reply("331");	//NoTopic
+			return ss->replyAsServer("331");	//NoTopic
 		else if (it->second->hasUser(&(ss->user())))
-			return ss->reply(it->second->topic());
-		return ss->reply("442");	//NotOnChannel
+			return ss->replyAsServer(it->second->topic());
+		return ss->replyAsServer("442");	//NotOnChannel
 	}
 	else
 	{
@@ -298,9 +298,9 @@ void	Frame::cmdTopic(Session *ss, std::vector<std::string> const& sets)
 		for (int i = 3; i < sets.size(); i++)
 			str += " " + sets[i];
 		if (it->second->isOperator(ss->user().nick()) == false)
-			return ss->reply("482");	//ChanOprivsNeeded
+			return ss->replyAsServer("482");	//ChanOprivsNeeded
 		it->second->setTopic(str);
-		return ss->reply("332");	//Topic
+		return ss->replyAsServer("332");	//Topic
 	}
 }
 
@@ -310,13 +310,13 @@ void	Frame::cmdList(Session *ss, std::vector<std::string> const& sets)
 	std::string		str;
 
 	if (sets.size() < 1)
-		return ss->reply("461");	//NeedMoreParams
+		return ss->replyAsServer("461");	//NeedMoreParams
 	else if (sets.size() == 1)
-		return ss->reply(doList(ss, ""));
+		return ss->replyAsServer(doList(ss, ""));
 	str = sets[1];
 	while (1){
 		n = str.find(",");
-		ss->reply(doList(ss, str.substr(0, n)));
+		ss->replyAsServer(doList(ss, str.substr(0, n)));
 		if (std::string::npos == n)
 			break ;
 		str = str.substr(n + 1);
@@ -403,26 +403,26 @@ void	Frame::cmdKick(Session *ss, std::vector<std::string> const& sets)
 	Channel *channel;
 
 	if (sets.size() < 3)
-		ss->reply("461"); // NOT ENOUGH PARAM
+		ss->replyAsServer("461"); // NOT ENOUGH PARAM
 	cmdsets = kicklist(sets);
 	while(cmdsets.size())
 	{
 		cmd = cmdsets[0];
 		if (cmd.size() < 2)
-			ss->reply("461"); //ERR_NEEDMOREPARAMS
+			ss->replyAsServer("461"); //ERR_NEEDMOREPARAMS
 		else if (cmd[0].find("#") == std::string::npos || cmd[0].find("&") == std::string::npos)
-			ss->reply("461"); //NOT ENOUGH PARAM
+			ss->replyAsServer("461"); //NOT ENOUGH PARAM
 		else if (!doesChannelExists(cmd[0].substr(1)))
-			ss->reply("403"); //ERR_NOSUCHCHANNEL
+			ss->replyAsServer("403"); //ERR_NOSUCHCHANNEL
 		else if (!(ss->user().isMemOfChannel(cmd[0].substr(1))))
-			ss->reply("442"); //ERR_NOTONCHANNEL;
+			ss->replyAsServer("442"); //ERR_NOTONCHANNEL;
 		else if (!((channel = findChannel(cmd[0].substr(1)))->isOperator(ss->user().nick())))
-			ss->reply("482"); //ERR_CHANOPRIVSNEEDED
+			ss->replyAsServer("482"); //ERR_CHANOPRIVSNEEDED
 		else
 		{
 			if (doesNicknameExists(cmd[1]))
 			{
-				target = findUser(cmd[0]);
+				target = findUser(cmd[1]);
 				channel->broadcast(ss, cmd[0] + cmd[1] + cmd[2]);
 				target->user().cmdPart(ss, cmd[0], cmd[2]);
 			}
@@ -434,34 +434,39 @@ void	Frame::cmdKick(Session *ss, std::vector<std::string> const& sets)
 void	Frame::cmdInvite(Session *ss, std::vector<std::string> const& sets)
 {
 	Channel *channel;
-	User	*target;
+	Session	*target;
 	std::string	rpl;
+	std::string	joinmsg;
 
 	if (sets.size() < 3)
 	{
-		ss->reply("461"); // NOT ENOUGH PARAM
+		ss->replyAsServer("461"); // NOT ENOUGH PARAM
 		return ;
 	}
 	if (sets[1].find("#") == std::string::npos && sets[1].find("&") == std::string::npos)
-		ss->reply("461"); //NOT ENOUGH PARAM
+		ss->replyAsServer("461"); //NOT ENOUGH PARAM
 	else if (!doesChannelExists(sets[1].substr(1)))
-		ss->reply("403"); //NO SUCH CHANNEL
+		ss->replyAsServer("403"); //NO SUCH CHANNEL
 	else if (!(ss->user().isMemOfChannel(sets[1].substr(1))))
-		ss->reply("442"); //ERR_NOTONCHANNEL;
+		ss->replyAsServer("442"); //ERR_NOTONCHANNEL;
 	else if (!doesNicknameExists(sets[2]))
-		ss->reply("401"); //ERR_NOSUCHNICK
-	else if (!((target = &(findUser(sets[2])->user()))->isMemOfChannel(channel->name())))
-		ss->reply("443"); //ERR_USERONCHANNEL;
+		ss->replyAsServer("401"); //ERR_NOSUCHNICK
+	else if (!(target = findUser(sets[2]))->user().isMemOfChannel(channel->name()))
+		ss->replyAsServer("443"); //ERR_USERONCHANNEL;
 	else
 	{
-		// proces
-		target->cmdJoin(channel); 
-		//channel->addUser(target); 수정필요
-		channel->broadcast(ss, target->nick() + " joined to " + channel->name());
+		rpl.append("341 ");
 		rpl.append(channel->name());
 		rpl.append(" ");
-		rpl.append(target->nick());
-		ss->reply(rpl);
+		rpl.append(target->user().nick());
+		ss->replyAsServer(rpl);
+		target->replyAsServer(rpl);
+		joinmsg.append("JOIN ");
+		joinmsg.append("#");
+		joinmsg.append(channel->name());
+		target->user().cmdJoin(channel); 
+		channel->addUser(target);
+		channel->broadcast(target, joinmsg);
 	}
 }
 
@@ -511,4 +516,3 @@ std::vector<std::string>	Frame::getMask(std::string const& str)
 	}
 	return v;
 }
-

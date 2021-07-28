@@ -143,7 +143,7 @@ void	User::optionJoin(Session *ss, std::vector<std::string> const& sets)
 		if (it->second->userCount() == 0)
 			Frame::instance()->removeChannel(it->first);
 	}
-	ss->reply("");	//success
+	ss->replyAsServer("");	//success
 }
 
 bool	User::cmdPart(Session *ss, std::string const& sets, std::string const& msg)
@@ -214,7 +214,7 @@ void			User::cmdKick(std::vector<std::string> const& sets, Session *ss)
 	if (sets.size() < 3)
 	{
 		std::cout << "Not enough parameter\n";
-		//ss.reply("461"); //not enough parameter
+		//ss.replyAsServer("461"); //not enough parameter
 		return ;
 	}
 	std::cout << "< check channel\n";
@@ -229,7 +229,7 @@ void			User::cmdKick(std::vector<std::string> const& sets, Session *ss)
 	if (chlist.empty())
 	{
 		std::cout << "Not enough parameter\n";
-		ss->reply("461"); //not enough parameter
+		ss->replyAsServer("461"); //not enough parameter
 		return ;
 	}
 	for (; it != sets.end(); ++it)
@@ -243,20 +243,20 @@ void			User::cmdKick(std::vector<std::string> const& sets, Session *ss)
 		if (!frame->doesChannelExists((*it)))
 		{
 			std::cout << "There is no such channel\n";
-			ss->reply("403"); //해당하는 채널없음
+			ss->replyAsServer("403"); //해당하는 채널없음
 			return ;
 		}
 		if (!isMemOfChannel((*it)))
 		{
 			std::cout << "You are not in that channel\n";
-			//ss.reply("442"); //조작하려는 유저가 해당 채널에 속하지 않음. 
+			//ss.replyAsServer("442"); //조작하려는 유저가 해당 채널에 속하지 않음. 
 			return ;
 		}
 		ch = (frame->findChannel((*it)));
 		if (!ch->isOperator(nick()))
 		{
 			std::cout << "You are not the operator\n";
-			//ss.reply("482"); //명령어에 대한 권한 없음
+			//ss.replyAsServer("482"); //명령어에 대한 권한 없음
 			return ;
 		}
 		// user Part
@@ -275,18 +275,18 @@ void			User::cmdKick(std::vector<std::string> const& sets, Session *ss)
 	ch_name = sets[1].substr(1);
 	if (!Frame().doesChannelExists(ch_name))
 	{
-		//ss.reply("403"); //해당하는 채널없음
+		//ss.replyAsServer("403"); //해당하는 채널없음
 		return ;
 	}
 	if (isMemOfChannel(ch_name))
 	{
-		//ss.reply("442"); //조작하려는 유저가 해당 채널에 속하지 않음. 
+		//ss.replyAsServer("442"); //조작하려는 유저가 해당 채널에 속하지 않음. 
 		return ;
 	}
 	ch = Frame().findChannel(ch_name);
 	if (!(*ch).second->isOperator(nick()))
 	{
-		//ss.reply("482"); //명령어에 대한 권한 없음
+		//ss.replyAsServer("482"); //명령어에 대한 권한 없음
 		return ;
 	}
 	*/

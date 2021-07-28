@@ -88,7 +88,7 @@ bool	Session::handleRead(std::map<int, Session*> & ms, int sd)
 }
 
 //void	Session::replyAsServer(std::string const& str)
-void	Session::reply(std::string const& str)
+void	Session::replyAsServer(std::string const& str)
 {
 	std::string msg;
 
@@ -115,3 +115,31 @@ void	Session::replyAsUser(Session *target, std::string const& str)
 Socket&	Session::soc() { return _soc; }
 
 User&	Session::user() { return _user; }
+
+void	Session::Err_401(){}
+void	Session::Err_402(){}
+void	Session::Err_404(){}
+void	Session::Err_406(){}
+void	Session::Err_407(){}
+void	Session::Err_411(){}
+void	Session::Err_412(){}
+void	Session::Err_413(){}
+void	Session::Err_414(){}
+void	Session::Err_431(){}
+void	Session::Err_432(){}
+void	Session::Err_433(){}
+void	Session::Err_442(){}
+void	Session::Err_443(){}
+void	Session::Err_461(std::string const& str)
+{
+	std::string msg;
+
+	msg += str;
+	msg += " :Not enough parameters";
+	replyAsServer(msg);
+}
+
+void	Session::Err_462(std::string const& str){}
+void	Session::Err_464(std::string const& str){}
+void	Session::Err_482(std::string const& str){}
+void	Session::Err_491(std::string const& str){}

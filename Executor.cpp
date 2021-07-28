@@ -103,7 +103,7 @@ void	Executor::execute(std::string& buff, Session* ss)
 	}
 	if (!(ss->user().IsConnected()))
 	{
-		ss->reply("451");
+		ss->replyAsServer("451");
 	}
 	else if (i == 1)
 	{
@@ -156,7 +156,7 @@ void	Executor::execute(std::string& buff, Session* ss)
 	else
 	{
 		// Error 421
-		ss->reply("421");
+		ss->replyAsServer("421");
 	}
 
 }
