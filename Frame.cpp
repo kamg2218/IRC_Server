@@ -188,14 +188,14 @@ void	Frame::cmdJoin(Session *ss, std::vector<std::string> const& sets)
 		n = str.find(",");
 		if (!(CheckChannelname(str.substr(0, n))))
 			return ss->Err_403(str.substr(0, n));	//NoSuchChannel
-		ss->replyAsServer(doJoin(ss, str.substr(0, n)));
+		doJoin(ss, str.substr(0, n));
 		if (std::string::npos == n)
 			break ;
 		str = str.substr(n + 1);
 	}
 }
 //reply check
-std::string	Frame::doJoin(Session *ss, std::string const& sets)
+void	Frame::doJoin(Session *ss, std::string const& sets)
 {
 	ChannelMap::iterator	it;
 	
@@ -209,7 +209,7 @@ std::string	Frame::doJoin(Session *ss, std::string const& sets)
 	}
 	else
 		addChannel(new Channel(ss, MakeLower(sets.substr(1))));
-	return ss->Rep_353(MakeLower(sets.substr(1)), ss->user().nick());	//RPL_NAMREPLY
+	ss->Rep_353(MakeLower(sets.substr(1)), ss->user().nick());	//RPL_NAMREPLY
 }
 
 void	Frame::cmdNick(Session *ss, std::vector<std::string> const& sets)
@@ -320,18 +320,18 @@ void	Frame::cmdList(Session *ss, std::vector<std::string> const& sets)
 	if (sets.size() < 1)
 		return ss->Err_461("LIST");	//NeedMoreParams
 	else if (sets.size() == 1)
-		return ss->replyAsServer(doList(ss, ""));
+		return doList(ss, "");
 	str = sets[1];
 	while (1){
 		n = str.find(",");
-		ss->replyAsServer(doList(ss, str.substr(0, n)));
+		doList(ss, str.substr(0, n));
 		if (std::string::npos == n)
 			break ;
 		str = str.substr(n + 1);
 	}
 }
 
-std::string		Frame::doList(Session *ss, std::string const& sets)
+void	Frame::doList(Session *ss, std::string const& sets)
 {
 	std::string				str;
 	ChannelMap::iterator	it;
@@ -341,21 +341,21 @@ std::string		Frame::doList(Session *ss, std::string const& sets)
 	{
 		for (it = mChannels.begin(); it != mChannels.end(); it++)
 		{
-			str += it->first + "\n";
+			str += it->first;
 			if (it->second->topic() != "")
-				str += it->second->topic() + "\n";
+				str += it->second->topic();
 		}
 		if (str == "")
 			return ss->Rep_323();	//ListEnd
-		return str;
+		return ss->replyAsServer(str);
 	}
 	if (!(doesChannelExists(MakeLower(sets.substr(1)))))
 		return ss->Rep_323();	//ListEnd
 	it = mChannels.find(MakeLower(sets.substr(1)));
-	str += it->first + "\n";
+	str += it->first;
 	if (it->second->topic() != "")
-		str += it->second->topic() + "\n";
-	return str;
+		str += it->second->topic();
+	return ss->replyAsServer(str);
 }
 
 std::vector<std::string> split_comma(std::string s)
