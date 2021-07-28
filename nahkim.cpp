@@ -243,7 +243,7 @@ void		Frame::cmdWhowas(Session *ss, std::vector<std::string> const& sets) // 에
     }
     else if (sets.size() > 2)
     {
-        count = atoi(sets[2]);  // 만들어야하나
+        count = stoi(sets[2]);  // 만들어야하나
     }
     // 모든 유저에 대한 _pastNickname을 확인(list)
     for (itv = mUsers.rbegin(); itv != mUsers.rend(); itv++)
@@ -277,6 +277,8 @@ void		Frame::cmdPrivmsg(Session *ss, std::vector<std::string> const& sets)
     std::vector<std::string> receivers;
     std::vector<std::string> msg;
     std::vector<std::string>::iterator msgit = msg.begin();
+    UserMap::iterator itu;
+    ChannelMap::iterator itc;
 
     if (sets[1][0] == ':')
     {
@@ -289,20 +291,23 @@ void		Frame::cmdPrivmsg(Session *ss, std::vector<std::string> const& sets)
     // receiver에 콤마로 split해서 저장하기
     receivers = split_comma(sets[1]);
     std::vector<std::string>::iterator receiverit = receivers.begin();
+    std::vector<std::string>::iterator tmp;
+    UserMap::iterator itu;
+    itu = mUsers.begin();
 
     // 메세지 전까지 확인하기
     while (receiverit != receivers.end())
     {
         if (sets[1][0] == '#')  // channel
         {
-            if (!doesChannelExists(*receiverit)) // mChannels.second->sName
+            if (!doesChannelExists((*receiverit).substr(1))) // mChannels.second->sName
                 ss->reply("404");   // ERR_CANNOTSENDTOCHAN
         }
         else
         {
             if (!doesNicknameExists(*receiverit))
                 ss->reply("401");       // ERR_NOSUCHNICK
-            if (receiverit + 1 != receivers.end())
+            for (tmp = receiverit + 1; tmp != receivers.end(); tmp++)
             {
                 if (*receiverit == *(receiverit + 1))
                     ss->reply("407");       // ERR_TOOMANYTARGETS
@@ -310,21 +315,44 @@ void		Frame::cmdPrivmsg(Session *ss, std::vector<std::string> const& sets)
         }
         receiverit++;
     }
+    std::string receiver;
+    for (receiverit = receivers.begin(); receiverit != receivers.end(); receiverit++)
+    {
+        receiver = *receiverit;
+        if (receiver[1] == '#')
+        {
+            for (;itc != mChannels.end(); receiverit++)
+            {
+                itc = mChannels.find((*receiverit).substr(1));
+                if (itc->second.name() == *receiverit)
+                    itc->second->broadcast(ss ,sets[2]);
+            }
+        }
+        else
+        {
+            for (itu = mUser.begin(); itu != mUsers.end(); itu++)
+            {
+                if (itu->second.user().name() == *receiverit)
+                    replyAsUser(itu->second, sets[2]);
+            }
+        }
+        ss->reply(*receiverit + " " + res);
+    }
 
     // 문자열 붙이기 :부터 맨 마지막까지
-    res = (std::string)sets.at(i);
-    std::string receiver;
-    while (++i < sets.size())
-    {
-        res += " " + sets.at(i);   // vector을 문자열로 변환
-    }
-    receiverit = receivers.begin();
-    while (receiverit != receivers.end())
-    {
-        ss->reply(*receiverit + " " + res);
-        receiverit++;
-    }
-    //ss->reply("<nick> :<away message>";
+    // res = (std::string)sets.at(i);
+    // std::string receiver;
+    // while (++i < sets.size())
+    // {
+    //     res += " " + sets.at(i);   // vector을 문자열로 변환
+    // }
+    // receiverit = receivers.begin();
+    // while (receiverit != receivers.end())
+    // {
+    //     ss->reply(*receiverit + " " + res);
+    //     receiverit++;
+    // }
+    // //ss->reply("<nick> :<away message>";
 
 }
 
