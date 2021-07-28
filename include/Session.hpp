@@ -44,7 +44,7 @@ class Session
 		void	Err_403(std::string const& chname);
 		void	Err_404(std::string const& chname);
 		void	Err_406(std::string const& nick);
-		void	Err_407(std::string const& nicl);
+		void	Err_407(std::string const& nick);
 		void	Err_411(std::string const& cmd);
 		void	Err_412(void);
 		void	Err_413(std::string const& mask);

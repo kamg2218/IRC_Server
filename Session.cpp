@@ -119,6 +119,9 @@ void	Session::Err_401(std::string const& nick)
 {
 	std::string msg;
 
+	msg += "401 ";
+	msg += user().nick();
+	msg += " ";
 	msg += nick;
 	msg += " :No such nick/channel";
 	replyAsServer(msg);
@@ -128,6 +131,9 @@ void	Session::Err_402(std::string const& name)
 {
 	std::string msg;
 
+	msg += "402 ";
+	msg += user().nick();
+	msg += " ";
 	msg += name;
 	msg += " :No such server";
 	replyAsServer(msg);
@@ -136,7 +142,10 @@ void	Session::Err_402(std::string const& name)
 void	Session::Err_403(std::string const& chname)
 {
 	std::string msg;
-
+	
+	msg += "403 ";
+	msg += user().nick();
+	msg += " ";
 	msg += chname;
 	msg += " :No such channel";
 	replyAsServer(msg);
@@ -145,7 +154,10 @@ void	Session::Err_403(std::string const& chname)
 void	Session::Err_404(std::string const& chname)
 {
 	std::string msg;
-
+	
+	msg += "404 ";
+	msg += user().nick();
+	msg += " ";
 	msg += chname;
 	msg += " :Cannot send to channel";
 	replyAsServer(msg);
@@ -155,6 +167,9 @@ void	Session::Err_406(std::string const& nick)
 {
 	std::string msg;
 
+	msg += "406 ";
+	msg += user().nick();
+	msg += " ";
 	msg += nick;
 	msg += " :There was no such nickname";
 	replyAsServer(msg);
@@ -164,6 +179,9 @@ void	Session::Err_407(std::string const& nick)
 {
 	std::string msg;
 
+	msg += "407 ";
+	msg += user().nick();
+	msg += " ";
 	msg += nick;
 	msg += " :Duplicate recipients. No message \\ delivered";
 	replyAsServer(msg);
@@ -173,6 +191,9 @@ void	Session::Err_411(std::string const &cmd)
 {
 	std::string msg;
 
+	msg += "411 ";
+	msg += user().nick();
+	msg += " ";
 	msg += ":No recipient given";
 	msg += cmd;
 	replyAsServer(msg);
@@ -182,6 +203,9 @@ void	Session::Err_412(void)
 {
 	std::string msg;
 
+	msg += "412 ";
+	msg += user().nick();
+	msg += " ";
 	msg += ":No text to send";
 	replyAsServer(msg);
 }
@@ -190,6 +214,9 @@ void	Session::Err_413(std::string const& mask)
 {
 	std::string msg;
 
+	msg += "413 ";
+	msg += user().nick();
+	msg += " ";
 	msg += mask;
 	msg += " :No toplevel domain specified";
 	replyAsServer(msg);
@@ -198,7 +225,10 @@ void	Session::Err_413(std::string const& mask)
 void	Session::Err_414(std::string const& mask)
 {
 	std::string msg;
-
+	
+	msg += "414 ";
+	msg += user().nick();
+	msg += " ";
 	msg += mask;
 	msg += " :Wildcard in toplevel domain";
 	replyAsServer(msg);
@@ -207,7 +237,10 @@ void	Session::Err_414(std::string const& mask)
 void	Session::Err_431(void)
 {
 	std::string msg;
-
+	
+	msg += "431 ";
+	msg += user().nick();
+	msg += " ";
 	msg += ":No nickname given";
 	replyAsServer(msg);
 }
@@ -215,7 +248,10 @@ void	Session::Err_431(void)
 void	Session::Err_432(std::string const& nick)
 {
 	std::string msg;
-
+	
+	msg += "432 ";
+	msg += user().nick();
+	msg += " ";
 	msg += nick;
 	msg += " :Erroneus nickname";
 	replyAsServer(msg);
@@ -225,6 +261,9 @@ void	Session::Err_433(std::string const& nick)
 {
 	std::string msg;
 
+	msg += "433 ";
+	msg += user().nick();
+	msg += " ";
 	msg += nick;
 	msg += " :Nickname is already in use";
 	replyAsServer(msg);
@@ -234,6 +273,9 @@ void	Session::Err_442(std::string const& chname)
 {
 	std::string msg;
 
+	msg += "442 ";
+	msg += user().nick();
+	msg += " ";
 	msg += chname;
 	msg += " :You;re not on that channel";
 	replyAsServer(msg);
@@ -243,6 +285,9 @@ void	Session::Err_443(std::string const& nick, std::string const& chname)
 {
 	std::string msg;
 
+	msg += "443 ";
+	msg += user().nick();
+	msg += " ";
 	msg += nick;
 	msg += " ";
 	msg += chname;
@@ -254,6 +299,9 @@ void	Session::Err_461(std::string const& cmd)
 {
 	std::string msg;
 
+	msg += "461 ";
+	msg += user().nick();
+	msg += " ";
 	msg += cmd;
 	msg += " :Not enough parameters";
 	replyAsServer(msg);
@@ -263,6 +311,9 @@ void	Session::Err_462(void)
 {
 	std::string msg;
 
+	msg += "462 ";
+	msg += user().nick();
+	msg += " ";
 	msg += ":You may not reregister";
 	replyAsServer(msg);
 }
@@ -271,6 +322,9 @@ void	Session::Err_464(void)
 {
 	std::string msg;
 
+	msg += "464 ";
+	msg += user().nick();
+	msg += " ";
 	msg += ":Password incorrect";
 	replyAsServer(msg);
 }
@@ -279,6 +333,9 @@ void	Session::Err_482(std::string const& chname)
 {
 	std::string msg;
 
+	msg += "482 ";
+	msg += user().nick();
+	msg += " ";
 	msg += chname;
 	msg += " :You're not channel operator";
 	replyAsServer(msg);
@@ -288,6 +345,9 @@ void	Session::Err_491(void)
 {
 	std::string msg;
 
+	msg += "491 ";
+	msg += user().nick();
+	msg += " ";
 	msg += ":No O-lines for your host";
 	replyAsServer(msg);
 }
