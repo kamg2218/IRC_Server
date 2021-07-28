@@ -18,6 +18,8 @@ void		Frame::cmdWho(Session *ss, std::vector<std::string> const& sets)
     std::vector<std::string> v;
     std::string res;
     std::string eol;
+    std::string member;
+    int i = 0;
 
     itu = mUsers.begin();
     itc = mChannels.begin();
@@ -27,15 +29,14 @@ void		Frame::cmdWho(Session *ss, std::vector<std::string> const& sets)
     {
         for (; itu != mUsers.end(); itu++,itc++)
         {
-            res = itc->second->sName;
-            res += itu->first + " " + itu->second->sHost + " " + "server " + itu->second->sNickname + "0 " + itu->second->sRealname + "\n";
-            //RPL_WHOREPLY
-            //"<channel> <user> <host> <server> <nick> \ <H|G>[*][@|+] :<hopcount>(0) <real name>"
-            ss->reply(res);
+            res = itc->second->name();
+            res += itu->first + " " + itu->second->user().host() + " " + "server " + itu->second->user().nick() + "0 " + itu->second->user().name();
+            // "<channel> <user> <host> <server> <nick> \ <H|G>[*][@|+] :<hopcount>(0) <real name>"
+            ss->reply(res); // RPL_WHOREPLY
             res.clear();
         }
     }
-    // else if (sets.size() == 2 && sets[1] == "o") // 옵션이 있을 경우
+    // if (sets[1] == "o") // 옵션이 있을 경우
     // {
     //     // 관리자 리스트만 리턴
     //     for (;itu != mUsers.end(); itu++, itc++)
@@ -54,114 +55,223 @@ void		Frame::cmdWho(Session *ss, std::vector<std::string> const& sets)
     else
     {
         v = getMask(sets[1]);
-        if (sets[2] == "o") // 옵션이 있을 경우
+        for (; i < v.size(); i++)
         {
-            // 관리자 리스트만 리턴
-            for (;itu != mUsers.end(); itu++, itc++)
+            member = v[i];
+            if (member == "#" && doesChannelExists(v[i]))     // channel
             {
-                if (itu->second->manager == 1)
+                // v[i]이 채널인 유저 정보 가져오기
+                // # 제거 함수 필요
+                // 채널 찾기
+                for (itc = mChannels.begin(); itc != mChannels.end(); itc++)
                 {
-                    res = mChannels.sName;
-                    res += itu->first + " " + mUsers.sHost + " " + "server " + "0 " + mUsers.Realname + "\n";
-                    //RPL_WHOREPLY
-                    //"<channel> <user> <host> <server> <nick> \ <H|G>[*][@|+] :<hopcount>(0) <real name>"
-                    ss->reply(res);
-                    res.clear();
+                    if (itc->first == v[i]) // = itc->second->name()
+                    {
+                        for (itu = itc->second.mUsers.begin(); itu != itc->second.mUsers.end(); itu++)
+                        {
+                            res = itc->first + " " + itc->second.mUsers->second.user() + " " + itc->second.mUsers->second.user().host() + " " + "server " + "0 " + itc->second.mUsers->second.user().nick();
+                            if (sets[1] == "o") // 옵션이 있는 경우
+                            {
+                                // 특정 채널의 관리자만 리턴
+                                // 매니저인지 확인 후 reply
+                                if (itc->second.mUsers->second.user().manager == 1)
+                                    ss->reply(res);    //RPL_WHOREPLY
+                            }
+                            else
+                            {
+                                ss->reply(res);    //RPL_WHOREPLY
+                            // 채널 안에 있는 모든 유저 reply
+                            }
+                            res.clear();
+                        }
+                    }
                 }
             }
-            // wild card 있을 경우
-        }
-        else    // 옵션이 없는 경우
-        {
-            if (v.empty())  // wild card 없을 경우
+            else if (mUsers->second.user().host().find(sets[1]) == mUsers->second.user().host().end())   // host(client의 hostname)
             {
-                if (doesChannelExists(sets[1]))     // channel
+                for (itu = mUsers.begin(); itu != mUsers.end(); itu++)
                 {
-                }
-                else if (mUsers->second->sHost.find(sets[1]) == mUsers->second->sHost.end())   // host
-                {
-                }
-                else if (server.find(sets[1]) == server.end())       // server
-                    return ss->reply("402");   // ERR_NOSUCHSERVER
-                else if (mUsers.find(sets[1]) == mUsers.end())       // real name
-                {
-                }
-                else if (doesNicknameExists(sets[1]))            // nick name
-                {
-                    for (; itu != itu.end(); itu++,itc++)
-                {
-                    res = itc->second->sName;
-                    res += itu->first + " " + itu->second->sHost + " " + "server " + "0 " + itu->second->sRealname + "\n";
-                    //RPL_WHOREPLY
-                    //"<channel> <user> <host> <server> <nick> \ <H|G>[*][@|+] :<hopcount>(0) <real name>"
-                    ss->reply(res);
-                    res.clear();
-                }
+                    if (itu->second.user().host() == v[i])
+                    {
+                        if (sets[1] == "o") // 옵션이 있는 경우
+                        {
+                            if (itu->second.user().manager == 1)
+                                ss->reply(res);    //RPL_WHOREPLY
+                        }
+                        else
+                        {
+                            res = itu->second.user().mChannels->first + " " + itu->first + " " + itu->second.user().host() + " " + "server " + "0 " + itu->second.user().name();
+                            ss->reply(res);
+                        }
+                        res.clear();
+                    }
+                    
                 }
             }
+            // else if (server.find(sets[1]) == server.end())       // server
+            //     return ss->reply("402");   // ERR_NOSUCHSERVER
+            else if (mUsers.find(v[i]) != mUsers.end())       // real name
+            {
+                for (itu = mUsers.begin(); itu != mUsers.end(); itu++)
+                {
+                    if (itu->second.user().name() == v[i])
+                    {
+                        if (sets[1] == "o")
+                        {
+                            if (itu->second.user().manager == 1)
+                                ss->reply(res);    //RPL_WHOREPLY
+                        }
+                        else
+                        {
+                            res = itu->second.user().mChannels->first + " " + itu->first + " " + itu->second.user().host() + " " + "server " + "0 " + itu->second.user().name();
+                            ss->reply(res);
+                        }
+                        res.clear();
+                    }
+                    
+                }
+            }
+            else if (doesNicknameExists(sets[1]))            // nick name
+            {
+                for (itu = mUsers.begin(); itu != mUsers.end(); itu++)
+                {
+                    if (itu->second.user().nick() == v[i])
+                    {
+                        if (sets[1] == "o")
+                        {
+                            if (itu->second.user().manager == 1)
+                                ss->reply(res);    //RPL_WHOREPLY
+                        }
+                        else
+                        {
+                            res = itu->second.user().mChannels->first + " " + itu->first + " " + itu->second.user().host() + " " + "server " + "0 " + itu->second.user().name();
+                            ss->reply(res);
+                        }
+                        res.clear();
+                    }
+                    
+                }
+            }
+            member.clear();
         }
-        //RPL_WHOREPLY
-        //"<channel> <user> <host> <server> <nick> \ <H|G>[*][@|+] :<hopcount>(0) <real name>"
+    }
+    //RPL_WHOREPLY
+    //"<channel> <user> <host> <server> <nick> \ <H|G>[*][@|+] :<hopcount>(0) <real name>"
 
-        return ss->reply(eol);
-        //RPL_ENDOFWHO
-        //"<name> :End of /WHO list"
-        }
+    return ss->reply(eol);
+    //RPL_ENDOFWHO
+    //"<name> :End of /WHO list"
     
 }
 
 void		Frame::cmdWhois(Session *ss, std::vector<std::string> const& sets)
 {
     // error 402 -431 (311 312 313 317 318 319 301) -401
+    std::string eol;
+    std::string res;
+    std::vector<std::string> v;
+
     if (sets.size() == 1)
         ss->reply("431");   // ERR_NONICKNAMEGIVEN
-    else if (!doesNicknameExists(sets[1]))
-		ss->reply("401"); //ERR_NOSUCHNICK
+    v = split_comma(sets[1]);
+    for (int i = 0; i < v.size(); i++)
+    {
+        if (!doesNicknameExists(v[i]))
+		    ss->reply("401"); //ERR_NOSUCHNICK
+    }
+    eol = sets[1] + " :End of /WHOIS list";
     // else if (server.find(set[1]) == server.end())
     //     ss->reply("402");   // ERR_NOSUCHSERVER
+    for (int i = 0; i < v.size(); i++)  // -> iterator 사용할까..
+    {
+        res += v[i] + " " + v[i].user + " " + v[i].host + " :" + v[i].realname; 
+        ss->reply(res);        // RPL_WHOISUSER
+        res.clear();
+        if ()// irc 관리자일 경우 -> 어케암?
+        {
+            res = v[i] + " :is an IRC operator";
+            ss->reply(res);    // RPL_WHOISOPERATOR
+            res.clear();
+        }
+        res = "<nick> <server> :<server info>";
+        ss->reply(res);    // RPL_WHOISSERVER -> 서버 이름이 무엇?
+        res.clear();
+        res = "<nick> <integer> :seconds idle";
+        ss->reply(res);    // RPL_WHOISIDLE -> ???
+        res.clear();
+        if (v[i]->manager == 1)       // 채널 관리자인 경우
+        {
+            res = v[i] + " :@" + v[i].channel + " ";
+        }
+        else
+        {
+            res = v[i] + " :" + v[i].channel + " ";
+        }
+        ss->reply(res);    // RPL_WHOISCHANNELS
+    }
 
+    // -301     RPL_AWAY
+    // -                   "<nick> :<away message>"
     // 311     RPL_WHOISUSER
     //                     "<nick> <user> <host> * :<real name>"
-    //     312     RPL_WHOISSERVER
-    //                     "<nick> <server> :<server info>"
+    //     -312     RPL_WHOISSERVER
+    //     -                "<nick> <server> :<server info>"
     //     313     RPL_WHOISOPERATOR
     //                     "<nick> :is an IRC operator"
-    //     317     RPL_WHOISIDLE
+    //     317     RPL_WHOISIDLE    ???
     //                     "<nick> <integer> :seconds idle"
-    //     318     RPL_ENDOFWHOIS
-    //                     "<nick> :End of /WHOIS list"
-    //     319     RPL_WHOISCHANNELS
+    //     -318     RPL_ENDOFWHOIS   // 다 따로해야하는건가?
+    //     -                "<nick> :End of /WHOIS list"
+    //     319     RPL_WHOISCHANNELS    // @: 운영자이면 붙임
     //                     "<nick> :{[@|+]<channel><space>}"
+    return ss->reply(eol);  // RPL_ENDOFWHOIS
+    // RPL_AWAY? 어디다씀..
     
 }
 
-void		Frame::cmdWhowas(Session *ss, std::vector<std::string> const& sets)
+void		Frame::cmdWhowas(Session *ss, std::vector<std::string> const& sets) // 에러나 응답하면 무조건 endofwhowas 넣기
 {
-    // (369) -431
     std::string res;
-    std::list<std::string>::iterator it;
+    std::vector<std::string>::reverse_iterator itv;
+    std::list<std::string>::reverse_iterator itl;
+    int count = -1;
+    bool check = 0;
 
     if (sets.size() == 1)
     {
         ss->reply("431");   // ERR_NONICKNAMEGIVEN
     }
-    //mUser.find(sets[1]) != mUser.end()
-    it = mUsers.second->_pastnick.rbegin();
-    for (; it != mUsers.second->_pastnick.rend(); it++)
+    else if (sets.size() > 2)
     {
-        if (sets[1] == it)
+        count = atoi(sets[2]);  // 만들어야하나
     }
-
-    if (mUsers.second->_pastNick.find(sets[1]) == mUsers.second->_pastNick.end())
-        ss->reply(sets[1] + " :End of WHOWAS");   // RPL_ENDOFWHOWAS
+    // 모든 유저에 대한 _pastNickname을 확인(list)
+    for (itv = mUsers.rbegin(); itv != mUsers.rend(); itv++)
+    {
+        if (count == 0)
+            break;
+        for (itl = itv._pastNick.rbegin(); itl != itv->_pastnick.rend(); itl++)
+        {
+            if (*itl == sets[1])
+            {
+                res = itv->user().nick() + " " + itv->user().user() + " " + itv->user().host() + " * :" + itv->user().name();
+                ss->reply(res);    // RPL_WHOWASUSER
+                count--;
+                check = 1;
+            }
+        }
+    }
+    if (!check)
+    {
+        ss->reply("406");   // ERR_WASNOSUCHNICK
+    }                 
+    ss->reply(sets[1] + " :End of WHOWAS"); // RPL_ENDOFWHOWAS
     //"<nick> :End of WHOWAS"
 
 }
 
 void		Frame::cmdPrivmsg(Session *ss, std::vector<std::string> const& sets)
 {
-    // (301) -401 -407 -411 -412 413 414 -404
-
     int i = 2;
     std::string res;
     std::vector<std::string> receivers;
