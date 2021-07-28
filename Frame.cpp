@@ -399,7 +399,7 @@ void	Frame::cmdKick(Session *ss, std::vector<std::string> const& sets)
 {
 	std::vector<std::vector<std::string> >	cmdsets;
 	std::vector<std::string>	cmd;
-	User	*target;
+	Session	*target;
 	Channel *channel;
 
 	if (sets.size() < 3)
@@ -422,11 +422,12 @@ void	Frame::cmdKick(Session *ss, std::vector<std::string> const& sets)
 		{
 			if (doesNicknameExists(cmd[1]))
 			{
-				target = &(findUser(cmd[1])->user());
-				target->cmdPart(ss, cmd[0], cmd[2]);
+				target = findUser(cmd[0]);
+				channel->broadcast(ss, cmd[0] + cmd[1] + cmd[2]);
+				target->user().cmdPart(ss, cmd[0], cmd[2]);
 			}
 		}
-		cmdsets.pop_back();
+		cmdsets.erase(cmdsets.begin());
 	}
 }
 
