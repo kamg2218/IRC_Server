@@ -160,9 +160,18 @@ void	Frame::doPart(Session *ss, std::string const& sets, std::string const& re)
 
 void	Frame::cmdQuit(Session *ss, std::vector<std::string> const& sets)
 {
+	std::string	msg;
+
+	msg = ss->user().nick() + " left";
 	ss->user().cmdQuit(ss, sets);
 	removeUser(ss->user().nick());
-	ss->replyAsServer(ss->user().nick() + " left\n");
+	if (sets.size() > 1 && sets[1][0] == ':')
+	{
+		msg = sets[1].substr(1);
+		for (int i = 2; i < sets.size(); i++)
+			msg += " " + sets[i];
+	}
+	ss->replyAsServer(msg);
 }
 
 void	Frame::cmdJoin(Session *ss, std::vector<std::string> const& sets)
@@ -194,13 +203,13 @@ std::string	Frame::doJoin(Session *ss, std::string const& sets)
 	{
 		it = mChannels.find(MakeLower(sets.substr(1)));
 		it->second->addUser(ss);
-		it->second->broadcast(ss, ss->user().name() + " joined to " + it->first + "\n");
+		it->second->broadcast(ss, ss->user().nick() + " joined to " + it->first + "\n");
 		ss->user().cmdJoin(it->second);
 		//Topic
 	}
 	else
 		addChannel(new Channel(ss, MakeLower(sets.substr(1))));
-	return "353";	//RPL_NAMREPLY
+	return "353 =" + MakeLower(sets.substr(1)) + " :" + ss->user().nick();	//RPL_NAMREPLY
 }
 
 void	Frame::cmdNick(Session *ss, std::vector<std::string> const& sets)
@@ -267,7 +276,7 @@ void	Frame::cmdOper(Session *ss, std::vector<std::string> const& sets)
 			if (server.checkPass(sets[2]) == false)
 				return ss->Err_464();	//passwdMismatch
 			it->second->user().cmdOper();
-			return ss->replyAsServer("381");	//RPL_YOUREOPER
+			return ss->Rep_381();	//RPL_YOUREOPER
 		}
 	}
 	return ss->Err_491();	//NoOperHost
