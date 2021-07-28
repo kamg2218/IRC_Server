@@ -129,7 +129,7 @@ void		Frame::cmdPart(Session *ss, std::vector<std::string> const& sets)
 	std::string	str;
 
 	if (sets.size() < 2)
-		return ss->replyAsServer("461");	//NeedMoreParams
+		return ss->Err_461("PART");	//NeedMoreParams
 	re = "";
 	if (sets.size() > 2)
 	{
@@ -142,20 +142,20 @@ void		Frame::cmdPart(Session *ss, std::vector<std::string> const& sets)
 	str = sets[1];
 	while (1){
 		n = str.find(",");
-		ss->replyAsServer(doPart(ss, str.substr(0, n), re));
+		doPart(ss, str.substr(0, n), re);
 		if (n == std::string::npos)
 			break ;
 		str = str.substr(n + 1);
 	}
 }
 
-std::string		Frame::doPart(Session *ss, std::string const& sets, std::string const& re)
+void	Frame::doPart(Session *ss, std::string const& sets, std::string const& re)
 {
 	if (mChannels.find(sets.substr(1)) == mChannels.end())
-		return "403";	//NoSuchChannel
+		return ss->Err_403(sets.substr(1));	//NoSuchChannel
 	else if (ss->user().cmdPart(ss, sets.substr(1), re) == false)
-		return "442";	//NotOnChannel
-	return "";	//Success
+		return ss->Err_442(sets.substr(1));	//NotOnChannel
+	ss->replyAsServer("");	//Success
 }
 
 void	Frame::cmdQuit(Session *ss, std::vector<std::string> const& sets)
@@ -171,14 +171,14 @@ void	Frame::cmdJoin(Session *ss, std::vector<std::string> const& sets)
 	std::string		str;
 
 	if (sets.size() < 2)
-		return ss->replyAsServer("461");	//NeedMoreParams
+		return ss->Err_461("JOIN");	//NeedMoreParams
 	else if (sets.size() == 2 && sets[1] == "O")
 		return ss->user().optionJoin(ss, sets);
 	str = sets[1];
 	while (1){
 		n = str.find(",");
 		if (!(CheckChannelname(str.substr(0, n))))
-			return ss->replyAsServer("403");	//NoSuchChannel
+			return ss->Err_403(str.substr(0, n));	//NoSuchChannel
 		ss->replyAsServer(doJoin(ss, str.substr(0, n)));
 		if (std::string::npos == n)
 			break ;
@@ -208,20 +208,20 @@ void	Frame::cmdNick(Session *ss, std::vector<std::string> const& sets)
 	if (sets[0] == "NICK")
 	{
 		if (sets.size() != 2)
-			return ss->replyAsServer("431");	//noNicknameGiven
+			return ss->Err_431();	//noNicknameGiven
 		else if (!(CheckNickname(sets[1])))
-			return ss->replyAsServer("432");	//ErroneusNickname
+			return ss->Err_432(sets[1]);	//ErroneusNickname
 		else if (doesNicknameExists(sets[1]))
-			return ss->replyAsServer("433");	//NicknameInUse
+			return ss->Err_433(sets[1]);	//NicknameInUse
 		else if (ss->user().addNick(sets) == false)
-			return ss->replyAsServer("433");	//already be registered
+			return ss->Err_433(sets[1]);	//already be registered
 	}
 	else
 	{
 		if (doesNicknameExists(sets[2]))
-			return ss->replyAsServer("433");	//ignore
-		else if (&sets[0][1] != ss->user().nick())
-			return ss->replyAsServer("");	//ERROR
+			return ss->Err_433(sets[2]);	//NicknameInUse
+		else if (sets[0].substr(1) != ss->user().nick())
+			return ss->Err_432(sets[0].substr(1));	//ErroneusNickname
 		for (UserMap::iterator it = mUsers.begin(); it != mUsers.end(); it++)
 		{
 			if (it->first == ss->user().nick())
@@ -239,39 +239,38 @@ void	Frame::cmdNick(Session *ss, std::vector<std::string> const& sets)
 void	Frame::cmdUser(Session *ss, std::vector<std::string> const& sets)
 {
 	if (sets.size() < 5)
-		return ss->replyAsServer("461");	//needMoreParams
+		return ss->Err_461("USER");	//needMoreParams
 	else if (ss->user().cmdUser(sets) == false)
-		return ss->replyAsServer("462");	//AlreadyRegistered
-	//Frame mUsers에 저장
+		return ss->Err_462();	//AlreadyRegistered
 	else if (addUser(ss) == false)
-		return ss->replyAsServer("462");	//AlreadyRegistered
+		return ss->Err_462();	//AlreadyRegistered
 	return ss->replyAsServer("");	//Success
 }
 
 void	Frame::cmdPass(Session *ss, std::vector<std::string> const& sets)
 {
 	if (sets.size() != 2)
-		return ss->replyAsServer("461");	//NeedMoreParams
+		return ss->Err_461("PASS");	//NeedMoreParams
 	else if (server.checkPass(sets[2]))
-		return ss->replyAsServer("462");	//AlreadyRegistred
+		return ss->Err_462();	//AlreadyRegistred
 	return ss->replyAsServer("");
 }
 
 void	Frame::cmdOper(Session *ss, std::vector<std::string> const& sets)
 {
 	if (sets.size() != 3)
-		return ss->replyAsServer("461");	//NeedMoreParams
+		return ss->Err_461("OPER");	//NeedMoreParams
 	for (UserMap::iterator it = mUsers.begin(); it != mUsers.end(); it++)
 	{
 		if (it->first == sets[1])
 		{
 			if (server.checkPass(sets[2]) == false)
-				return ss->replyAsServer("464");	//passwdMismatch
+				return ss->Err_464();	//passwdMismatch
 			it->second->user().cmdOper();
 			return ss->replyAsServer("381");	//RPL_YOUREOPER
 		}
 	}
-	return ss->replyAsServer("491");	//NoOperHost
+	return ss->Err_491();	//NoOperHost
 }
 
 void	Frame::cmdTopic(Session *ss, std::vector<std::string> const& sets)
@@ -280,17 +279,17 @@ void	Frame::cmdTopic(Session *ss, std::vector<std::string> const& sets)
 	std::string				str;
 
 	if (sets.size() < 2)
-		return ss->replyAsServer("461");	//NeedMoreParams
+		return ss->Err_461("TOPIC");	//NeedMoreParams
 	it = mChannels.find(MakeLower(sets[1].substr(1)));
 	if (it == mChannels.end())
-		return ss->replyAsServer("442");	//NotOnChannel
+		return ss->Err_442(sets[1].substr(1));	//NotOnChannel
 	if (sets.size() == 2)
 	{
 		if (it->second->topic() == "")
 			return ss->replyAsServer("331");	//NoTopic
 		else if (it->second->hasUser(&(ss->user())))
 			return ss->replyAsServer(it->second->topic());
-		return ss->replyAsServer("442");	//NotOnChannel
+		return ss->Err_442(it->first);	//NotOnChannel
 	}
 	else
 	{
@@ -298,7 +297,7 @@ void	Frame::cmdTopic(Session *ss, std::vector<std::string> const& sets)
 		for (int i = 3; i < sets.size(); i++)
 			str += " " + sets[i];
 		if (it->second->isOperator(ss->user().nick()) == false)
-			return ss->replyAsServer("482");	//ChanOprivsNeeded
+			return ss->Err_482(it->first);	//ChanOprivsNeeded
 		it->second->setTopic(str);
 		return ss->replyAsServer("332");	//Topic
 	}
@@ -310,7 +309,7 @@ void	Frame::cmdList(Session *ss, std::vector<std::string> const& sets)
 	std::string		str;
 
 	if (sets.size() < 1)
-		return ss->replyAsServer("461");	//NeedMoreParams
+		return ss->Err_461("LIST");	//NeedMoreParams
 	else if (sets.size() == 1)
 		return ss->replyAsServer(doList(ss, ""));
 	str = sets[1];
