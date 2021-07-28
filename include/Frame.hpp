@@ -52,6 +52,10 @@ class Frame
 		void	cmdInvite(Session *ss, std::vector<std::string> const& sets);
 		bool	checkMask(std::string const& str, std::string const& name, int wild);
 		std::vector<std::string>	getMask(std::string const& str);
+		void	cmdWho(Session *ss, std::vector<std::string> const& sets);
+		void	cmdWhois(Session *ss, std::vector<std::string> const& sets);
+		void	cmdWhowas(Session *ss, std::vector<std::string> const& sets);
+		void	cmdPrivmsg(Session *ss, std::vector<std::string> const& sets);
 };
 
 #endif
