@@ -40,11 +40,14 @@ class Session
 		bool	IsReady() const;
 		void	StreamAppend(char *str, int r);
 		void	Rep_001(User *us);
+		void	Rep_321();
+		void	Rep_322(Channel *ch);
 		void	Rep_323();
 		void	Rep_331(std::string const& ch);
 		void	Rep_332(std::string const& ch, std::string const& topic);
 		void	Rep_341(std::string const& ch, std::string const& nick);
 		void	Rep_353(std::string const& ch, std::string const& nic);
+		void	Rep_366(std::string const& ch);
 		void	Rep_381();
 		void	Err_401(std::string const& nick);
 		void	Err_402(std::string const& name);

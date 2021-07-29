@@ -72,6 +72,27 @@ void	Channel::cmdNick(std::string const& name, std::string const& nick)
 	}
 }
 
+void	Channel::cmdJoin(Session *ss)
+{
+	std::string	str;
+	Usermap::iterator	it;
+
+	if (topic() == "")
+		ss->Rep_331(name());
+	else
+		ss->Rep_332(name(), topic());
+	it = mUsers.begin();
+	if (it != mUsers.end())
+	{
+		str = it->first;
+		it++;
+	}
+	for (; it != mUsers.end(); it++)
+		str += " " + it->first;
+	if (str != "")
+		ss->Rep_353(name(), str);
+	ss->Rep_366(name());
+}
 
 bool			Channel::isOperator(std::string const& nick) const
 {

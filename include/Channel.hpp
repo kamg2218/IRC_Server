@@ -26,6 +26,7 @@ class Channel
 
 		*/
 		void	addUser(Session *user);
+		void	cmdJoin(Session *ss);
 		void	cmdNick(std::string const& name, std::string const& nick);
 		void	removeUser(User *user);
 		bool	hasUser(User *user);
