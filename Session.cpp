@@ -91,14 +91,21 @@ void	Session::replyAsServer(std::string const& str)
 {
 	std::string msg;
 
+	//..std::cout << inet_ntoa(se->soc().sin().sin_addr) << ":" << ntohs(se->soc().sin().sin_port) << " is connected\n";
 	msg += ":";
-	msg += "server.hostnema "; //temp;
+	//msg += "server.hostnema "; //temp;
+	msg += "127.0.0.1 ";
 	msg += str;
+	std::cout << "replied : " <<msg << "\n";
+	msg += "\r\n";
+	send(_soc.sd(), msg.c_str(), msg.length(), 0);
+	/*
 
 	std::string res = str;	
 	std::cout << "replied : " << str << "\n";
-	res += "\n";
+	res += "\r\n";
 	send(_soc.sd(), res.c_str(), res.length(), 0);
+	*/
 }
 
 void	Session::replyAsUser(Session *target, std::string const& str)
@@ -108,6 +115,7 @@ void	Session::replyAsUser(Session *target, std::string const& str)
 	msg += ":";
 	msg += target->user().msgHeader();
 	msg += str;
+	msg += "\r\n";
 	send(target->soc().sd(), msg.c_str(), msg.length(), 0);
 }
 
