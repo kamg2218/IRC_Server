@@ -39,6 +39,7 @@ class Session
 		void	replyAsUser(Session *target, std::string const& str);
 		bool	IsReady() const;
 		void	StreamAppend(char *str, int r);
+		void	Rep_001(User *us);
 		void	Rep_323();
 		void	Rep_331(std::string const& ch);
 		void	Rep_332(std::string const& ch, std::string const& topic);
