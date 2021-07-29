@@ -115,6 +115,9 @@ Socket&	Session::soc() { return _soc; }
 
 User&	Session::user() { return _user; }
 
+void	Session::Rep_001(User *us){
+	replyAsServer("001 :Welcome to the Internet Relay Network " + us->nick() + "!" + us->user() + "@" + us->host());
+}
 void	Session::Rep_323(){
 	replyAsServer("323 :End of List");
 }

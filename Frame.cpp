@@ -155,7 +155,6 @@ void	Frame::doPart(Session *ss, std::string const& sets, std::string const& re)
 		return ss->Err_403(sets.substr(1));	//NoSuchChannel
 	else if (ss->user().cmdPart(ss, sets.substr(1), re) == false)
 		return ss->Err_442(sets.substr(1));	//NotOnChannel
-	ss->replyAsServer("");	//Success
 }
 
 void	Frame::cmdQuit(Session *ss, std::vector<std::string> const& sets)
@@ -242,7 +241,6 @@ void	Frame::cmdNick(Session *ss, std::vector<std::string> const& sets)
 		}
 		ss->user().cmdNick(sets);
 	}
-	return ss->replyAsServer(""); //success
 }
 
 void	Frame::cmdUser(Session *ss, std::vector<std::string> const& sets)
@@ -253,7 +251,7 @@ void	Frame::cmdUser(Session *ss, std::vector<std::string> const& sets)
 		return ss->Err_462();	//AlreadyRegistered
 	else if (addUser(ss) == false)
 		return ss->Err_462();	//AlreadyRegistered
-	return ss->replyAsServer("");	//Success
+	return ss->Rep_001(&(ss->user()));	//Success
 }
 
 void	Frame::cmdPass(Session *ss, std::vector<std::string> const& sets)
@@ -262,7 +260,6 @@ void	Frame::cmdPass(Session *ss, std::vector<std::string> const& sets)
 		return ss->Err_461("PASS");	//NeedMoreParams
 	else if (server.checkPass(sets[2]))
 		return ss->Err_462();	//AlreadyRegistred
-	return ss->replyAsServer("");
 }
 
 void	Frame::cmdOper(Session *ss, std::vector<std::string> const& sets)
