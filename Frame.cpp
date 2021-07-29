@@ -458,8 +458,8 @@ void	Frame::cmdInvite(Session *ss, std::vector<std::string> const& sets)
 		ss->Err_443(sets[1], channel->name()); //ERR_USERONCHANNEL;
 	else
 	{
-		//ss->Rep_341(channel->name(), target->user().nick());
-		//target>Rep_341(channel->name(), target->user().nick());
+		ss->Rep_341(channel->name(), target->user().nick());
+		target->Rep_341(channel->name(), target->user().nick());
 		joincmd.push_back("JOIN");
 		joincmd.push_back("#" + channel->name());
 		cmdJoin(target, joincmd);
