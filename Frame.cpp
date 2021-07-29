@@ -387,6 +387,7 @@ std::vector<std::vector<std::string> > kicklist(std::vector<std::string> const& 
 	}
 	for (int i = 0 ; i < chlist.size() || i < tgtlist.size() ; i++)
 	{
+		chlist.push_back("KICK");
 		if (chlist.size() == 1)
 			subres.push_back(chlist[0]);
 		else if (i < chlist.size())
@@ -407,28 +408,26 @@ void	Frame::cmdKick(Session *ss, std::vector<std::string> const& sets)
 	Session	*target;
 	Channel *channel;
 
-	if (sets.size() < 3)
-		ss->Err_461("KICK"); //ERR_NEEDMOREPARAMS
 	cmdsets = kicklist(sets);
 	while(cmdsets.size())
 	{
 		cmd = cmdsets[0];
-		if (cmd.size() < 2)
+		if (cmd.size() < 3)
 			ss->Err_461("KICK"); //ERR_NEEDMOREPARAMS
-		else if (cmd[0].find("#") == std::string::npos || cmd[0].find("&") == std::string::npos)
+		else if (cmd[1].find("#") == std::string::npos || cmd[1].find("&") == std::string::npos)
 			ss->Err_461("KICK"); //ERR_NEEDMOREPARAMS
-		else if (!doesChannelExists(cmd[0].substr(1)))
-			ss->replyAsServer("403"); //ERR_NOSUCHCHANNEL
-		else if (!(ss->user().isMemOfChannel(cmd[0].substr(1))))
-			ss->replyAsServer("442"); //ERR_NOTONCHANNEL;
-		else if (!((channel = findChannel(cmd[0].substr(1)))->isOperator(ss->user().nick())))
-			ss->replyAsServer("482"); //ERR_CHANOPRIVSNEEDED
+		else if (!doesChannelExists(MakeLower(cmd[1].substr(1))))
+			ss->Err_403(cmd[1].substr(1)); //ERR_NOSUCHCHANNEL
+		else if (!(ss->user().isMemOfChannel(cmd[1].substr(1))))
+			ss->Err_442(cmd[1].substr(1)); //ERR_NOTONCHANNEL;
+		else if (!((channel = findChannel(MakeLower(cmd[1].substr(1))))->isOperator(ss->user().nick())))
+			ss->Err_482(cmd[1].substr(1)); //ERR_CHANOPRIVSNEEDED
 		else
 		{
-			if (doesNicknameExists(cmd[1]))
+			if (doesNicknameExists(cmd[2]))
 			{
-				target = findUser(cmd[1]);
-				channel->broadcast(ss, cmd[0] + cmd[1] + cmd[2]);
+				target = findUser(cmd[2]);
+				channel->broadcast(ss, vectorToString(cmd));
 				target->user().cmdPart(ss, cmd[0], cmd[2]);
 			}
 		}
@@ -440,38 +439,30 @@ void	Frame::cmdInvite(Session *ss, std::vector<std::string> const& sets)
 {
 	Channel *channel;
 	Session	*target;
-	std::string	rpl;
-	std::string	joinmsg;
+	std::vector<std::string>	joincmd;
 
 	if (sets.size() < 3)
 	{
-		ss->replyAsServer("461"); // NOT ENOUGH PARAM
+		ss->Err_461("INVITE"); // NOT ENOUGH PARAM
 		return ;
 	}
-	if (sets[1].find("#") == std::string::npos && sets[1].find("&") == std::string::npos)
-		ss->replyAsServer("461"); //NOT ENOUGH PARAM
-	else if (!doesChannelExists(sets[1].substr(1)))
-		ss->replyAsServer("403"); //NO SUCH CHANNEL
-	else if (!(ss->user().isMemOfChannel(sets[1].substr(1))))
-		ss->replyAsServer("442"); //ERR_NOTONCHANNEL;
+	if (sets[2].find("#") == std::string::npos && sets[2].find("&") == std::string::npos)
+		ss->Err_461("INVITE"); // NOT ENOUGH PARAM
+	else if (!doesChannelExists(sets[2].substr(1)))
+		ss->Err_403(sets[2].substr(1)); //NO SUCH CHANNEL
+	else if (!(ss->user().isMemOfChannel(sets[2].substr(1))))
+		ss->Err_442(sets[2].substr(1)); //ERR_NOTONCHANNEL;
 	else if (!doesNicknameExists(sets[2]))
-		ss->replyAsServer("401"); //ERR_NOSUCHNICK
-	else if (!(target = findUser(sets[2]))->user().isMemOfChannel(channel->name()))
-		ss->replyAsServer("443"); //ERR_USERONCHANNEL;
+		ss->Err_401(sets[1]); //ERR_NOSUCHNICK
+	else if (!(target = findUser(sets[1]))->user().isMemOfChannel(channel->name()))
+		ss->Err_443(sets[1], channel->name()); //ERR_USERONCHANNEL;
 	else
 	{
-		rpl.append("341 ");
-		rpl.append(channel->name());
-		rpl.append(" ");
-		rpl.append(target->user().nick());
-		ss->replyAsServer(rpl);
-		target->replyAsServer(rpl);
-		joinmsg.append("JOIN ");
-		joinmsg.append("#");
-		joinmsg.append(channel->name());
-		target->user().cmdJoin(channel); 
-		channel->addUser(target);
-		channel->broadcast(target, joinmsg);
+		ss->Rep_341(channel->name(), target->user().nick());
+		target->Rep_341(channel->name(), target->user().nick());
+		joincmd.push_back("JOIN");
+		joincmd.push_back("#" + channel->name());
+		cmdJoin(target, joincmd);
 	}
 }
 
