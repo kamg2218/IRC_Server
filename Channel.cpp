@@ -86,3 +86,29 @@ void	Channel::setTopic(std::string const topic)
 {
 	sTopic = topic;
 }
+
+void Channel::cmdWho(Session *ss, int check)
+{
+	std::string res;
+	Usermap::iterator it;
+
+	if (check)
+	{
+		for (it = mOperators.begin(); it != mOperators.end(); it++)
+		{
+			res = sName + " " + it->second.user() + " " + it->second.user().host() + " ft_irc " + it->second.user().nick() + " :0 " + it->second.user().name();
+			ss->replyAsServer(res); // RPL_WHOREPLY
+			res.clear();
+		}
+	}
+	else
+	{
+		for (it = mUsers.begin(); it != mUsers.end(); it++)
+		{
+			res = *it + " " + it->second.user() + " " + it->second.user().host() + " ft_irc " + it->second.user().nick() + " :0 " + it->second.user().name();
+			ss->replyAsServer(res); // RPL_WHOREPLY
+			res.clear();
+		}
+		
+	}
+}
