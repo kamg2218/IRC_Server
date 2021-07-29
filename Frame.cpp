@@ -524,3 +524,14 @@ std::vector<std::string>	Frame::getMask(std::string const& str)
 	}
 	return v;
 }
+
+std::string Frame::vectorToString(std::vector<std::string> const& sets)
+{
+    std::string res;
+    
+    for (int i = 0; i < sets.size(); i++)
+    {
+        res += sets[i];
+    }
+    return res;
+}
