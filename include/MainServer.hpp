@@ -19,6 +19,7 @@ class MainServer
 		int		_sd;
 		Socket	_sock;
 		std::string	_pass;
+		std::string	_name;
 		std::map<int, Session*>	mSessions;
 	public:
 		class BindException : public std::exception
@@ -48,6 +49,7 @@ class MainServer
 		void	handleAccept(Service *p);
 		void	handleDecline(std::map<int, Session*>::iterator& pos);
 		int		socket() const;
+		std::string	name() const;
 		std::map<int, Session*>&		users();
 		const std::map<int, Session*>&	users() const;
 		bool	checkPass(std::string const& pass);

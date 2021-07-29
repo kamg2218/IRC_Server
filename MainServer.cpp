@@ -22,19 +22,15 @@ const char*		MainServer::AcceptException::what() const throw()
 	return ("Accpet Error");
 }
 
-MainServer::MainServer() {}
+MainServer::MainServer() :_name("ft_irc") {}
 
 void	MainServer::create(unsigned int port)
 {
 	_sd = _sock.makeSocket(port);
 	if ((bind(_sd, (struct sockaddr *)&(_sock.sin()), sizeof(_sock.sin()))) == -1)
-	{
 		throw BindException();
-	}
 	if (listen(_sd, 42) < 0)
-	{
 		throw ListenException();
-	}
 }
 
 void		MainServer::handleRead(std::map<int, Session*>::iterator temp)
@@ -42,7 +38,6 @@ void		MainServer::handleRead(std::map<int, Session*>::iterator temp)
 	if (temp->second->handleRead(mSessions, temp->first))
 		handleDecline(temp);
 }
-
 
 void	MainServer::handleAccept(Service* p)
 {
@@ -54,13 +49,9 @@ void	MainServer::handleAccept(Service* p)
 	se = Session().create();
 	cs = accept(_sd, (struct sockaddr*)&(se->soc().sin()), &(se->soc().len()));
 	if (cs < 0)
-	{
 		throw AcceptException();
-	}
 	se->soc().setSd(cs);
-
 	se->soc().makeNonBlocking();
-
 	on = 1;
 	if (setsockopt(cs, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on)) == -1)
 	{
@@ -68,7 +59,6 @@ void	MainServer::handleAccept(Service* p)
 		throw AcceptException();
 	}
 	std::cout << inet_ntoa(se->soc().sin().sin_addr) << ":" << ntohs(se->soc().sin().sin_port) << " is connected\n";
-
 	mSessions.insert(std::pair<int, Session*>(cs, se));
 }
 
@@ -83,6 +73,7 @@ void		MainServer::handleDecline(std::map<int, Session*>::iterator& pos)
 }
 
 int 	MainServer::socket() const { return _sd; }
+std::string 	MainServer::name() const { return _name; }
 
 std::map<int, Session*>&	MainServer::users() { return mSessions; }
 
