@@ -1,6 +1,7 @@
 #include "include/Session.hpp"
 #include "include/User.hpp"
 #include "include/Service.hpp"
+#include "include/Frame.hpp"
 
 Session::Session()
 {
@@ -92,13 +93,18 @@ void	Session::replyAsServer(std::string const& str)
 	std::string msg;
 
 	msg += ":";
-	msg += "server.hostnema "; //temp;
+	msg += Frame::instance()->GetServer().msgHeader() + " ";
 	msg += str;
+	std::cout << "replied : " <<msg << "\n";
+	msg += "\r\n";
+	send(_soc.sd(), msg.c_str(), msg.length(), 0);
+	/*
 
 	std::string res = str;	
 	std::cout << "replied : " << str << "\n";
-	res += "\n";
+	res += "\r\n";
 	send(_soc.sd(), res.c_str(), res.length(), 0);
+	*/
 }
 
 void	Session::replyAsUser(Session *target, std::string const& str)
@@ -108,6 +114,7 @@ void	Session::replyAsUser(Session *target, std::string const& str)
 	msg += ":";
 	msg += target->user().msgHeader();
 	msg += str;
+	msg += "\r\n";
 	send(target->soc().sd(), msg.c_str(), msg.length(), 0);
 }
 

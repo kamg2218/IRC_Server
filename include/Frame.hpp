@@ -57,6 +57,7 @@ class Frame
 		void	cmdWhowas(Session *ss, std::vector<std::string> const& sets);
 		void	cmdPrivmsg(Session *ss, std::vector<std::string> const& sets);
 		std::string	vectorToString(std::vector<std::string> const& sets);
+		MainServer& GetServer(void);
 
 };
 
