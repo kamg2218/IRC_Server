@@ -247,8 +247,8 @@ void	Frame::cmdUser(Session *ss, std::vector<std::string> const& sets)
 {
 	if (sets.size() < 5)
 		return ss->Err_461("USER");	//needMoreParams
-	else if (ss->user().CheckNick())
-		return ss->replyAsServer("");	//ignore
+	else if (ss->user().CheckNick() == false)
+		return ;	//ignore
 	else if (ss->user().cmdUser(sets) == false)
 		return ss->Err_462();	//AlreadyRegistered
 	else if (addUser(ss) == false)
