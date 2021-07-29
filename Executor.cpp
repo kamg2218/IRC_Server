@@ -153,7 +153,7 @@ void	Executor::execute(std::string& buff, Session* ss)
 	{
 		// frame->cmdWhowas(ss, splited_cmd);
 	}
-	else
+	else if (splited_cmd[i] != "PONG")
 	{
 		// Error 421
 		ss->replyAsServer("421");
