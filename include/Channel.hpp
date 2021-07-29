@@ -37,5 +37,8 @@ class Channel
 		bool	hasPass() const;
 		bool	isOperator(std::string const& nick) const;
 		void	setTopic(std::string topic);
+		//void	cmdWho(Session *ss, int check);
+		std::vector<std::string> channelVector();
+		std::vector<std::string> channeloperVector();
 };
 #endif

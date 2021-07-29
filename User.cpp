@@ -65,6 +65,11 @@ std::string		User::user() const
 	return (sUsername);
 }
 
+const ChannelMap&		User::channel() const
+{
+	return mChannels;
+}
+
 std::string		User::msgHeader() const
 {
 	return (std::string(":" + sNickname + "!" + sUsername + "@" + sHostname+ " "));
@@ -303,5 +308,18 @@ bool	User::isMemOfChannel(std::string const& chname) const
 	if (res == mChannels.end())
 		return (false);
 	return (true);
+}
+
+std::vector<std::string> User::userVector()
+{
+	ChannelMap::iterator it;
+	std::vector<std::string> res;
+	std::string servername = "ft_irc";
+
+	for (it = mChannels.begin(); it != mChannels.end(); ++it)
+	{
+		res.push_back(it->second->name() + " " + user() + " " + host() + " " + servername + " " + nick() + " :0 " + name());
+	}
+	return (res);
 }
 
