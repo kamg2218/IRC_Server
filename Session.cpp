@@ -1,6 +1,7 @@
 #include "include/Session.hpp"
 #include "include/User.hpp"
 #include "include/Service.hpp"
+#include "include/Frame.hpp"
 
 Session::Session()
 {
@@ -91,10 +92,8 @@ void	Session::replyAsServer(std::string const& str)
 {
 	std::string msg;
 
-	//..std::cout << inet_ntoa(se->soc().sin().sin_addr) << ":" << ntohs(se->soc().sin().sin_port) << " is connected\n";
 	msg += ":";
-	//msg += "server.hostnema "; //temp;
-	msg += "127.0.0.1 ";
+	msg += Frame::instance()->GetServer().msgHeader() + " ";
 	msg += str;
 	std::cout << "replied : " <<msg << "\n";
 	msg += "\r\n";
