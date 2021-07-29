@@ -29,31 +29,11 @@ Socket::~Socket()
 }
 
 void		Socket::setSd(int sd) { _sd = sd; }
-
-int			Socket::sd() const
-{
-	return _sd;
-}
-
-unsigned int&	Socket::port()
-{
-	return _port;
-}
-
-unsigned int&	Socket::len()
-{
-	return _len;
-}
-
-sockaddr_in&	Socket::sin()
-{
-	return _sin;
-}
-
-protoent*		Socket::proto()
-{
-	return _proto;
-}
+int			Socket::sd() const { return _sd; }
+unsigned int&	Socket::port() { return _port; }
+unsigned int&	Socket::len() { return _len; }
+sockaddr_in&	Socket::sin() { return _sin; }
+protoent*		Socket::proto(){ return _proto;}
 
 int				Socket::makeSocket(unsigned int port)
 {
@@ -61,19 +41,13 @@ int				Socket::makeSocket(unsigned int port)
 
 	_proto = getprotobyname("tcp");
 	if (!_proto)
-	{
 		throw ProtoException();
-	}
 	_sd = socket(AF_INET, SOCK_STREAM, _proto->p_proto);
 	if (_sd == -1)
-	{
 		throw SocketException();
-	}
 	on = 1;
 	if (setsockopt(_sd, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on)) == -1)
-	{
 		throw SocketException();
-	}
 	_sin.sin_family = AF_INET;
 	_sin.sin_port = htons(port);
 	_sin.sin_addr.s_addr = htonl(INADDR_ANY);
@@ -86,19 +60,13 @@ int				Socket::makeSocket(unsigned int port, unsigned long addr)
 
 	_proto = getprotobyname("tcp");
 	if (!_proto)
-	{
 		throw ProtoException();
-	}
 	_sd = socket(AF_INET, SOCK_STREAM, _proto->p_proto);
 	if (_sd == -1)
-	{
 		throw SocketException();
-	}
 	on = 1;
 	if (setsockopt(_sd, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on)) == -1)
-	{
 		throw SocketException();
-	}
 	_sin.sin_family = AF_INET;
 	_sin.sin_port = htons(port);
 	_sin.sin_addr.s_addr = htonl(addr);
@@ -112,7 +80,5 @@ void			Socket::makeNonBlocking()
 	std::cout << "sd = " << _sd << std::endl;
 	flag = fcntl(_sd, F_GETFL, 0);
 	if (fcntl(_sd, F_SETFL, flag | O_NONBLOCK) == -1)
-	{
 		throw SocketException();
-	}
 }
