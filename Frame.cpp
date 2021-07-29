@@ -252,13 +252,8 @@ void	Frame::cmdUser(Session *ss, std::vector<std::string> const& sets)
 	else if (ss->user().cmdUser(sets) == false)
 		return ss->Err_462();	//AlreadyRegistered
 	else if (addUser(ss) == false)
-<<<<<<< HEAD
-		return ss->replyAsServer("462");	//AlreadyRegistered
-	return ss->replyAsServer("001");	//Success
-=======
 		return ss->Err_462();	//AlreadyRegistered
 	return ss->replyAsServer("");	//Success
->>>>>>> main
 }
 
 void	Frame::cmdPass(Session *ss, std::vector<std::string> const& sets)
