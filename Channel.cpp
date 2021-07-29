@@ -87,6 +87,7 @@ void	Channel::setTopic(std::string const topic)
 	sTopic = topic;
 }
 
+/*
 void Channel::cmdWho(Session *ss, int check)
 {
 	std::string res;
@@ -96,7 +97,7 @@ void Channel::cmdWho(Session *ss, int check)
 	{
 		for (it = mOperators.begin(); it != mOperators.end(); it++)
 		{
-			res = sName + " " + it->second.user() + " " + it->second.user().host() + " ft_irc " + it->second.user().nick() + " :0 " + it->second.user().name();
+			//res = sName + " " + it->second->user() + " " + it->second->user().host() + " ft_irc " + it->second->user().nick() + " :0 " + it->second->user().name();
 			ss->replyAsServer(res); // RPL_WHOREPLY
 			res.clear();
 		}
@@ -105,10 +106,37 @@ void Channel::cmdWho(Session *ss, int check)
 	{
 		for (it = mUsers.begin(); it != mUsers.end(); it++)
 		{
-			res = *it + " " + it->second.user() + " " + it->second.user().host() + " ft_irc " + it->second.user().nick() + " :0 " + it->second.user().name();
+			res = it->second->user().channel() + " " + it->second->user() + " " + it->second->user().host() + " ft_irc " + it->second->user().nick() + " :0 " + it->second->user().name();
 			ss->replyAsServer(res); // RPL_WHOREPLY
 			res.clear();
 		}
-		
+			
 	}
+}
+*/
+std::vector<std::string> Channel::channelVector()
+{
+	Usermap::iterator it;
+	std::vector<std::string> res;
+	std::string servername = "ft_irc";
+
+	for (it = mUsers.begin(); it != mUsers.end(); ++it)
+	{
+		res.push_back(name() + " " + it->second->user().user() + " " + it->second->user().host() + " " + servername + " " + it->second->user().nick() + " :0 " + it->second->user().name());
+	}
+	return (res);
+}
+
+std::vector<std::string> Channel::channeloperVector()
+{
+	Usermap::iterator it;
+	std::vector<std::string> res;
+	std::string servername = "ft_irc";
+
+	for (it = mOperators.begin(); it != mOperators.end(); ++it)
+	{
+		res.push_back(name() + " " + it->second->user().user() + " " + it->second->user().host() + " " + servername + " " + it->second->user().nick() + " :0 " + it->second->user().name());
+
+	}
+	return (res);
 }
