@@ -151,7 +151,9 @@ void		Frame::cmdPart(Session *ss, std::vector<std::string> const& sets)
 
 void	Frame::doPart(Session *ss, std::string const& sets, std::string const& re)
 {
-	if (mChannels.find(sets.substr(1)) == mChannels.end())
+	if (checkChannelName(sets) == false)
+		return ss->Err_403(sets);	//wrongChannelName
+	else if (mChannels.find(sets.substr(1)) == mChannels.end())
 		return ss->Err_403(sets.substr(1));	//NoSuchChannel
 	else if (ss->user().cmdPart(ss, sets.substr(1), re) == false)
 		return ss->Err_442(sets.substr(1));	//NotOnChannel
