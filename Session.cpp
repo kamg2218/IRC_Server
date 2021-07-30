@@ -90,7 +90,7 @@ bool	Session::handleRead(std::map<int, Session*> & ms, int sd)
 
 void	Session::Rep_352(std::vector<std::string> const& res)
 {
-	std::vector<std::string>::iterator it;
+	std::vector<std::string>::const_iterator it;
 
 	for (it = res.begin(); it != res.end(); it++)
 		replyAsServer(*it); // RPL_WHOREPLY
