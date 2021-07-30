@@ -90,3 +90,8 @@ void	MainServer::setPass(std::string const& pass)
 {
 	_pass = pass;
 }
+
+std::string	MainServer::msgHeader()
+{
+	return (inet_ntoa(_sock.sin().sin_addr));
+}

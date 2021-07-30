@@ -525,3 +525,8 @@ std::string Frame::vectorToString(std::vector<std::string> const& sets)
 	res += sets[i];
     return res;
 }
+
+MainServer&	Frame::GetServer()
+{
+	return (server);
+}
