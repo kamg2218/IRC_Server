@@ -133,6 +133,11 @@ User&	Session::user() { return _user; }
 void	Session::Rep_001(User *us){
 	replyAsServer("001 :Welcome to the Internet Relay Network " + us->nick() + "!" + us->user() + "@" + us->host());
 }
+
+void	Session::Rep_315(std::string const& str){
+	replyAsServer(str + " :End of /WHO list");
+}
+
 void	Session::Rep_321(){
 	replyAsServer("321 Channel :Users Name");
 }

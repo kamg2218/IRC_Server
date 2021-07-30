@@ -1,5 +1,5 @@
 #include <iostream>
-#include "./include/Frame.hpp"
+//#include "./include/Frame.hpp"
 
 // 일치하는 정보 목록 반환
 // <name> 매개 변수와 일치하는 정보 목록을 반환하는 쿼리를 생성하는 데 사용
@@ -234,29 +234,15 @@ void		Frame::cmdWhowas(Session *ss, std::vector<std::string> const& sets) // 에
 
 void		Frame::cmdPrivmsg(Session *ss, std::vector<std::string> const& sets)
 {
-    int i = 2;
-    std::string res;
     std::vector<std::string> receivers;
-    std::vector<std::string> msg;
-    std::vector<std::string>::iterator msgit = msg.begin();
-    UserMap::iterator itu = mUsers.begin();
-    ChannelMap::iterator itc;
+    std::string receiver;
 
 	if (sets.size() == 1)
-	{
-        ss->Err_411(sets[0]);   // ERR_NORECIPIENT
-		return ;
-	}
+        return (ss->Err_411(sets[0]));   // ERR_NORECIPIENT
 	if (sets[1][0] == ':')
-    {
-        ss->Err_411(sets[0]);   // ERR_NORECIPIENT
-		return ;
-    }
+        return (ss->Err_411(sets[0]));   // ERR_NORECIPIENT
     else if (sets[2][0] != ':')
-    {
-        ss->Err_412();   // ERR_NOTEXTTOSEND
-		return ;
-    }
+        return (ss->Err_412());   // ERR_NOTEXTTOSEND
     // receiver에 콤마로 split해서 저장하기
     receivers = split_comma(sets[1]);
     std::vector<std::string>::iterator receiverit = receivers.begin();
@@ -265,47 +251,38 @@ void		Frame::cmdPrivmsg(Session *ss, std::vector<std::string> const& sets)
     // 메세지 전까지 확인하기
     while (receiverit != receivers.end())
     {
-        if (sets[1][0] == '#')  // channel
-        {
-            if (!doesChannelExists((*receiverit).substr(1)))
-			{
-                ss->Err_404(*receiverit);   // ERR_CANNOTSENDTOCHAN
-				return ;
-			}
+        //if (sets[1][0] == '#')  // channel
+        if (CheckChannelname(*receiverit))
+		{
+            if (!doesChannelExists(MakeLower((*receiverit).substr(1))))
+                return (ss->Err_404(*receiverit));   // ERR_CANNOTSENDTOCHAN
         }
         else
         {
             if (!doesNicknameExists(*receiverit))
-			{
-                ss->Err_401(*receiverit);       // ERR_NOSUCHNICK
-				return ;
-			}
+                return (ss->Err_401(*receiverit));       // ERR_NOSUCHNICK
 			for (tmp = receiverit + 1; tmp != receivers.end(); tmp++)
             {
                 if (*(tmp - 1) == *tmp)
-				{
-                    ss->Err_407(*tmp);       // ERR_TOOMANYTARGETS
-					return ;
-				}
+                    return (ss->Err_407(*tmp));       // ERR_TOOMANYTARGETS
             }
         }
         receiverit++;
     }
-    std::string receiver;
     for (receiverit = receivers.begin(); receiverit != receivers.end(); receiverit++)
     {
         receiver = *receiverit;
         if (receiver[0] == '#')
         {
 			Channel *channel;
-			channel = findChannel(receiver.substr(1));
-            ss->broadcast(ss, sets[2]);
+			channel = findChannel(MakeLower(receiver.substr(1)));
+            channel->broadcast(ss, sets[2].substr(1));
         }
         else
         {
 			Session *session;
 			session = findUser(receiver);
-			ss->replyAsUser(session, sets[2]);
+			ss->replyAsUser(session, sets[2].substr(1));
         }
     }
 }
