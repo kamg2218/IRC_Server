@@ -133,8 +133,14 @@ User&	Session::user() { return _user; }
 void	Session::Rep_001(User *us){
 	replyAsServer("001 :Welcome to the Internet Relay Network " + us->nick() + "!" + us->user() + "@" + us->host());
 }
+void	Session::Rep_321(){
+	replyAsServer("321 Channel :Users Name");
+}
+void	Session::Rep_322(Channel *ch){
+	replyAsServer("322 " + ch->name() + " " + std::to_string(ch->userCount()) + " :" + ch->topic());
+}
 void	Session::Rep_323(){
-	replyAsServer("323 :End of List");
+	replyAsServer("323 :End of /List");
 }
 void	Session::Rep_331(std::string const& ch){
 	replyAsServer("331 " + ch + " :No topic is set");
@@ -146,7 +152,10 @@ void	Session::Rep_341(std::string const& ch, std::string const& nick){
 	replyAsServer("341 " + ch + " " + nick);
 }
 void	Session::Rep_353(std::string const& ch, std::string const& nick){
-	replyAsServer("381 =" + ch + " :" + nick);
+	replyAsServer("353 =" + ch + " :" + nick);
+}
+void	Session::Rep_366(std::string const& ch){
+	replyAsServer("366 " + ch + " : End of NAMES list");
 }
 void	Session::Rep_381(){
 	replyAsServer("381 :You are now an IRC operator");
