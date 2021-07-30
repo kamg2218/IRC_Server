@@ -40,12 +40,14 @@ class Session
 		bool	IsReady() const;
 		void	StreamAppend(char *str, int r);
 		void	Rep_001(User *us);
+		void	Rep_315(std::string const& str);
 		void	Rep_321();
 		void	Rep_322(Channel *ch);
 		void	Rep_323();
 		void	Rep_331(std::string const& ch);
 		void	Rep_332(std::string const& ch, std::string const& topic);
 		void	Rep_341(std::string const& ch, std::string const& nick);
+		void	Rep_352(std::vector<std::string> const& v);
 		void	Rep_353(std::string const& ch, std::string const& nic);
 		void	Rep_366(std::string const& ch);
 		void	Rep_381();
@@ -69,7 +71,6 @@ class Session
 		void	Err_464(void);
 		void	Err_482(std::string const& chname);
 		void	Err_491(void);
-		void	Rep_352(std::vector<std::string> const& v);
 };
 
 #endif
