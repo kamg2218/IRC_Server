@@ -33,10 +33,10 @@ void		Frame::cmdWho(Session *ss, std::vector<std::string> const& sets)
     eol = sets[1] + " :End of /WHO list";
     if (sets.size() == 1 || (sets.size() == 2 && sets[1] == "*"))
     {
-		v = userVector();
-		for (it = v.begin(); it != v.end(); it++)
+		usermap::iterator it;
+		for (it = mUsers.begin(); it != mUsers.end(); it++)
 		{
-			Rep_352(v);
+			Rep_352(it->uesrVector());
 		}
 		/*
         for (; itu != mUsers.end(); itu++,itc++)
@@ -59,17 +59,12 @@ void		Frame::cmdWho(Session *ss, std::vector<std::string> const& sets)
 				{
 					if (itu->second->user().CheckManager() == 1)
 					{
-						v = channel->channeloperVector();
-						Rep_352(v);
+						Rep_352(channel->channeloperVector());
 					}
 				}
 				else
 				{
-					v = channelVector();
-					for (it = v.begin(); it != v.end(); it++)
-					{
-						Rep_352(v);
-					}
+					Rep_352(itc->channelVector());
 				}
 			}
             else

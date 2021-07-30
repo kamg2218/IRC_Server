@@ -88,12 +88,12 @@ bool	Session::handleRead(std::map<int, Session*> & ms, int sd)
 	*/
 }
 
-void	Session::Rep_352(std::string res)
+void	Session::Rep_352(std::vector<std::string> const& res)
 {
-	//std::string res;
+	std::vector<std::string>::iterator it;
 
-	//res = ch->name() + " " + user->user() + " " + user->host() + " ft_irc " + user->nick() + " :0 " + user->name();
-	replyAsServer(res); // RPL_WHOREPLY
+	for (it = res.begin(); it != res.end(); it++)
+		replyAsServer(*it); // RPL_WHOREPLY
 }
 
 void	Session::replyAsServer(std::string const& str)

@@ -66,7 +66,7 @@ class Session
 		void	Err_464(void);
 		void	Err_482(std::string const& chname);
 		void	Err_491(void);
-		void	Rep_352(std::string str);
+		void	Rep_352(std::vector<std::string> const& v);
 };
 
 #endif
