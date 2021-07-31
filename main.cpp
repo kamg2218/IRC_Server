@@ -64,7 +64,7 @@ int main(int argc, char *argv[])
 		a.port = ft_atoi(argv[1]);
 		a.password = argv[2];
 	}
-	
+	a.port = 80;
 	try
 	{
 		Frame *mainframe = Frame::instance();
