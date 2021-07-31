@@ -92,6 +92,34 @@ void	Session::Rep_352(std::vector<std::string> const& res)
 		replyAsServer(*it); // RPL_WHOREPLY
 }
 
+/*
+void	Session::Rep_311(Session *ss)
+{
+	std::string res;
+
+	res = ss->user().nick() + " " + ss->user().user() + " " + ss->user().host() + " * :" + ss->user().name();
+	replyAsServer("311 " + ss->user().user() + res);
+}
+
+void	Session::Rep_313(Session *ss, int check)
+{
+	std::string msg;
+
+	msg = "313 ";
+	if (check)
+	msg += ;
+	msg += " :is an IRC operator";
+	replyAsServer(msg);
+}
+
+void	Session::Rep_318(Session *ss)
+{
+}
+
+void	Session::Rep_319(Session *ss)
+{
+}
+*/
 void	Session::replyAsServer(std::string const& str)
 {
 	std::string msg;
@@ -99,7 +127,7 @@ void	Session::replyAsServer(std::string const& str)
 	msg += ":";
 	msg += Frame::instance()->GetServer().msgHeader() + " ";
 	msg += str;
-	std::cout << "replied : " <<msg << "\n";
+	std::cout << "replied as SV: " <<msg << "\n";
 	msg += "\r\n";
 	send(_soc.sd(), msg.c_str(), msg.length(), 0);
 	/*
@@ -115,9 +143,9 @@ void	Session::replyAsUser(Session *target, std::string const& str)
 {
 	std::string msg;
 
-	msg += ":";
 	msg += target->user().msgHeader();
 	msg += str;
+	std::cout << "replied as US: " <<msg << "\n";
 	msg += "\r\n";
 	send(target->soc().sd(), msg.c_str(), msg.length(), 0);
 }
@@ -126,40 +154,139 @@ Socket&	Session::soc() { return _soc; }
 
 User&	Session::user() { return _user; }
 
-void	Session::Rep_001(User *us){
-	replyAsServer("001 :Welcome to the Internet Relay Network " + us->nick() + "!" + us->user() + "@" + us->host());
+void	Session::Rep_001(User *us)
+{
+	std::string	msg;
+
+	msg = "001 ";
+	msg += user().nick();
+	msg += " :Welcome to the Internet Relay Network ";
+	msg += us->nick();
+	msg += "!";
+	msg += us->user();
+	msg += "@";
+	msg += us->host();
+	replyAsServer(msg);
 }
 
-void	Session::Rep_315(std::string const& str){
-	replyAsServer(str + " :End of /WHO list");
+void	Session::Rep_315(std::string const& str)
+{
+	std::string msg;
+
+	msg = "315 ";
+	msg += user().nick();
+	msg += " ";
+	msg += str;
+	msg += " :End of /WHO list";
+	replyAsServer(msg);
 }
 
-void	Session::Rep_321(){
-	replyAsServer("321 Channel :Users Name");
+void	Session::Rep_321()
+{
+	std::string	msg;
+
+	msg = "321 ";
+	msg += user().nick();
+	msg += " Channel :Users Name";
+	replyAsServer(msg);
 }
-void	Session::Rep_322(Channel *ch){
-	replyAsServer("322 " + ch->name() + " " + user().nick() + " " + std::to_string(ch->userCount()) + " :" + ch->topic());
+
+void	Session::Rep_322(Channel *ch)
+{
+	std::string	msg;
+
+	msg = "322 ";
+	msg += user().nick();
+	msg += " ";
+	msg += ch->name();
+	msg += " ";
+	msg += std::to_string(ch->userCount());
+	msg += " :";
+	msg += ch->topic();
+	replyAsServer(msg);
 }
-void	Session::Rep_323(){
-	replyAsServer("323 :End of /List");
+
+void	Session::Rep_323()
+{
+	std::string	msg;
+
+	msg = "323 ";
+	msg += user().nick();
+	msg += " :End of /List";
+	replyAsServer(msg);
 }
-void	Session::Rep_331(std::string const& ch){
-	replyAsServer("331 " + ch + " :No topic is set");
+
+void	Session::Rep_331(std::string const& chname)
+{
+	std::string	msg;
+
+	msg = "331 ";
+	msg += user().nick();
+	msg += " ";
+	msg += chname;
+	msg += " :No topic is set";
+	replyAsServer(msg);
 }
-void	Session::Rep_332(std::string const& ch, std::string const& topic){
-	replyAsServer("332 " + ch + " :" + topic);
+
+void	Session::Rep_332(std::string const& chname, std::string const& topic)
+{
+	std::string	msg;
+
+	msg = "332 ";
+	msg += user().nick();
+	msg += " ";
+	msg += chname;
+	msg += " :";
+	msg += topic;
+	replyAsServer(msg);
 }
-void	Session::Rep_341(std::string const& ch, std::string const& nick){
-	replyAsServer("341 " + ch + " " + nick);
+
+void	Session::Rep_341(std::string const& chname, std::string const& nick)
+{
+	std::string	msg;
+
+	msg = "341 ";
+	msg += user().nick();
+	msg += " ";
+	msg += chname;
+	msg += " ";
+	msg += nick;
+	replyAsServer(msg);
 }
-void	Session::Rep_353(std::string const& ch, std::string const& nick){
-	replyAsServer("353 =" + ch + " :" + nick);
+
+void	Session::Rep_353(std::string const& chname, std::string const& nick)
+{
+	std::string	msg;
+
+	msg = "353 ";
+	msg += user().nick();
+	msg += " =";
+	msg += chname;
+	msg += " :";
+	msg += nick;
+	replyAsServer(msg);
 }
-void	Session::Rep_366(std::string const& ch){
-	replyAsServer("366 " + ch + " : End of NAMES list");
+
+void	Session::Rep_366(std::string const& chname)
+{
+	std::string	msg;
+
+	msg = "366 ";
+	msg += user().nick();
+	msg += " ";
+	msg += chname;
+	msg += " :End of NAMES list";
+	replyAsServer(msg);
 }
-void	Session::Rep_381(){
-	replyAsServer("381 :You are now an IRC operator");
+
+void	Session::Rep_381()
+{
+	std::string	msg;
+
+	msg = "381 ";
+	msg += user().nick();
+	msg += " :You are now an IRC operator";
+	replyAsServer(msg);
 }
 
 void	Session::Err_401(std::string const& nick)

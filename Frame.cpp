@@ -532,9 +532,7 @@ void	Frame::cmdWho(Session *ss, std::vector<std::string> const& sets)
 	if (sets.size() == 1 || (sets.size() == 2 && sets[1] == "*"))
 	{
 		for (itu = mUsers.begin(); itu != mUsers.end(); ++itu)
-		{
 			ss->Rep_352(itu->second->user().userVector());
-		}
 	}
 	else
 	{
@@ -547,13 +545,9 @@ void	Frame::cmdWho(Session *ss, std::vector<std::string> const& sets)
 				Channel *channel;
 				channel = findChannel(v[i]);
 				if (sets[2] == "o")
-				{
 					ss->Rep_352(channel->channeloperVector());
-				}
 				else
-				{
 					ss->Rep_352(channel->channelVector());
-				}
 			}
 			else
 			{
@@ -569,29 +563,6 @@ void	Frame::cmdWho(Session *ss, std::vector<std::string> const& sets)
 					}
 					else
 						break ;
-						/*
-					if (itu->second->user().host() == v[i])	// hostname
-					{
-						if (sets.size() > 2 && sets[2] == "o" && itu->second->user().CheckManager() == 0)
-							continue ;
-						ss->Rep_352(itu->second->user().userVector());
-					}
-					//server
-					else if (itu->second->user().name() == v[i])	// realname
-					{
-						if (sets.size() > 2 && sets[2] == "o" && itu->second->user().CheckManager() == 0)
-							continue ;
-						ss->Rep_352(itu->second->user().userVector());
-					}
-					else if (itu->second->user().nick() == v[i])	// nickname
-					{
-						if (sets.size() > 2 && sets[2] == "o" && itu->second->user().CheckManager() == 0)
-							continue ;
-						ss->Rep_352(itu->second->user().userVector());
-					}
-					else
-						break ;
-						*/
 				}
 			}
 		}
@@ -649,7 +620,36 @@ void		Frame::cmdPrivmsg(Session *ss, std::vector<std::string> const& sets)
         {
 			Session *session;
 			session = findUser(receiver);
-			ss->replyAsUser(session, sets[2].substr(1));
+			ss->replyAsUser(session, vectorToString(sets));
         }
     }
 }
+/*
+void	Frame::cmdWhois(Session *ss, std::vector<std::string> const& sets)
+{
+	std::vector<std::string>::iterator it;
+	usermap::iterator itu;
+	std::string res;
+
+	if (sets.size() == 1)
+		return ss->Err_431();
+	v = split_comma(sets[1]);
+	for (int i = 0; i < v.size(); i++)
+	{
+		if (!doesNicknameExists(v[i]))
+			return (ss->Err_401(v[i]));
+	}
+	for (it = v.begin(); it != v.end(); it++)
+	{
+		Session *session;
+
+		session = findUser(*it);
+		//ss->cmdWhois(v[i]);
+		ss->Rep_311(session);
+		ss->Rep_313(session);
+		ss->Rep_318(session);
+		ss->Rep_319(session);
+	}
+	ss->Rep_318();
+}
+*/
