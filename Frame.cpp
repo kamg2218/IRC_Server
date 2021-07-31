@@ -179,7 +179,8 @@ void	Frame::cmdJoin(Session *ss, std::vector<std::string> const& sets)
 	else if (sets.size() == 2 && sets[1] == "O")
 		return ss->user().optionJoin(ss, sets, vectorToString(sets));
 	str = sets[1];
-	while (1){
+	while (1)
+	{
 		n = str.find(",");
 		if (!(CheckChannelname(str.substr(0, n))))
 			return ss->Err_403(str.substr(0, n));	//NoSuchChannel
@@ -312,7 +313,8 @@ void	Frame::cmdList(Session *ss, std::vector<std::string> const& sets)
 	if (sets.size() == 1)
 		return doList(ss, "");
 	str = sets[1];
-	while (1){
+	while (1)
+	{
 		n = str.find(",");
 		doList(ss, str.substr(0, n));
 		if (std::string::npos == n)
