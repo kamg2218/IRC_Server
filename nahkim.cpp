@@ -275,7 +275,7 @@ void		Frame::cmdPrivmsg(Session *ss, std::vector<std::string> const& sets)
     for (receiverit = receivers.begin(); receiverit != receivers.end(); receiverit++)
     {
         receiver = *receiverit;
-        if (receiver[1] == '#')
+        if (receiver[0] == '#')
         {
             for (;itc != mChannels.end(); receiverit++)
             {
@@ -286,7 +286,7 @@ void		Frame::cmdPrivmsg(Session *ss, std::vector<std::string> const& sets)
         }
         else
         {
-            for (itu = mUser.begin(); itu != mUsers.end(); itu++)
+			for (itu = mUser.begin(); itu != mUsers.end(); itu++)
             {
                 if (itu->second.user().name() == *receiverit)
                     ss->replyAsUser(itu->second, sets[2]);
