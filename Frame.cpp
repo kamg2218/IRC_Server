@@ -614,7 +614,7 @@ void		Frame::cmdPrivmsg(Session *ss, std::vector<std::string> const& sets)
         {
 			Channel *channel;
 			channel = findChannel(MakeLower(receiver.substr(1)));
-            channel->broadcast(ss, sets[2].substr(1));
+            channel->broadcast(ss, vectorToString(sets));
         }
         else
         {
@@ -624,12 +624,15 @@ void		Frame::cmdPrivmsg(Session *ss, std::vector<std::string> const& sets)
         }
     }
 }
-/*
+
 void	Frame::cmdWhois(Session *ss, std::vector<std::string> const& sets)
 {
 	std::vector<std::string>::iterator it;
-	usermap::iterator itu;
+	std::vector<std::string>::iterator it2;
+	std::vector<std::string> v;
+	Usermap::iterator itu;
 	std::string res;
+	std::vector<std::string> resline;
 
 	if (sets.size() == 1)
 		return ss->Err_431();
@@ -642,14 +645,15 @@ void	Frame::cmdWhois(Session *ss, std::vector<std::string> const& sets)
 	for (it = v.begin(); it != v.end(); it++)
 	{
 		Session *session;
+		int check;
 
 		session = findUser(*it);
 		//ss->cmdWhois(v[i]);
 		ss->Rep_311(session);
 		ss->Rep_313(session);
-		ss->Rep_318(session);
-		ss->Rep_319(session);
+		resline = ss->user().User::cmdWhois();
+		for (it2 = resline.begin(); it2 != resline.end(); it2++)
+			ss->Rep_319(*it2);
 	}
-	ss->Rep_318();
+	ss->Rep_318(sets[1]);
 }
-*/

@@ -209,3 +209,18 @@ std::vector<std::string> User::userVector()
 	}
 	return (res);
 }
+
+std::vector<std::string> User::cmdWhois()
+{
+	ChannelMap::iterator it;
+	std::vector<std::string> res;
+
+	for (it = mChannels.begin(); it != mChannels.end(); ++it)
+	{
+		if (manager)
+			res.push_back(nick() + " :@" + it->second->name() + " ");
+		else
+			res.push_back(nick() + " :" + it->second->name() + " ");
+	}
+	return (res);
+}

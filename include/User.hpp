@@ -52,6 +52,7 @@ class User
 		bool	isMemOfChannel(std::string const& chname) const;
 		const ChannelMap&	channel() const;	// tmp
 		std::vector<std::string> userVector();
+		std::vector<std::string> cmdWhois();
 };
 
 #endif
