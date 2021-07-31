@@ -3,7 +3,7 @@
 #include <vector>
 #include <string>
 #include <cstring>
-
+/*
 typedef struct base
 {
     std::string host;
@@ -13,7 +13,7 @@ typedef struct base
     std::string password;
   
 } base;
-
+*/
 int ft_atoi(char *str)
 {
   int n = 0;
@@ -68,7 +68,7 @@ int main(int argc, char *argv[])
 	try
 	{
 		Frame *mainframe = Frame::instance();
-		mainframe->start();
+		mainframe->start(a);
 	}
 	catch(std::exception const& err)
 	{
