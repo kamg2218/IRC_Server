@@ -179,7 +179,8 @@ void	Frame::cmdJoin(Session *ss, std::vector<std::string> const& sets)
 	else if (sets.size() == 2 && sets[1] == "O")
 		return ss->user().optionJoin(ss, sets, vectorToString(sets));
 	str = sets[1];
-	while (1){
+	while (1)
+	{
 		n = str.find(",");
 		if (!(CheckChannelname(str.substr(0, n))))
 			return ss->Err_403(str.substr(0, n));	//NoSuchChannel
@@ -212,28 +213,21 @@ void	Frame::doJoin(Session *ss, std::string const& sets, std::string const& msg)
 
 void	Frame::cmdNick(Session *ss, std::vector<std::string> const& sets)
 {
-	if (sets[0] == "NICK")
+	if (sets.size() < 2)
+		return ss->Err_431();	//noNicknameGiven
+	else if (!(CheckNickname(sets[1])))
+		return ss->Err_432(sets[1]);	//ErroneusNickname
+	else if (doesNicknameExists(sets[1]))
+		return ss->Err_433(sets[1]);	//NicknameInUse
+	else if (ss->user().addNick(sets) == true)
+		return ;	//success to register
+	else			//change Nickname
 	{
-		if (sets.size() != 2)
-			return ss->Err_431();	//noNicknameGiven
-		else if (!(CheckNickname(sets[1])))
-			return ss->Err_432(sets[1]);	//ErroneusNickname
-		else if (doesNicknameExists(sets[1]))
-			return ss->Err_433(sets[1]);	//NicknameInUse
-		else if (ss->user().addNick(sets) == false)
-			return ss->Err_433(sets[1]);	//already be registered
-	}
-	else
-	{
-		if (doesNicknameExists(sets[2]))
-			return ss->Err_433(sets[2]);	//NicknameInUse
-		else if (sets[0].substr(1) != ss->user().nick())
-			return ss->Err_432(sets[0].substr(1));	//ErroneusNickname
 		for (UserMap::iterator it = mUsers.begin(); it != mUsers.end(); it++)
 		{
 			if (it->first == ss->user().nick())
 			{
-				mUsers.insert(std::pair<std::string, Session*>(sets[2], it->second));
+				mUsers.insert(std::pair<std::string, Session*>(sets[1], it->second));
 				mUsers.erase(it);
 				break ;
 			}
@@ -319,7 +313,8 @@ void	Frame::cmdList(Session *ss, std::vector<std::string> const& sets)
 	if (sets.size() == 1)
 		return doList(ss, "");
 	str = sets[1];
-	while (1){
+	while (1)
+	{
 		n = str.find(",");
 		doList(ss, str.substr(0, n));
 		if (std::string::npos == n)
