@@ -280,9 +280,11 @@ void		Frame::cmdPrivmsg(Session *ss, std::vector<std::string> const& sets)
         }
         else
         {
-			Session *session;
-			session = findUser(receiver);
-			ss->replyAsUser(session, sets[2].substr(1));
+
+      			Session *session;
+  	    		session = findUser(receiver);
+		      	ss->replyAsUser(session, sets[2].substr(1));
+
         }
     }
 }
