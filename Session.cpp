@@ -92,16 +92,22 @@ void	Session::Rep_352(std::vector<std::string> const& res)
 		replyAsServer(*it); // RPL_WHOREPLY
 }
 
-/*
 void	Session::Rep_311(Session *ss)
 {
-	std::string res;
+	std::string msg;
 
-	res = ss->user().nick() + " " + ss->user().user() + " " + ss->user().host() + " * :" + ss->user().name();
-	replyAsServer("311 " + ss->user().user() + res);
+	msg = "311 ";
+	msg += ss->user().nick();
+	msg += " ";
+	msg += ss->user().user();
+	msg += " ";
+	msg += ss->user().host();
+	msg += " * :";
+	msg += ss->user().name();
+	replyAsServer(msg);
 }
 
-void	Session::Rep_313(Session *ss, int check)
+void	Session::Rep_313(Session *ss)
 {
 	std::string msg;
 
@@ -111,28 +117,25 @@ void	Session::Rep_313(Session *ss, int check)
 	replyAsServer(msg);
 }
 
-void	Session::Rep_318(Session *ss)
+void	Session::Rep_318(std::string const& str)
 {
 	std::string msg;
 
 	msg = "318 ";
-	msg += ss->user().user();
+	msg += str;
 	msg += " :End of /WHOIS list";
+	replyAsServer(msg);
 }
 
-void	Session::Rep_319(Session *ss, int check)
+void	Session::Rep_319(std::string const& str)
 {
 	std::string msg;
 
 	msg = "319 ";
-	msg += ss->user().user();
-	if (check)
-		msg += " :@";
-	else
-		msg += " :";
-	msg += ;
+	msg += str;
+	replyAsServer(msg);
 }
-*/
+
 void	Session::replyAsServer(std::string const& str)
 {
 	std::string msg;

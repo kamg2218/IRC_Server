@@ -38,7 +38,11 @@ class Session
 		void	replyAsUser(Session *target, std::string const& str);
 		void	StreamAppend(char *str, int r);
 		void	Rep_001(User *us);
+		void	Rep_311(Session *ss);
+		void	Rep_313(Session *ss);
 		void	Rep_315(std::string const& str);
+		void	Rep_318(std::string const& str);
+		void	Rep_319(std::string const& str);
 		void	Rep_321();
 		void	Rep_322(Channel *ch);
 		void	Rep_323();
