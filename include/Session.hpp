@@ -23,7 +23,6 @@ class Session
 	private:
 		Socket		_soc;
 		User		_user;
-		Executor	request;
 		std::string	rstream;
 
 	public:
@@ -37,7 +36,6 @@ class Session
 		bool	handleRead(std::map<int, Session*> & ms, int fd);
 		void	replyAsServer(std::string const& str);
 		void	replyAsUser(Session *target, std::string const& str);
-		bool	IsReady() const;
 		void	StreamAppend(char *str, int r);
 		void	Rep_001(User *us);
 		void	Rep_315(std::string const& str);
