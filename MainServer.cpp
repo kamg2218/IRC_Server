@@ -24,9 +24,9 @@ const char*		MainServer::AcceptException::what() const throw()
 
 MainServer::MainServer() :_name("ft_irc") {}
 
-void	MainServer::create(unsigned int port)
+void	MainServer::create(base const& bs)//(unsigned int port)
 {
-	_sd = _sock.makeSocket(port);
+	_sd = _sock.makeSocket(bs.port);
 	if ((bind(_sd, (struct sockaddr *)&(_sock.sin()), sizeof(_sock.sin()))) == -1)
 		throw BindException();
 	if (listen(_sd, 42) < 0)

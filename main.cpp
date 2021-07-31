@@ -4,16 +4,6 @@
 #include <string>
 #include <cstring>
 
-typedef struct base
-{
-    std::string host;
-    int server_port;
-    std::string password_network;
-    int port;
-    std::string password;
-  
-} base;
-
 int ft_atoi(char *str)
 {
   int n = 0;
@@ -64,11 +54,15 @@ int main(int argc, char *argv[])
 		a.port = ft_atoi(argv[1]);
 		a.password = argv[2];
 	}
-	
+	std::cout << "host = " << a.host << std::endl;
+	std::cout << "server_port = " << a.server_port << std::endl;
+	std::cout << "port = " << a.port << std::endl;
+	std::cout << "pass = " << a.password << std::endl;
+	std::cout << "pass_network = " << a.password_network << std::endl;
 	try
 	{
 		Frame *mainframe = Frame::instance();
-		mainframe->start();
+		mainframe->start(a);
 	}
 	catch(std::exception const& err)
 	{

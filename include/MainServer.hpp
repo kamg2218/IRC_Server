@@ -13,6 +13,16 @@ class Service;
 class Session;
 #include "Socket.hpp"
 
+typedef struct base
+{
+    std::string host;
+    int server_port;
+    std::string password_network;
+    int port;
+    std::string password;
+  
+} base;
+
 class MainServer
 {
 	private:
@@ -43,8 +53,7 @@ class MainServer
 				virtual const char *what(void) const throw();
 		};
 		MainServer();
-		void	create(unsigned int port);
-
+		void	create(base const& bs);//(unsigned int port);
 		void	handleRead(std::map<int, Session*>::iterator temp);
 		void	handleAccept(Service *p);
 		void	handleDecline(std::map<int, Session*>::iterator& pos);

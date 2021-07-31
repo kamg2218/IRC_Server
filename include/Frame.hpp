@@ -11,7 +11,17 @@
 
 typedef std::map<std::string, Session*> UserMap;
 typedef std::map<std::string, Channel*> ChannelMap;
-
+/*
+typedef struct base
+{
+    std::string host;
+    int server_port;
+    std::string password_network;
+    int port;
+    std::string password;
+  
+} base;
+*/
 class Frame
 {
 	private:
@@ -23,7 +33,7 @@ class Frame
 	public:
 		~Frame();
 		static Frame*	instance();
-		void	start();
+		void	start(base const& bs);
 		bool	doesNicknameExists(std::string const& name);
 		bool	addUser(Session *new_user);
 		void	removeUser(std::string const& nick);
