@@ -100,7 +100,7 @@ bool	User::CheckManager() const
 bool	User::addNick(std::vector<std::string> const& sets)
 {
 	if (didNick)
-		return false;
+		return true;	//alreadyRegistered
 	sNickname = sets[1];
 	didNick = true;
 	return true;
