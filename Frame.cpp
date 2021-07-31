@@ -205,7 +205,7 @@ void	Frame::doJoin(Session *ss, std::string const& sets)
 	{
 		ch = findChannel(MakeLower(sets.substr(1)));
 		ch->addUser(ss);
-		ch->broadcast(ss, ss->user().nick() + " joined to " + ch->name());
+		ch->broadcast(ss, vectorToString(sets));
 		ss->user().cmdJoin(ch);
 	}
 	else
