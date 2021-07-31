@@ -143,7 +143,7 @@ void	Session::replyAsUser(Session *target, std::string const& str)
 {
 	std::string msg;
 
-	msg += target->user().msgHeader();
+	msg += user().msgHeader();
 	msg += str;
 	std::cout << "replied as US: " <<msg << "\n";
 	msg += "\r\n";
