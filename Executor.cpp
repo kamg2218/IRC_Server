@@ -50,9 +50,9 @@ bool	Executor::IsPrefix(std::string const& s)
 	return (false);
 }
 
-int	Executor::split(std::string& buff, std::vector<std::string> & v)
+std::string	Executor::split(std::string& buff, std::vector<std::string> & v)
 {
-	int					i;
+	std::string			prefix;
 	std::string			msgline;
 	std::string::size_type	pos;
 	std::string::iterator	it;
@@ -66,51 +66,61 @@ int	Executor::split(std::string& buff, std::vector<std::string> & v)
 	if (msgline.size())
 		v.push_back(msgline);
 	if (IsPrefix(v[0]))
-		i = 1;
-	else
-		i = 0;
-	it = v[i].begin();
-	for (; it != v[i].end() ; ++it)
+	{
+		prefix = v[0];
+		v.erase(v.begin());
+	}
+	it = v[0].begin();
+	for (; it != v[0].end() ; ++it)
 		(*it) = toupper(*it);
-	return (i);
+	return (prefix);
 }
 
+bool	Executor::DoesMatchNick(std::string const& prefix, std::string const& sender_nick)
+{
+	if (!IsPrefix(prefix))
+		return (true);
+	if (prefix.substr(1) == sender_nick)
+		return (true);
+	return (false);
+}
 
 void	Executor::execute(std::string& buff, Session* ss)
 {
-	int		i;
+	std::string sender_prefix;
+	int		i = 0;
 	std::vector<std::string>	splited_cmd;
 	Frame *frame;
 
 	frame = Frame().instance();
-	i = split(buff, splited_cmd);
-	if (splited_cmd[i] == "NICK")
+	sender_prefix = split(buff, splited_cmd);
+	if (!DoesMatchNick(sender_prefix, ss->user().nick()))
+		return ;
+	if (splited_cmd[0] == "NICK")
 		return frame->cmdNick(ss, splited_cmd);
-	else if (splited_cmd[i] == "USER")
+	else if (splited_cmd[0] == "USER")
 		return frame->cmdUser(ss, splited_cmd);
-	else if (splited_cmd[i] == "PASS")
+	else if (splited_cmd[0] == "PASS")
 		return frame->cmdPass(ss, splited_cmd);
 	if (!(ss->user().IsConnected()))
 		ss->replyAsServer("451");
-	else if (i == 1)
-		return ;
-	else if (splited_cmd[i] == "PRIVMSG")
+	else if (splited_cmd[0] == "PRIVMSG")
 		frame->cmdPrivmsg(ss, splited_cmd);
-	else if (splited_cmd[i] == "QUIT")
+	else if (splited_cmd[0] == "QUIT")
 		frame->cmdQuit(ss, splited_cmd);
-	else if (splited_cmd[i] == "JOIN")
+	else if (splited_cmd[0] == "JOIN")
 		frame->cmdJoin(ss, splited_cmd);
-	else if (splited_cmd[i] == "PART")
+	else if (splited_cmd[0] == "PART")
 		frame->cmdPart(ss, splited_cmd);
-	else if (splited_cmd[i] == "KICK")
+	else if (splited_cmd[0] == "KICK")
 		frame->cmdKick(ss, splited_cmd);
-	else if (splited_cmd[i] == "TOPIC")
+	else if (splited_cmd[0] == "TOPIC")
 		frame->cmdTopic(ss, splited_cmd);
-	else if (splited_cmd[i] == "LIST")
+	else if (splited_cmd[0] == "LIST")
 		frame->cmdList(ss, splited_cmd);
-	else if (splited_cmd[i] == "INVITE")
+	else if (splited_cmd[0] == "INVITE")
 		frame->cmdInvite(ss, splited_cmd);
-	else if (splited_cmd[i] == "WHO")
+	else if (splited_cmd[0] == "WHO")
 	{
 		// frame->cmdWho(ss, splited_cmd);
 	}
