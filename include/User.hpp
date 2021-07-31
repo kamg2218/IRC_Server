@@ -24,6 +24,7 @@ class User
 		bool	manager;
 		bool	is_properly_quit;
 		std::list<std::string>	_pastNick;
+
 	public:
 		User();
 		~User();
