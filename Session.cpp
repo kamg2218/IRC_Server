@@ -106,18 +106,31 @@ void	Session::Rep_313(Session *ss, int check)
 	std::string msg;
 
 	msg = "313 ";
-	if (check)
-	msg += ;
+	msg += ss->user().nick();
 	msg += " :is an IRC operator";
 	replyAsServer(msg);
 }
 
 void	Session::Rep_318(Session *ss)
 {
+	std::string msg;
+
+	msg = "318 ";
+	msg += ss->user().user();
+	msg += " :End of /WHOIS list";
 }
 
-void	Session::Rep_319(Session *ss)
+void	Session::Rep_319(Session *ss, int check)
 {
+	std::string msg;
+
+	msg = "319 ";
+	msg += ss->user().user();
+	if (check)
+		msg += " :@";
+	else
+		msg += " :";
+	msg += ;
 }
 */
 void	Session::replyAsServer(std::string const& str)
