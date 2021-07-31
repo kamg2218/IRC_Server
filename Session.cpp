@@ -92,22 +92,34 @@ void	Session::Rep_352(std::vector<std::string> const& res)
 		replyAsServer(*it); // RPL_WHOREPLY
 }
 
-void	Session::Rep_311(std::vector<std::string> const& str)
+/*
+void	Session::Rep_311(Session *ss)
+{
+	std::string res;
+
+	res = ss->user().nick() + " " + ss->user().user() + " " + ss->user().host() + " * :" + ss->user().name();
+	replyAsServer("311 " + ss->user().user() + res);
+}
+
+void	Session::Rep_313(Session *ss, int check)
+{
+	std::string msg;
+
+	msg = "313 ";
+	if (check)
+	msg += ;
+	msg += " :is an IRC operator";
+	replyAsServer(msg);
+}
+
+void	Session::Rep_318(Session *ss)
 {
 }
 
-void	Session::Rep_313(std::vector<std::string> const& str)
+void	Session::Rep_319(Session *ss)
 {
 }
-
-void	Session::Rep_318(std::vector<std::string> const& str)
-{
-}
-
-void	Session::Rep_319(std::vector<std::string> const& str)
-{
-}
-
+*/
 void	Session::replyAsServer(std::string const& str)
 {
 	std::string msg;

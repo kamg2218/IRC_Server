@@ -655,11 +655,11 @@ void		Frame::cmdPrivmsg(Session *ss, std::vector<std::string> const& sets)
         {
 			Session *session;
 			session = findUser(receiver);
-			ss->replyAsUser(session, sets[2].substr(1));
+			ss->replyAsUser(session, vectorToString(sets));
         }
     }
 }
-
+/*
 void	Frame::cmdWhois(Session *ss, std::vector<std::string> const& sets)
 {
 	std::vector<std::string>::iterator it;
@@ -678,8 +678,13 @@ void	Frame::cmdWhois(Session *ss, std::vector<std::string> const& sets)
 	{
 		Session *session;
 
-		session = findUser(v[i]);
-		ss->cmdWhois(v[i]);
+		session = findUser(*it);
+		//ss->cmdWhois(v[i]);
+		ss->Rep_311(session);
+		ss->Rep_313(session);
+		ss->Rep_318(session);
+		ss->Rep_319(session);
 	}
 	ss->Rep_318();
 }
+*/
