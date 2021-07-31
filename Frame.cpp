@@ -538,9 +538,7 @@ void	Frame::cmdWho(Session *ss, std::vector<std::string> const& sets)
 	if (sets.size() == 1 || (sets.size() == 2 && sets[1] == "*"))
 	{
 		for (itu = mUsers.begin(); itu != mUsers.end(); ++itu)
-		{
 			ss->Rep_352(itu->second->user().userVector());
-		}
 	}
 	else
 	{
@@ -553,13 +551,9 @@ void	Frame::cmdWho(Session *ss, std::vector<std::string> const& sets)
 				Channel *channel;
 				channel = findChannel(v[i]);
 				if (sets[2] == "o")
-				{
 					ss->Rep_352(channel->channeloperVector());
-				}
 				else
-				{
 					ss->Rep_352(channel->channelVector());
-				}
 			}
 			else
 			{
@@ -575,29 +569,6 @@ void	Frame::cmdWho(Session *ss, std::vector<std::string> const& sets)
 					}
 					else
 						break ;
-						/*
-					if (itu->second->user().host() == v[i])	// hostname
-					{
-						if (sets.size() > 2 && sets[2] == "o" && itu->second->user().CheckManager() == 0)
-							continue ;
-						ss->Rep_352(itu->second->user().userVector());
-					}
-					//server
-					else if (itu->second->user().name() == v[i])	// realname
-					{
-						if (sets.size() > 2 && sets[2] == "o" && itu->second->user().CheckManager() == 0)
-							continue ;
-						ss->Rep_352(itu->second->user().userVector());
-					}
-					else if (itu->second->user().nick() == v[i])	// nickname
-					{
-						if (sets.size() > 2 && sets[2] == "o" && itu->second->user().CheckManager() == 0)
-							continue ;
-						ss->Rep_352(itu->second->user().userVector());
-					}
-					else
-						break ;
-						*/
 				}
 			}
 		}

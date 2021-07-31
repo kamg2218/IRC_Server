@@ -143,7 +143,6 @@ void	Session::replyAsUser(Session *target, std::string const& str)
 {
 	std::string msg;
 
-	msg += ":";
 	msg += target->user().msgHeader();
 	msg += str;
 	msg += "\r\n";
@@ -155,39 +154,39 @@ Socket&	Session::soc() { return _soc; }
 User&	Session::user() { return _user; }
 
 void	Session::Rep_001(User *us){
-	replyAsServer("001 :Welcome to the Internet Relay Network " + us->nick() + "!" + us->user() + "@" + us->host());
+	replyAsServer("001 " + user().nick() + " :Welcome to the Internet Relay Network " + us->nick() + "!" + us->user() + "@" + us->host());
 }
 
 void	Session::Rep_315(std::string const& str){
-	replyAsServer(str + " :End of /WHO list");
+	replyAsServer("315 " + user().nick() + " " + str + " :End of /WHO list");
 }
 
 void	Session::Rep_321(){
-	replyAsServer("321 Channel :Users Name");
+	replyAsServer("321 " + user().nick() + " Channel :Users Name");
 }
 void	Session::Rep_322(Channel *ch){
-	replyAsServer("322 " + ch->name() + " " + std::to_string(ch->userCount()) + " :" + ch->topic());
+	replyAsServer("322 " + user().nick() + " " + ch->name() + " " + std::to_string(ch->userCount()) + " :" + ch->topic());
 }
 void	Session::Rep_323(){
-	replyAsServer("323 :End of /List");
+	replyAsServer("323 " + user().nick() + " :End of /List");
 }
 void	Session::Rep_331(std::string const& ch){
-	replyAsServer("331 " + ch + " :No topic is set");
+	replyAsServer("331 " + user().nick() + " " + ch + " :No topic is set");
 }
 void	Session::Rep_332(std::string const& ch, std::string const& topic){
-	replyAsServer("332 " + ch + " :" + topic);
+	replyAsServer("332 " + user().nick() + " " + ch + " :" + topic);
 }
 void	Session::Rep_341(std::string const& ch, std::string const& nick){
-	replyAsServer("341 " + ch + " " + nick);
+	replyAsServer("341 " + user().nick() + " " + ch + " " + nick);
 }
 void	Session::Rep_353(std::string const& ch, std::string const& nick){
-	replyAsServer("353 =" + ch + " :" + nick);
+	replyAsServer("353 " + user().nick() + " =" + ch + " :" + nick);
 }
 void	Session::Rep_366(std::string const& ch){
-	replyAsServer("366 " + ch + " : End of NAMES list");
+	replyAsServer("366 " + user().nick() + " " + ch + " :End of NAMES list");
 }
 void	Session::Rep_381(){
-	replyAsServer("381 :You are now an IRC operator");
+	replyAsServer("381 " + user().nick() + " :You are now an IRC operator");
 }
 
 void	Session::Err_401(std::string const& nick)

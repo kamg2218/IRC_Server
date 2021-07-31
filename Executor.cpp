@@ -71,9 +71,7 @@ int	Executor::split(std::string& buff, std::vector<std::string> & v)
 		i = 0;
 	it = v[i].begin();
 	for (; it != v[i].end() ; ++it)
-	{
 		(*it) = toupper(*it);
-	}
 	return (i);
 }
 
@@ -87,60 +85,31 @@ void	Executor::execute(std::string& buff, Session* ss)
 	frame = Frame().instance();
 	i = split(buff, splited_cmd);
 	if (splited_cmd[i] == "NICK")
-	{
-		frame->cmdNick(ss, splited_cmd);
-		return ;
-	}
+		return frame->cmdNick(ss, splited_cmd);
 	else if (splited_cmd[i] == "USER")
-	{
-		frame->cmdUser(ss, splited_cmd);
-		return ;
-	}
+		return frame->cmdUser(ss, splited_cmd);
 	else if (splited_cmd[i] == "PASS")
-	{
-		frame->cmdPass(ss, splited_cmd);
-		return ;
-	}
+		return frame->cmdPass(ss, splited_cmd);
 	if (!(ss->user().IsConnected()))
-	{
 		ss->replyAsServer("451");
-	}
 	else if (i == 1)
-	{
 		return ;
-	}
 	else if (splited_cmd[i] == "PRIVMSG")
-	{
-		//frame->cmdPrivmsg(ss, splited_cmd);
-	}
+		frame->cmdPrivmsg(ss, splited_cmd);
 	else if (splited_cmd[i] == "QUIT")
-	{
 		frame->cmdQuit(ss, splited_cmd);
-	}
 	else if (splited_cmd[i] == "JOIN")
-	{
 		frame->cmdJoin(ss, splited_cmd);
-	}
 	else if (splited_cmd[i] == "PART")
-	{
 		frame->cmdPart(ss, splited_cmd);
-	}
 	else if (splited_cmd[i] == "KICK")
-	{
 		frame->cmdKick(ss, splited_cmd);
-	}
 	else if (splited_cmd[i] == "TOPIC")
-	{
 		frame->cmdTopic(ss, splited_cmd);
-	}
 	else if (splited_cmd[i] == "LIST")
-	{
 		frame->cmdList(ss, splited_cmd);
-	}
 	else if (splited_cmd[i] == "INVITE")
-	{
 		frame->cmdInvite(ss, splited_cmd);
-	}
 	else if (splited_cmd[i] == "WHO")
 	{
 		// frame->cmdWho(ss, splited_cmd);
@@ -158,5 +127,4 @@ void	Executor::execute(std::string& buff, Session* ss)
 		// Error 421
 		ss->replyAsServer("421");
 	}
-
 }
