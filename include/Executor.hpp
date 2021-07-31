@@ -9,8 +9,9 @@
 class Executor
 {
 	private:
-		int	split(std::string& buff, std::vector<std::string>& v);
+		std::string	split(std::string& buff, std::vector<std::string>& v);
 		bool	IsPrefix(std::string const& s);
+		bool	DoesMatchNick(std::string const& prefix, std::string const& sender_nick);
 	public:
 		void	insert(std::string& buff, char *str, int r);
 		bool	gotFullMsg(std::string const& buff) const;
