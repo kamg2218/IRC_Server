@@ -88,7 +88,6 @@ bool	Executor::DoesMatchNick(std::string const& prefix, std::string const& sende
 void	Executor::execute(std::string& buff, Session* ss)
 {
 	std::string sender_prefix;
-	int		i = 0;
 	std::vector<std::string>	splited_cmd;
 	Frame *frame;
 
@@ -121,20 +120,13 @@ void	Executor::execute(std::string& buff, Session* ss)
 	else if (splited_cmd[0] == "INVITE")
 		frame->cmdInvite(ss, splited_cmd);
 	else if (splited_cmd[0] == "WHO")
-	{
-		// frame->cmdWho(ss, splited_cmd);
-	}
-	else if (splited_cmd[i] == "WHOIS")
-	{
-		// frame->cmdWhoi(ss, splited_cmd);
-	}
-	else if (splited_cmd[i] == "WHOWAS")
+		frame->cmdWho(ss, splited_cmd);
+	else if (splited_cmd[0] == "WHOIS")
+		frame->cmdWhois(ss, splited_cmd);
+	else if (splited_cmd[0] == "WHOWAS")
 	{
 		// frame->cmdWhowas(ss, splited_cmd);
 	}
-	else if (splited_cmd[i] != "PONG")
-	{
-		// Error 421
+	else if (splited_cmd[0] != "PONG")
 		ss->replyAsServer("421");
-	}
 }
