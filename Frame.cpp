@@ -163,15 +163,9 @@ void	Frame::cmdQuit(Session *ss, std::vector<std::string> const& sets)
 {
 	std::string	msg;
 
-	msg = ss->user().nick() + " left";
-	ss->user().cmdQuit(ss, sets);
+	msg = vectorToString(sets);
+	ss->user().cmdQuit(ss, sets, msg);
 	removeUser(ss->user().nick());
-	if (sets.size() > 1 && sets[1][0] == ':')
-	{
-		msg = sets[1].substr(1);
-		for (int i = 2; i < sets.size(); i++)
-			msg += " " + sets[i];
-	}
 	ss->replyAsServer(msg);
 }
 
@@ -183,34 +177,34 @@ void	Frame::cmdJoin(Session *ss, std::vector<std::string> const& sets)
 	if (sets.size() < 2)
 		return ss->Err_461("JOIN");	//NeedMoreParams
 	else if (sets.size() == 2 && sets[1] == "O")
-		return ss->user().optionJoin(ss, sets);
+		return ss->user().optionJoin(ss, sets, vectorToString(sets));
 	str = sets[1];
 	while (1){
 		n = str.find(",");
 		if (!(CheckChannelname(str.substr(0, n))))
 			return ss->Err_403(str.substr(0, n));	//NoSuchChannel
-		doJoin(ss, sets, str.substr(0, n));
+		doJoin(ss, str.substr(0, n), vectorToString(sets));
 		if (std::string::npos == n)
 			break ;
 		str = str.substr(n + 1);
 	}
 }
 //reply check
-void	Frame::doJoin(Session *ss, std::vector<std::string> const& sets, std::string const& setstr)
+void	Frame::doJoin(Session *ss, std::string const& sets, std::string const& msg)
 {
 	std::vector<std::string>	v;
 	Channel*					ch;
 	
-	if (doesChannelExists(MakeLower(setstr.substr(1))))
+	if (doesChannelExists(MakeLower(sets.substr(1))))
 	{
-		ch = findChannel(MakeLower(setstr.substr(1)));
+		ch = findChannel(MakeLower(sets.substr(1)));
 		ch->addUser(ss);
-		ch->broadcast(ss, vectorToString(sets));
+		ch->broadcast(ss, msg);
 		ss->user().cmdJoin(ch);
 	}
 	else
 	{
-		ch = new Channel(ss, MakeLower(setstr.substr(1)));
+		ch = new Channel(ss, MakeLower(sets.substr(1)));
 		addChannel(ch);
 	}
 	ch->cmdJoin(ss);

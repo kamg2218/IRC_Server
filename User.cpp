@@ -100,7 +100,7 @@ bool	User::CheckManager() const
 bool	User::addNick(std::vector<std::string> const& sets)
 {
 	if (didNick)
-		return false;
+		return true;	//alreadyRegistered
 	sNickname = sets[1];
 	didNick = true;
 	return true;
@@ -138,12 +138,12 @@ void	User::cmdJoin(Channel* ch)
 	mChannels.insert(std::pair<std::string, Channel*>(ch->name(), ch));
 }
 
-void	User::optionJoin(Session *ss, std::vector<std::string> const& sets)
+void	User::optionJoin(Session *ss, std::vector<std::string> const& sets, std::string const& msg)
 {
 	for (ChannelMap::iterator it = mChannels.begin(); it != mChannels.end(); it++)
 	{
 		it->second->removeUser(this);
-		it->second->broadcast(ss, nick() + " left " + it->first + "\n");
+		it->second->broadcast(ss, msg);
 		mChannels.erase(it);
 		if (it->second->userCount() == 0)
 			Frame::instance()->removeChannel(it->first);
@@ -171,23 +171,13 @@ bool	User::cmdPart(Session *ss, std::string const& sets, std::string const& msg)
 	return true;
 }
 
-void			User::cmdQuit(Session *ss, std::vector<std::string> const& sets)
+void			User::cmdQuit(Session *ss, std::vector<std::string> const& sets, std::string const& msg)
 {
-	std::string	str;
-
 	_pastNick.clear();
 	for (ChannelMap::iterator it = mChannels.begin(); it != mChannels.end(); it++)
 	{
 		it->second->removeUser(this);
-		if (sets.size() > 2)
-		{
-			str = sets[2].substr(1);
-			for (int i = 3; i < sets.size(); i++)
-				str += " " + sets[i];
-			it->second->broadcast(ss, str);
-		}
-		else
-			it->second->broadcast(ss, name() + " left\n");
+		it->second->broadcast(ss, msg);
 	}
 	mChannels.clear();
 }

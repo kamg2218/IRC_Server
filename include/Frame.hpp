@@ -46,7 +46,7 @@ class Frame
 		void	cmdTopic(Session *ss, std::vector<std::string> const& sets);
 		void	cmdList(Session *ss, std::vector<std::string> const& sets);
 		void	doPart(Session *ss, std::string const& sets, std::string const& re);
-		void	doJoin(Session *ss, std::vector<std::string> const& sets, std::string const& setstr);
+		void	doJoin(Session *ss, std::string const& sets, std::string const& msg);
 		void	doList(Session *ss, std::string const& sets);
 		void	cmdKick(Session *ss, std::vector<std::string> const& sets);
 		void	cmdInvite(Session *ss, std::vector<std::string> const& sets);
