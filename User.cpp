@@ -100,7 +100,7 @@ bool	User::CheckManager() const
 bool	User::addNick(std::vector<std::string> const& sets)
 {
 	if (didNick)
-		return true;	//alreadyRegistered
+		return false;	//alreadyRegistered
 	sNickname = sets[1];
 	didNick = true;
 	return true;
@@ -111,8 +111,8 @@ void	User::cmdNick(std::vector<std::string> const& sets)
 {
 	_pastNick.insert(_pastNick.end(), sNickname);
 	for (ChannelMap::iterator it = mChannels.begin(); it != mChannels.end(); it++)
-		it->second->cmdNick(sNickname, sets[2]);
-	sNickname = sets[2];
+		it->second->cmdNick(sNickname, sets[1]);
+	sNickname = sets[1];
 	return ; //success
 }
 
