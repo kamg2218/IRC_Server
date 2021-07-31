@@ -9,7 +9,7 @@ User::User()
 User::~User()
 {
 	if (!is_properly_quit)
-	{
+	{//call cmdQuit
 		/*
 		ChannelMap::iterator it;
 
@@ -48,21 +48,21 @@ void			User::setUser(std::string const& s)
 }
 std::string		User::name() const
 {
-	return (sRealname);
+	return sRealname;
 }
 
 std::string		User::nick() const
 {
-	return (sNickname);
+	return sNickname;
 }
 
 std::string		User::host() const
 {
-	return (sHostname);
+	return sHostname;
 }
 std::string		User::user() const
 {
-	return (sUsername);
+	return sUsername;
 }
 
 const ChannelMap&		User::channel() const
@@ -72,7 +72,7 @@ const ChannelMap&		User::channel() const
 
 std::string		User::msgHeader() const
 {
-	return (std::string(":" + sNickname + "!" + sUsername + "@" + sHostname+ " "));
+	return std::string(":" + sNickname + "!" + sUsername + "@" + sHostname+ " ");
 }
 
 bool	User::CheckNick() const
@@ -100,7 +100,7 @@ bool	User::CheckManager() const
 bool	User::addNick(std::vector<std::string> const& sets)
 {
 	if (didNick)
-		return true;	//alreadyRegistered
+		return false;	//alreadyRegistered
 	sNickname = sets[1];
 	didNick = true;
 	return true;
@@ -111,8 +111,8 @@ void	User::cmdNick(std::vector<std::string> const& sets)
 {
 	_pastNick.insert(_pastNick.end(), sNickname);
 	for (ChannelMap::iterator it = mChannels.begin(); it != mChannels.end(); it++)
-		it->second->cmdNick(sNickname, sets[2]);
-	sNickname = sets[2];
+		it->second->cmdNick(sNickname, sets[1]);
+	sNickname = sets[1];
 	return ; //success
 }
 
@@ -193,8 +193,8 @@ bool	User::isMemOfChannel(std::string const& chname) const
 
 	res = mChannels.find(chname);
 	if (res == mChannels.end())
-		return (false);
-	return (true);
+		return false;
+	return true;
 }
 
 std::vector<std::string> User::userVector()
@@ -207,7 +207,7 @@ std::vector<std::string> User::userVector()
 	{
 		res.push_back(it->second->name() + " " + user() + " " + host() + " " + servername + " " + nick() + " :0 " + name());
 	}
-	return (res);
+	return res;
 }
 
 std::vector<std::string> User::cmdWhois()
@@ -222,5 +222,5 @@ std::vector<std::string> User::cmdWhois()
 		else
 			res.push_back(nick() + " :" + it->second->name() + " ");
 	}
-	return (res);
+	return res;
 }
