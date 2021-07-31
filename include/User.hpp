@@ -51,7 +51,8 @@ class User
 		void	cmdOper();
 		void	cmdKick(std::vector<std::string> const& sets, Session *ss);
 		bool	isMemOfChannel(std::string const& chname) const;
-
+		const ChannelMap&	channel() const;	// tmp
+		std::vector<std::string> userVector();
 };
 
 #endif

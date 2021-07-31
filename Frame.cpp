@@ -198,19 +198,22 @@ void	Frame::cmdJoin(Session *ss, std::vector<std::string> const& sets)
 //reply check
 void	Frame::doJoin(Session *ss, std::string const& sets)
 {
-	ChannelMap::iterator	it;
+	std::vector<std::string>	v;
+	Channel*					ch;
 	
 	if (doesChannelExists(MakeLower(sets.substr(1))))
 	{
-		it = mChannels.find(MakeLower(sets.substr(1)));
-		it->second->addUser(ss);
-		it->second->broadcast(ss, ss->user().nick() + " joined to " + it->first + "\n");
-		ss->user().cmdJoin(it->second);
-		//Topic
+		ch = findChannel(MakeLower(sets.substr(1)));
+		ch->addUser(ss);
+		ch->broadcast(ss, ss->user().nick() + " joined to " + ch->name());
+		ss->user().cmdJoin(ch);
 	}
 	else
-		addChannel(new Channel(ss, MakeLower(sets.substr(1))));
-	ss->Rep_353(MakeLower(sets.substr(1)), ss->user().nick());	//RPL_NAMREPLY
+	{
+		ch = new Channel(ss, MakeLower(sets.substr(1)));
+		addChannel(ch);
+	}
+	ch->cmdJoin(ss);
 }
 
 void	Frame::cmdNick(Session *ss, std::vector<std::string> const& sets)
@@ -319,9 +322,7 @@ void	Frame::cmdList(Session *ss, std::vector<std::string> const& sets)
 	int				n;
 	std::string		str;
 
-	if (sets.size() < 1)
-		return ss->Err_461("LIST");	//NeedMoreParams
-	else if (sets.size() == 1)
+	if (sets.size() == 1)
 		return doList(ss, "");
 	str = sets[1];
 	while (1){
@@ -335,29 +336,22 @@ void	Frame::cmdList(Session *ss, std::vector<std::string> const& sets)
 
 void	Frame::doList(Session *ss, std::string const& sets)
 {
-	std::string				str;
 	ChannelMap::iterator	it;
 
-	str = "";
+	ss->Rep_321();	//ListStart
 	if (sets == "")
 	{
 		for (it = mChannels.begin(); it != mChannels.end(); it++)
-		{
-			str += it->first;
-			if (it->second->topic() != "")
-				str += it->second->topic();
-		}
-		if (str == "")
-			return ss->Rep_323();	//ListEnd
-		return ss->replyAsServer(str);
+			ss->Rep_322(it->second);	//List
+		return ss->Rep_323();	//ListEnd
 	}
-	if (!(doesChannelExists(MakeLower(sets.substr(1)))))
+	if (CheckChannelname(sets) == false)
+		return ss->Rep_323();	//ListEnd
+	else if (!(doesChannelExists(MakeLower(sets.substr(1)))))
 		return ss->Rep_323();	//ListEnd
 	it = mChannels.find(MakeLower(sets.substr(1)));
-	str += it->first;
-	if (it->second->topic() != "")
-		str += it->second->topic();
-	return ss->replyAsServer(str);
+	ss->Rep_322(it->second);
+	return ss->Rep_323();	//ListEnd
 }
 
 std::vector<std::string> split_comma(std::string s)
@@ -535,4 +529,133 @@ std::string Frame::vectorToString(std::vector<std::string> const& sets)
 MainServer&	Frame::GetServer()
 {
 	return (server);
+}
+
+void	Frame::cmdWho(Session *ss, std::vector<std::string> const& sets)
+{
+	UserMap::iterator itu;
+	
+	if (sets.size() == 1 || (sets.size() == 2 && sets[1] == "*"))
+	{
+		for (itu = mUsers.begin(); itu != mUsers.end(); ++itu)
+		{
+			ss->Rep_352(itu->second->user().userVector());
+		}
+	}
+	else
+	{
+		std::vector<std::string> v;
+		v = getMask(sets[1]);
+		for (int i = 0; i < v.size(); i++)
+		{
+			if (doesChannelExists(v[i]))	// channel
+			{
+				Channel *channel;
+				channel = findChannel(v[i]);
+				if (sets[2] == "o")
+				{
+					ss->Rep_352(channel->channeloperVector());
+				}
+				else
+				{
+					ss->Rep_352(channel->channelVector());
+				}
+			}
+			else
+			{
+				for (itu = mUsers.begin(); itu != mUsers.end(); ++itu)
+				{
+					if (itu->second->user().host() == v[i]			// hostname
+							||	itu->second->user().name() == v[i]	// realname
+							||	itu->second->user().nick() == v[i])	// nickname
+					{
+						if (sets.size() > 2 && sets[2] == "o" && itu->second->user().CheckManager() == 0)
+							continue ;
+						ss->Rep_352(itu->second->user().userVector());
+					}
+					else
+						break ;
+						/*
+					if (itu->second->user().host() == v[i])	// hostname
+					{
+						if (sets.size() > 2 && sets[2] == "o" && itu->second->user().CheckManager() == 0)
+							continue ;
+						ss->Rep_352(itu->second->user().userVector());
+					}
+					//server
+					else if (itu->second->user().name() == v[i])	// realname
+					{
+						if (sets.size() > 2 && sets[2] == "o" && itu->second->user().CheckManager() == 0)
+							continue ;
+						ss->Rep_352(itu->second->user().userVector());
+					}
+					else if (itu->second->user().nick() == v[i])	// nickname
+					{
+						if (sets.size() > 2 && sets[2] == "o" && itu->second->user().CheckManager() == 0)
+							continue ;
+						ss->Rep_352(itu->second->user().userVector());
+					}
+					else
+						break ;
+						*/
+				}
+			}
+		}
+	}
+	ss->Rep_315(sets[1]);
+}
+
+void		Frame::cmdPrivmsg(Session *ss, std::vector<std::string> const& sets)
+{
+    std::vector<std::string> receivers;
+    std::string receiver;
+
+	if (sets.size() == 1)
+        return (ss->Err_411(sets[0]));   // ERR_NORECIPIENT
+	if (sets[1][0] == ':')
+        return (ss->Err_411(sets[0]));   // ERR_NORECIPIENT
+    else if (sets[2][0] != ':')
+        return (ss->Err_412());   // ERR_NOTEXTTOSEND
+    // receiver에 콤마로 split해서 저장하기
+    receivers = split_comma(sets[1]);
+    std::vector<std::string>::iterator receiverit = receivers.begin();
+    std::vector<std::string>::iterator tmp;
+    
+    // 메세지 전까지 확인하기
+    while (receiverit != receivers.end())
+    {
+        //if (sets[1][0] == '#')  // channel
+        if (CheckChannelname(*receiverit))
+		{
+            if (!doesChannelExists(MakeLower((*receiverit).substr(1))))
+                return (ss->Err_404(*receiverit));   // ERR_CANNOTSENDTOCHAN
+        }
+        else
+        {
+            if (!doesNicknameExists(*receiverit))
+                return (ss->Err_401(*receiverit));       // ERR_NOSUCHNICK
+			for (tmp = receiverit + 1; tmp != receivers.end(); tmp++)
+            {
+                if (*(tmp - 1) == *tmp)
+                    return (ss->Err_407(*tmp));       // ERR_TOOMANYTARGETS
+            }
+        }
+        receiverit++;
+    }
+    for (receiverit = receivers.begin(); receiverit != receivers.end(); receiverit++)
+    {
+        receiver = *receiverit;
+        if (receiver[0] == '#')
+        {
+			Channel *channel;
+			channel = findChannel(MakeLower(receiver.substr(1)));
+            channel->broadcast(ss, sets[2].substr(1));
+        }
+        else
+        {
+			Session *session;
+			session = findUser(receiver);
+			ss->replyAsUser(session, sets[2].substr(1));
+        }
+    }
 }

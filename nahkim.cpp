@@ -1,5 +1,5 @@
 #include <iostream>
-#include "./include/Frame.hpp"
+//#include "./include/Frame.hpp"
 
 // 일치하는 정보 목록 반환
 // <name> 매개 변수와 일치하는 정보 목록을 반환하는 쿼리를 생성하는 데 사용
@@ -16,9 +16,16 @@ void		Frame::cmdWho(Session *ss, std::vector<std::string> const& sets)
     UserMap::iterator itu;
     ChannelMap::iterator itc;
     std::vector<std::string> v;
+    std::vector<std::string> info;
     std::string res;
     std::string eol;
     std::string member;
+
+	std::vector<std::string> v;
+	std::vector<std::string>::iterator it;
+    
+	Channel *c;
+
     int i = 0;
 
     itu = mUsers.begin();
@@ -26,13 +33,19 @@ void		Frame::cmdWho(Session *ss, std::vector<std::string> const& sets)
     eol = sets[1] + " :End of /WHO list";
     if (sets.size() == 1 || (sets.size() == 2 && sets[1] == "*"))
     {
+		usermap::iterator it;
+		for (it = mUsers.begin(); it != mUsers.end(); it++)
+		{
+			Rep_352(it->uesrVector());
+		}
+		/*
         for (; itu != mUsers.end(); itu++,itc++)
         {
             res = itc->second->name();
-            res += itu->first + " " + itu->second->user().host() + " " + "server " + itu->second->user().nick() + "0 " + itu->second->user().name();
+            res += itu->first + " " + itu->second->user().host() + " " + "ft_irc " + itu->second->user().nick() + "0 " + itu->second->user().name();
             ss->replyAsServer(res);         // RPL_WHOREPLY
             res.clear();
-        }
+        }*/
     }
     else
     {
@@ -40,98 +53,96 @@ void		Frame::cmdWho(Session *ss, std::vector<std::string> const& sets)
         for (; i < v.size(); i++)
         {
             member = v[i];
-            if (member == "#" && doesChannelExists(v[i]))     // channel
+            if (doesChannelExists(v[i]))     // channel
             {
-                // v[i]이 채널인 유저 정보 가져오기
-                // # 제거 함수 필요
-                for (itc = mChannels.begin(); itc != mChannels.end(); itc++)
+				if (sets[2] == "o")
+				{
+					if (itu->second->user().CheckManager() == 1)
+					{
+						Rep_352(channel->channeloperVector());
+					}
+				}
+				else
+				{
+					Rep_352(itc->channelVector());
+				}
+			}
+            else
+            {
+                for (itu = mUsers.begin(); itu != mUsers.end(); itu++)
                 {
-                    if (itc->first == v[i].substr(1))
+                    if (itu->second->user().host() == v[i])   // host name
                     {
-                        for (itu = itc->second.mUsers.begin(); itu != itc->second.mUsers.end(); itu++)
+                        if (sets[2] == "o")
                         {
-                            res = itc->first + " " + itc->second.mUsers->second.user() + " " + itc->second.mUsers->second.user().host() + " " + "server " + "0 " + itc->second.mUsers->second.user().nick();
-                            if (sets[1] == "o") // 옵션이 있는 경우
+                            if (itu->second->user().CheckManager() == 1)
                             {
-                                if (itc->second.mUsers->second.user().manager == 1)
-                                    ss->replyAsServer(res); // RPL_WHOREPLY
+								v = user->userVector();
+								Rep_352(v);
+									/*
+								ChannelMap chsets = itu->second->user().channel();
+								for (itc = chsets.begin() ; itc != chsets.end() ; ++itc)
+								{
+									ss->Rep_352((itc->second, itu->second->user());
+								}
+								*/
                             }
-                            else
+                        }
+                        else
+                        {
+							v = userVector();
+							for (it = v.begin(); it != v.end(); it++)
+							{
+								Rep_352(v);
+							}
+		//					ss->Rep_352((itc->second, itu->second->user());
+                        }
+                    }
+                    // server
+                    else if (itu->second->user().name() == v[i])   // real name
+                    {
+                        if (sets[2] == "o")
+                        {
+                            if (itu->second->user().CheckManager() == 1)
                             {
-                                ss->replyAsServer(res); // RPL_WHOREPLY
-                            }
-                            res.clear();
-                        }
+								v = user->userVector();
+								Rep_352(v);
+							}
+						}
+						else
+						{
+							v = userVector();
+							for (it = v.begin(); it != v.end(); it++)
+							{
+								Rep_352(v);
+							}
+						}
+						//ss->Rep_352((itc->second, itu->second->user());
                     }
-                }
-            }
-            else if (mUsers->second.user().host().find(sets[1]) == mUsers->second.user().host().end())   // host(client의 hostname)
-            {
-                for (itu = mUsers.begin(); itu != mUsers.end(); itu++)
-                {
-                    if (itu->second.user().host() == v[i])
+                    else if (itu->second->user().nick() == v[i])  // nick name
                     {
-                        if (sets[1] == "o") // 옵션이 있는 경우
+                        if (sets[2] == "o")
                         {
-                            if (itu->second.user().manager == 1)
-                                ss->replyAsServer(res); // RPL_WHOREPLY
-                        }
-                        else
-                        {
-                            res = itu->second.user().mChannels->first + " " + itu->first + " " + itu->second.user().host() + " " + "server " + "0 " + itu->second.user().name();
-                            ss->replyAsServer(res); // RPL_WHOREPLY
-                        }
-                        res.clear();
+                            if (itu->second->user().CheckManager() == 1)
+                            {
+								v = user->userVector();
+								Rep_352(v);
+							}
+						}
+						else
+						{
+							v = userVector();
+							for (it = v.begin(); it != v.end(); it++)
+							{
+								Rep_352(v);
+							}
+						}
+						//ss->Rep_352((itc->second, itu->second->user());
                     }
-                    
                 }
+                member.clear();
+                res.clear();
             }
-            // else if (server.find(sets[1]) == server.end())       // server
-            //     return ss->reply("402");   // ERR_NOSUCHSERVER
-            else if (mUsers.find(v[i]) != mUsers.end())       // real name
-            {
-                for (itu = mUsers.begin(); itu != mUsers.end(); itu++)
-                {
-                    if (itu->second.user().name() == v[i])
-                    {
-                        if (sets[1] == "o")
-                        {
-                            if (itu->second.user().manager == 1)
-                                ss->replyAsServer(res); // RPL_WHOREPLY
-                        }
-                        else
-                        {
-                            res = itu->second.user().mChannels->first + " " + itu->first + " " + itu->second.user().host() + " " + "server " + "0 " + itu->second.user().name();
-                            ss->replyAsServer(res); // RPL_WHOREPLY
-                        }
-                        res.clear();
-                    }
-                    
-                }
-            }
-            else if (doesNicknameExists(sets[1]))            // nick name
-            {
-                for (itu = mUsers.begin(); itu != mUsers.end(); itu++)
-                {
-                    if (itu->second.user().nick() == v[i])
-                    {
-                        if (sets[1] == "o")
-                        {
-                            if (itu->second.user().manager == 1)
-                                ss->replyAsServer(res); // RPL_WHOREPLY
-                        }
-                        else
-                        {
-                            res = itu->second.user().mChannels->first + " " + itu->first + " " + itu->second.user().host() + " " + "server " + "0 " + itu->second.user().name();
-                            ss->replyAsServer(res); // RPL_WHOREPLY
-                        }
-                        res.clear();
-                    }
-                    
-                }
-            }
-            member.clear();
-        }
     }
     ss->replyAsServer(eol); // RPL_ENDOFWHO
 }
@@ -156,12 +167,7 @@ void		Frame::cmdWhois(Session *ss, std::vector<std::string> const& sets)
         res += v[i] + " " + v[i].user + " " + v[i].host + " :" + v[i].realname; 
         ss->replyAsServer(res);        // RPL_WHOISUSER
         res.clear();
-        if ()// irc 관리자일 경우 -> 어케암?
-        {
-            res = v[i] + " :is an IRC operator";
-            ss->replyAsServer(res);    // RPL_WHOISOPERATOR
-            res.clear();
-        }
+        // irc 관리자일 경우 우리는 서버관리자가 없기 때문에 생략(RPL_WHOISOPERATOR)
         res = "<nick> <server> :<server info>";
         ss->replyAsServer(res);    // RPL_WHOISSERVER -> 서버 이름이 무엇?
         res.clear();
@@ -228,71 +234,58 @@ void		Frame::cmdWhowas(Session *ss, std::vector<std::string> const& sets) // 에
 
 void		Frame::cmdPrivmsg(Session *ss, std::vector<std::string> const& sets)
 {
-    int i = 2;
-    std::string res;
     std::vector<std::string> receivers;
-    std::vector<std::string> msg;
-    std::vector<std::string>::iterator msgit = msg.begin();
-    UserMap::iterator itu;
-    ChannelMap::iterator itc;
+    std::string receiver;
 
-    if (sets[1][0] == ':')
-    {
-        ss->Err_411(sets[0]);   // ERR_NORECIPIENT
-    }
+	if (sets.size() == 1)
+        return (ss->Err_411(sets[0]));   // ERR_NORECIPIENT
+	if (sets[1][0] == ':')
+        return (ss->Err_411(sets[0]));   // ERR_NORECIPIENT
     else if (sets[2][0] != ':')
-    {
-        ss->Err_412();   // ERR_NOTEXTTOSEND
-    }
+        return (ss->Err_412());   // ERR_NOTEXTTOSEND
     // receiver에 콤마로 split해서 저장하기
     receivers = split_comma(sets[1]);
     std::vector<std::string>::iterator receiverit = receivers.begin();
     std::vector<std::string>::iterator tmp;
-    UserMap::iterator itu;
-    itu = mUsers.begin();
-
+    
     // 메세지 전까지 확인하기
     while (receiverit != receivers.end())
     {
-        if (sets[1][0] == '#')  // channel
-        {
-            if (!doesChannelExists((*receiverit).substr(1))) // mChannels.second->sName
-                ss->Err_404(*receiverit);   // ERR_CANNOTSENDTOCHAN
+        //if (sets[1][0] == '#')  // channel
+        if (CheckChannelname(*receiverit))
+		{
+            if (!doesChannelExists(MakeLower((*receiverit).substr(1))))
+                return (ss->Err_404(*receiverit));   // ERR_CANNOTSENDTOCHAN
         }
         else
         {
             if (!doesNicknameExists(*receiverit))
-                ss->Err_401(*receiverit);       // ERR_NOSUCHNICK
-            for (tmp = receiverit + 1; tmp != receivers.end(); tmp++)
+                return (ss->Err_401(*receiverit));       // ERR_NOSUCHNICK
+			for (tmp = receiverit + 1; tmp != receivers.end(); tmp++)
             {
-                if (*receiverit == *(receiverit + 1))
-                    ss->Err_407(*receiverit);       // ERR_TOOMANYTARGETS
+                if (*(tmp - 1) == *tmp)
+                    return (ss->Err_407(*tmp));       // ERR_TOOMANYTARGETS
             }
         }
         receiverit++;
     }
-    std::string receiver;
     for (receiverit = receivers.begin(); receiverit != receivers.end(); receiverit++)
     {
         receiver = *receiverit;
         if (receiver[0] == '#')
         {
-            for (;itc != mChannels.end(); receiverit++)
-            {
-                itc = mChannels.find((*receiverit).substr(1));
-                if (itc->second.name() == *receiverit)
-                    itc->second->broadcast(ss ,sets[2]);
-            }
+			Channel *channel;
+			channel = findChannel(MakeLower(receiver.substr(1)));
+            channel->broadcast(ss, sets[2].substr(1));
         }
         else
         {
-			for (itu = mUser.begin(); itu != mUsers.end(); itu++)
-            {
-                if (itu->second.user().name() == *receiverit)
-                    ss->replyAsUser(itu->second, sets[2]);
-            }
+
+      			Session *session;
+  	    		session = findUser(receiver);
+		      	ss->replyAsUser(session, sets[2].substr(1));
+
         }
     }
 }
-
 
