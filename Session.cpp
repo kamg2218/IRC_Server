@@ -22,11 +22,6 @@ int		Session::socket() const
 	return (_soc.sd());
 }
 
-bool	Session::IsReady() const
-{
-	return (request.gotFullMsg(rstream));
-}
-
 void	Session::StreamAppend(char *str, int r)
 {
 	char ctrld = 4;
@@ -43,6 +38,7 @@ bool	Session::handleRead(std::map<int, Session*> & ms, int sd)
 	int		r;
 	int		bufsize = 512;
 	char	buf[512] = {0,};
+	Executor	executor;
 	//char	buf[bufsize];
 
 	//std::cout << "handle Read\n";
@@ -50,11 +46,11 @@ bool	Session::handleRead(std::map<int, Session*> & ms, int sd)
 
 	if (r)
 		StreamAppend(buf, r);
-	while (request.gotFullMsg(rstream))
+	while (executor.gotFullMsg(rstream))
 	{
-		std::cout << "Got msg : " << request.getMessage(rstream) << std::endl;
-		request.execute(rstream, this);
-		request.reset(rstream);
+		std::cout << "Got msg : " << executor.getMessage(rstream) << std::endl;
+		executor.execute(rstream, this);
+		executor.reset(rstream);
 	}
 	if (r <= 0)
 	{
@@ -74,14 +70,14 @@ bool	Session::handleRead(std::map<int, Session*> & ms, int sd)
 	else if (r)
 	{
 	//	rstream.append(buf, r);
-	//	if (!request.gotFullMsg(rstream))
+	//	if (!executor.gotFullMsg(rstream))
 	//		return (false);
 		StreamAppend(buf, r);
-		while (request.gotFullMsg(rstream))
+		while (executor.gotFullMsg(rstream))
 		{
-			std::cout << "Got msg : " << request.getMessage(rstream) << std::endl;
-			request.execute(rstream, this);
-			request.reset(rstream);
+			std::cout << "Got msg : " << executor.getMessage(rstream) << std::endl;
+			executor.execute(rstream, this);
+			executor.reset(rstream);
 		}
 	}
 	return (false);
