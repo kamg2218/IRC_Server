@@ -50,7 +50,8 @@ class User
 		bool	IsConnected() const;
 		void	cmdOper();
 		bool	isMemOfChannel(std::string const& chname) const;
-
+		const ChannelMap&	channel() const;	// tmp
+		std::vector<std::string> userVector();
 };
 
 #endif

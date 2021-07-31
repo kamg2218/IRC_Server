@@ -26,6 +26,7 @@ class Channel
 
 		*/
 		void	addUser(Session *user);
+		void	cmdJoin(Session *ss);
 		void	cmdNick(std::string const& name, std::string const& nick);
 		void	removeUser(User *user);
 		bool	hasUser(User *user);
@@ -37,5 +38,8 @@ class Channel
 		bool	hasPass() const;
 		bool	isOperator(std::string const& nick) const;
 		void	setTopic(std::string topic);
+		//void	cmdWho(Session *ss, int check);
+		std::vector<std::string> channelVector();
+		std::vector<std::string> channeloperVector();
 };
 #endif
