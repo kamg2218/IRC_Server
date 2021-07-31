@@ -189,28 +189,28 @@ void	Frame::cmdJoin(Session *ss, std::vector<std::string> const& sets)
 		n = str.find(",");
 		if (!(CheckChannelname(str.substr(0, n))))
 			return ss->Err_403(str.substr(0, n));	//NoSuchChannel
-		doJoin(ss, str.substr(0, n));
+		doJoin(ss, sets, str.substr(0, n));
 		if (std::string::npos == n)
 			break ;
 		str = str.substr(n + 1);
 	}
 }
 //reply check
-void	Frame::doJoin(Session *ss, std::string const& sets)
+void	Frame::doJoin(Session *ss, std::vector<std::string> const& sets, std::string const& setstr)
 {
 	std::vector<std::string>	v;
 	Channel*					ch;
 	
-	if (doesChannelExists(MakeLower(sets.substr(1))))
+	if (doesChannelExists(MakeLower(setstr.substr(1))))
 	{
-		ch = findChannel(MakeLower(sets.substr(1)));
+		ch = findChannel(MakeLower(setstr.substr(1)));
 		ch->addUser(ss);
-		ch->broadcast(ss, ss->user().nick() + " joined to " + ch->name());
+		ch->broadcast(ss, vectorToString(sets));
 		ss->user().cmdJoin(ch);
 	}
 	else
 	{
-		ch = new Channel(ss, MakeLower(sets.substr(1)));
+		ch = new Channel(ss, MakeLower(setstr.substr(1)));
 		addChannel(ch);
 	}
 	ch->cmdJoin(ss);
