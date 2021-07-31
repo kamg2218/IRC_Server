@@ -92,6 +92,34 @@ void	Session::Rep_352(std::vector<std::string> const& res)
 		replyAsServer(*it); // RPL_WHOREPLY
 }
 
+/*
+void	Session::Rep_311(Session *ss)
+{
+	std::string res;
+
+	res = ss->user().nick() + " " + ss->user().user() + " " + ss->user().host() + " * :" + ss->user().name();
+	replyAsServer("311 " + ss->user().user() + res);
+}
+
+void	Session::Rep_313(Session *ss, int check)
+{
+	std::string msg;
+
+	msg = "313 ";
+	if (check)
+	msg += ;
+	msg += " :is an IRC operator";
+	replyAsServer(msg);
+}
+
+void	Session::Rep_318(Session *ss)
+{
+}
+
+void	Session::Rep_319(Session *ss)
+{
+}
+*/
 void	Session::replyAsServer(std::string const& str)
 {
 	std::string msg;
@@ -99,7 +127,7 @@ void	Session::replyAsServer(std::string const& str)
 	msg += ":";
 	msg += Frame::instance()->GetServer().msgHeader() + " ";
 	msg += str;
-	std::cout << "replied : " <<msg << "\n";
+	std::cout << "replied as SV: " <<msg << "\n";
 	msg += "\r\n";
 	send(_soc.sd(), msg.c_str(), msg.length(), 0);
 	/*
@@ -117,6 +145,7 @@ void	Session::replyAsUser(Session *target, std::string const& str)
 
 	msg += target->user().msgHeader();
 	msg += str;
+	std::cout << "replied as US: " <<msg << "\n";
 	msg += "\r\n";
 	send(target->soc().sd(), msg.c_str(), msg.length(), 0);
 }
