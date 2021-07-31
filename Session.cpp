@@ -96,6 +96,22 @@ void	Session::Rep_352(std::vector<std::string> const& res)
 		replyAsServer(*it); // RPL_WHOREPLY
 }
 
+void	Session::Rep_311(std::vector<std::string> const& str)
+{
+}
+
+void	Session::Rep_313(std::vector<std::string> const& str)
+{
+}
+
+void	Session::Rep_318(std::vector<std::string> const& str)
+{
+}
+
+void	Session::Rep_319(std::vector<std::string> const& str)
+{
+}
+
 void	Session::replyAsServer(std::string const& str)
 {
 	std::string msg;

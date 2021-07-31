@@ -185,7 +185,6 @@ void		Frame::cmdWhois(Session *ss, std::vector<std::string> const& sets)
         ss->replyAsServer(res);    // RPL_WHOISCHANNELS
     }
     ss->replyAsServer(eol);  // RPL_ENDOFWHOIS
-    // RPL_AWAY? 어디다씀..
     
 }
 

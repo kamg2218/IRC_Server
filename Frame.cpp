@@ -659,3 +659,27 @@ void		Frame::cmdPrivmsg(Session *ss, std::vector<std::string> const& sets)
         }
     }
 }
+
+void	Frame::cmdWhois(Session *ss, std::vector<std::string> const& sets)
+{
+	std::vector<std::string>::iterator it;
+	usermap::iterator itu;
+	std::string res;
+
+	if (sets.size() == 1)
+		return ss->Err_431();
+	v = split_comma(sets[1]);
+	for (int i = 0; i < v.size(); i++)
+	{
+		if (!doesNicknameExists(v[i]))
+			return (ss->Err_401(v[i]));
+	}
+	for (it = v.begin(); it != v.end(); it++)
+	{
+		Session *session;
+
+		session = findUser(v[i]);
+		ss->cmdWhois(v[i]);
+	}
+	ss->Rep_318();
+}
