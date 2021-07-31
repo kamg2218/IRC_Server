@@ -138,7 +138,7 @@ void	Session::Rep_321(){
 	replyAsServer("321 Channel :Users Name");
 }
 void	Session::Rep_322(Channel *ch){
-	replyAsServer("322 " + ch->name() + " " + user().nick() + " " + std::to_string(ch->userCount()) + " :" + ch->topic());
+	replyAsServer("322 " + user().nick() + " " + ch->name() + " " + std::to_string(ch->userCount()) + " :" + ch->topic());
 }
 void	Session::Rep_323(){
 	replyAsServer("323 :End of /List");
