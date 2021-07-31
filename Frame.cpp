@@ -657,3 +657,7 @@ void	Frame::cmdWhois(Session *ss, std::vector<std::string> const& sets)
 	}
 	ss->Rep_318(sets[1]);
 }
+
+void	Frame::cmdWho(Session *ss, std::vector<std::string> const& sets)
+{
+}
