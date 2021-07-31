@@ -115,7 +115,6 @@ void	Session::replyAsUser(Session *target, std::string const& str)
 {
 	std::string msg;
 
-	msg += ":";
 	msg += target->user().msgHeader();
 	msg += str;
 	msg += "\r\n";
@@ -156,7 +155,7 @@ void	Session::Rep_353(std::string const& ch, std::string const& nick){
 	replyAsServer("353 " + user().nick() + " =" + ch + " :" + nick);
 }
 void	Session::Rep_366(std::string const& ch){
-	replyAsServer("366 " + user().nick() + " " + ch + " : End of NAMES list");
+	replyAsServer("366 " + user().nick() + " " + ch + " :End of NAMES list");
 }
 void	Session::Rep_381(){
 	replyAsServer("381 " + user().nick() + " :You are now an IRC operator");
