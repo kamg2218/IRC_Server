@@ -15,9 +15,9 @@ Frame* Frame::instance()
 	}
 	return (pInstance);
 } 
-void	Frame::start()
+void	Frame::start(base const& bs)
 {
-	server.create(80);
+	server.create(bs);
 	while(1)
 	{
 		service.do_select(server);
