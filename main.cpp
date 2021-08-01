@@ -15,6 +15,16 @@ typedef struct base
 } base;
 */
 
+int ft_atoi(char *str)
+{
+	int n = 0;
+	while (*str >= '0' && *str <= '9')
+	{
+		n = n * 10 + (*str++ - '0');
+	}
+	return n;
+}
+
 std::vector<std::string> split(std::string str, std::string divid)
 {
 	std::vector<std::string> v;
