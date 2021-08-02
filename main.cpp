@@ -22,7 +22,7 @@ int main(int argc, char *argv[])
 	if (argc != 3 || argc != 4)
 	{
 		std::cout << "Wrong Input" << std::endl;
-		return (1);
+		return (-1);
 	}
 	/*
 	* argv[1] parse
