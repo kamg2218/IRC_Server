@@ -41,10 +41,6 @@ bool Frame::addUser(Session *new_user)
 
 void	Frame::removeUser(std::string const& nick)
 {
-	Session	*ss;
-
-	ss = findUser(nick);
-	delete ss;
 	mUsers.erase(nick);
 }
 
@@ -402,7 +398,7 @@ void	Frame::cmdKick(Session *ss, std::vector<std::string> const& sets)
 			{
 				target = findUser(cmd[2]);
 				channel->broadcast(ss, vectorToString(cmd));
-				target->user().cmdPart(ss, cmd[0], cmd[2]);
+				//target->user().cmdPart(ss, cmd[0], cmd[2]);
 			}
 		}
 		cmdsets.erase(cmdsets.begin());
