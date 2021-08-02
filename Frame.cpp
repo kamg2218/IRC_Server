@@ -222,6 +222,7 @@ void	Frame::cmdNick(Session *ss, std::vector<std::string> const& sets)
 			}
 		}
 		ss->user().cmdNick(sets);
+		//ss->replyAsUser(ss, vectorToString(sets));//temp
 	}
 }
 
