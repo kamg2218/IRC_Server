@@ -63,7 +63,7 @@ class MainServer
 		const std::map<int, Session*>&	users() const;
 		bool	checkPass(std::string const& pass);
 		void	setPass(std::string const& pass);
-		std::string	msgHeader();
+		std::string		msgHeader();
 };
 
 #endif

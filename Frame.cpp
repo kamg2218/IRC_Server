@@ -204,6 +204,8 @@ void	Frame::cmdNick(Session *ss, std::vector<std::string> const& sets)
 {
 	if (sets.size() < 2)
 		return ss->Err_431();	//noNicknameGiven
+	else if (ss->user().pass() == false)
+		return ;
 	else if (!(CheckNickname(sets[1])))
 		return ss->Err_432(sets[1]);	//ErroneusNickname
 	else if (doesNicknameExists(sets[1]))
@@ -230,6 +232,8 @@ void	Frame::cmdUser(Session *ss, std::vector<std::string> const& sets)
 {
 	if (sets.size() < 5)
 		return ss->Err_461("USER");	//needMoreParams
+	else if (ss->user().pass() == false)
+		return ;
 	else if (ss->user().CheckNick() == false)
 		return ;	//ignore
 	else if (ss->user().cmdUser(sets) == false)
@@ -244,8 +248,12 @@ void	Frame::cmdPass(Session *ss, std::vector<std::string> const& sets)
 {
 	if (sets.size() != 2)
 		return ss->Err_461("PASS");	//NeedMoreParams
+	else if (ss->user().CheckUser() && ss->user().CheckNick())
+		return ss->Err_462();		//AlreadyRegistered
 	else if (server.checkPass(sets[2]))
-		return ss->Err_462();	//AlreadyRegistred
+		ss->user().setPass(true);
+	else
+		ss->user().setPass(false);
 }
 
 void	Frame::cmdOper(Session *ss, std::vector<std::string> const& sets)

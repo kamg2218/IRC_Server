@@ -22,6 +22,7 @@ class User
 		bool	didNick;
 		bool	didUser;
 		bool	manager;
+		bool	password;
 		bool	is_properly_quit;
 		std::list<std::string>	_pastNick;
 
@@ -40,6 +41,8 @@ class User
 		void		setNick(std::string const& s);
 		void		setHost(std::string const& s);
 		void		setUser(std::string const& s);
+		void		setPass(bool pass);
+		bool		pass() const;
 		std::string	name() const;
 		std::string nick() const;
 		std::string host() const;

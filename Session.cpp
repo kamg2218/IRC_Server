@@ -487,7 +487,7 @@ void	Session::Err_442(std::string const& chname)
 	msg += user().nick();
 	msg += " #";
 	msg += chname;
-	msg += " :You;re not on that channel";
+	msg += " :You are not on that channel";
 	replyAsServer(msg);
 }
 
