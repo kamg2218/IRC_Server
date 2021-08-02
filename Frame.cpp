@@ -416,7 +416,7 @@ void	Frame::cmdKick(Session *ss, std::vector<std::string> const& sets)
 			{
 				target = findUser(cmd[2]);
 				channel->broadcast(ss, vectorToString(cmd));
-				target->user().cmdPart(ss, cmd[0], cmd[2]);
+				target->user().cmdPart(ss, cmd[0], cmd[2]); //temp 
 			}
 		}
 		cmdsets.erase(cmdsets.begin());
