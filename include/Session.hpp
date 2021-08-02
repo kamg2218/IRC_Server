@@ -40,8 +40,9 @@ class Session
 		void	Rep_001(User *us);
 		void	Rep_311(Session *ss);
 		void	Rep_313(Session *ss);
+		//void	Rep_314(std::string const& str);
 		void	Rep_315(std::string const& str);
-		void	Rep_318(std::string const& str);
+		void	Rep_318(std::string const& nick);
 		void	Rep_319(std::string const& str);
 		void	Rep_321();
 		void	Rep_322(Channel *ch);
@@ -52,6 +53,7 @@ class Session
 		void	Rep_352(std::vector<std::string> const& v);
 		void	Rep_353(std::string const& chname, std::string const& nic);
 		void	Rep_366(std::string const& chname);
+		//void	Rep_369(std::string const& nick);
 		void	Rep_381();
 		void	Err_401(std::string const& nick);
 		void	Err_402(std::string const& name);

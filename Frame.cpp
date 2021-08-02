@@ -613,9 +613,60 @@ void	Frame::cmdWhois(Session *ss, std::vector<std::string> const& sets)
 		//ss->cmdWhois(v[i]);
 		ss->Rep_311(session);
 		ss->Rep_313(session);
-		resline = ss->user().User::cmdWhois();
+		resline = session->user().User::cmdWhois();	// check!
 		for (it2 = resline.begin(); it2 != resline.end(); it2++)
 			ss->Rep_319(*it2);
 	}
 	ss->Rep_318(sets[1]);
 }
+/* delete
+void	Frame::cmdWhowas(Session *ss, std::vector<std::string> const& sets)
+{
+	std::vector<std::string>::reverse_iterator itv = mUsers.rbegin();
+	std::list<std::string>::reverse_iterator itl;
+	std::vector<std::string> findline;
+	std::string checkline;
+	int count = -1;
+	bool check = 0;
+	bool fin = 0;
+	int num = 0;
+
+	if (sets.size() == 1)
+	{
+		ss->Err_431();
+		ss->Rep_369(sets[1]);
+		return ;
+	}
+	if (sets.size() > 2)
+		count = stoi(sets[2]);
+	while (!(itv == mUsers.rend() && (itl = itv->second.user().pastnick().begin())))
+	//			&& fin == 1))
+	{
+		for (itv = mUsers.rbegin(); itv != mUsers.rend(); itv++)
+		{
+			Session *session;
+			session = findUser(*itv);
+			checkline = session->user().cmdWhowas(sets[1], num);	//findUser로 session 못찾으면? end()반환인데 작동?
+			if (checkline != "")
+			{
+				findline.push_back(checkline);
+				check = 1;
+			}
+			//if ((itv + 1) == mUsers.rend() && )
+			//	fin = 1;
+		}
+		num++;
+	}
+	if (!check)
+		ss->Err_406(sets[1]);
+	for (std::vector<std::string>::iterator it = findline.begin(); it != findline.end(); it++)
+	{
+		if (count == 0)
+			break ;
+		ss->Rep_314(*it);
+		count--;
+	}
+	ss->Rep_369(sets[1]);
+}
+*/
+

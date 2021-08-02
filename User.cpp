@@ -237,3 +237,21 @@ std::vector<std::string> User::cmdWhois()
 	}
 	return res;
 }
+/*whowas
+std::string User::cmdWhowas(std::string nickname, int num)
+{
+	std::string res;
+	std::list<std::string>::reverse_iterator it;
+
+	it = _pastNick.rbegin();
+	//it = it + num;
+	while (num--)
+		it++;
+	if (it != _pastNick.rend())
+	{
+		if (*it == nickname)
+			res = nick() + " " + user() + " " + host() + " * :" + name();
+	}
+	return res;
+}
+*/

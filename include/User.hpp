@@ -54,6 +54,7 @@ class User
 		const ChannelMap&	channel() const;	// tmp
 		std::vector<std::string> userVector();
 		std::vector<std::string> cmdWhois();
+		//std::string cmdWhowas(std::string nickname, int num);
 };
 
 #endif
