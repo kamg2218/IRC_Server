@@ -102,7 +102,7 @@ void	Executor::execute(std::string& buff, Session* ss)
 	else if (splited_cmd[0] == "PASS")
 		return frame->cmdPass(ss, splited_cmd);
 	if (!(ss->user().IsConnected()))
-		ss->replyAsServer("451");
+		ss->Err_451(); //ss->replyAsServer("451");
 	else if (splited_cmd[0] == "PRIVMSG")
 		frame->cmdPrivmsg(ss, splited_cmd);
 	else if (splited_cmd[0] == "QUIT")
@@ -123,10 +123,6 @@ void	Executor::execute(std::string& buff, Session* ss)
 		frame->cmdWho(ss, splited_cmd);
 	else if (splited_cmd[0] == "WHOIS")
 		frame->cmdWhois(ss, splited_cmd);
-	else if (splited_cmd[0] == "WHOWAS")
-	{
-		// frame->cmdWhowas(ss, splited_cmd);
-	}
 	else if (splited_cmd[0] != "PONG")
-		ss->replyAsServer("421");
+		ss->Err_421(splited_cmd[0]); //ss->replyAsServer("421");
 }
