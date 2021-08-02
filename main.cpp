@@ -20,13 +20,7 @@ int main(int argc, char *argv[])
 	base a;
 	
 	if (argc != 3 || argc != 4)
-	{
-		std::cout << "Wrong Input" << std::endl;
 		return (-1);
-	}
-	/*
-	* argv[1] parse
-	*/
 	if (argc == 4)
 	{
 		std::vector<std::string> v = split(argv[1], ":");
