@@ -33,7 +33,7 @@ class User
 		bool	cmdUser(std::vector<std::string> const& sets);
 		void	cmdJoin(Channel* ch);
 		void	optionJoin(Session *ss, std::vector<std::string> const& sets, std::string const& msg);
-		bool	cmdPart(Session *ss, std::string const& sets, std::string const& msg);
+		bool	cmdPart(Session *ss, std::string const& chname, std::vector<std::string> const& sets);
 		void	cmdQuit(Session *ss, std::vector<std::string> const& sets, std::string const& msg);
 		void		setName(std::string const& s);
 		void		setNick(std::string const& s);
@@ -44,6 +44,7 @@ class User
 		std::string host() const;
 		std::string user() const;
 		std::string	msgHeader() const;
+		std::string	MakeLower(std::string const& str);
 		bool	CheckNick() const;
 		bool	CheckUser() const;
 		bool	CheckManager() const;

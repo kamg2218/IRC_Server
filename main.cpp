@@ -3,17 +3,6 @@
 #include <vector>
 #include <string>
 #include <cstring>
-/*
-typedef struct base
-{
-    std::string host;
-    int server_port;
-    std::string password_network;
-    int port;
-    std::string password;
-  
-} base;
-*/
 
 std::vector<std::string> split(std::string str, std::string divid)
 {

@@ -124,39 +124,20 @@ std::string	Frame::MakeLower(std::string const& str)
 
 void		Frame::cmdPart(Session *ss, std::vector<std::string> const& sets)
 {
-	int			n;
-	std::string	re;
-	std::string	str;
+	std::vector<std::string>	v;
 
 	if (sets.size() < 2)
 		return ss->Err_461("PART");	//NeedMoreParams
-	re = "";
-	if (sets.size() > 2)
+	v = split_comma(sets[1]);
+	for (int i = 0; i < v.size(); i++)
 	{
-		re = sets[2];
-		if (re[0] == ':')
-			re = re.substr(1);
-		for (int i = 3; i < sets.size(); i++)
-			re += " " + sets[i];
+		if (CheckChannelname(v[i]) == false)
+			return ss->Err_403(v[i]);	//wrongChannelName
+		else if (mChannels.find(MakeLower(v[i].substr(1))) == mChannels.end())
+			return ss->Err_403(v[i].substr(1));	//NoSuchChannel
+		else if (ss->user().cmdPart(ss, v[i], sets) == false)
+			return ss->Err_442(v[i].substr(1));	//NotOnChannel
 	}
-	str = sets[1];
-	while (1){
-		n = str.find(",");
-		doPart(ss, str.substr(0, n), re);
-		if (n == std::string::npos)
-			break ;
-		str = str.substr(n + 1);
-	}
-}
-
-void	Frame::doPart(Session *ss, std::string const& sets, std::string const& re)
-{
-	if (CheckChannelname(sets) == false)
-		return ss->Err_403(sets);	//wrongChannelName
-	else if (mChannels.find(sets.substr(1)) == mChannels.end())
-		return ss->Err_403(sets.substr(1));	//NoSuchChannel
-	else if (ss->user().cmdPart(ss, sets.substr(1), re) == false)
-		return ss->Err_442(sets.substr(1));	//NotOnChannel
 }
 
 void	Frame::cmdQuit(Session *ss, std::vector<std::string> const& sets)
@@ -171,23 +152,18 @@ void	Frame::cmdQuit(Session *ss, std::vector<std::string> const& sets)
 
 void	Frame::cmdJoin(Session *ss, std::vector<std::string> const& sets)
 {
-	int				n;
-	std::string		str;
+	std::vector<std::string>	v;
 
 	if (sets.size() < 2)
 		return ss->Err_461("JOIN");	//NeedMoreParams
 	else if (sets.size() == 2 && sets[1] == "O")
 		return ss->user().optionJoin(ss, sets, vectorToString(sets));
-	str = sets[1];
-	while (1)
+	v = split_comma(sets[1]);
+	for (int i = 0; i < v.size(); i++)
 	{
-		n = str.find(",");
-		if (!(CheckChannelname(str.substr(0, n))))
-			return ss->Err_403(str.substr(0, n));	//NoSuchChannel
-		doJoin(ss, str.substr(0, n), vectorToString(sets));
-		if (std::string::npos == n)
-			break ;
-		str = str.substr(n + 1);
+		if (!(CheckChannelname(v[i])))
+			return ss->Err_403(v[i]);	//NoSuchChannel
+		doJoin(ss, v[i], vectorToString(sets));
 	}
 }
 //reply check
@@ -197,17 +173,15 @@ void	Frame::doJoin(Session *ss, std::string const& sets, std::string const& msg)
 	Channel*					ch;
 	
 	if (doesChannelExists(MakeLower(sets.substr(1))))
-	{
 		ch = findChannel(MakeLower(sets.substr(1)));
-		ch->addUser(ss);
-		ch->broadcast(ss, msg);
-		ss->user().cmdJoin(ch);
-	}
 	else
 	{
 		ch = new Channel(ss, MakeLower(sets.substr(1)));
 		addChannel(ch);
 	}
+	ch->addUser(ss);
+	ch->broadcast(ss, msg);
+	ss->user().cmdJoin(ch);
 	ch->cmdJoin(ss);
 }
 
@@ -307,20 +281,13 @@ void	Frame::cmdTopic(Session *ss, std::vector<std::string> const& sets)
 
 void	Frame::cmdList(Session *ss, std::vector<std::string> const& sets)
 {
-	int				n;
-	std::string		str;
+	std::vector<std::string>	v;
 
 	if (sets.size() == 1)
 		return doList(ss, "");
-	str = sets[1];
-	while (1)
-	{
-		n = str.find(",");
-		doList(ss, str.substr(0, n));
-		if (std::string::npos == n)
-			break ;
-		str = str.substr(n + 1);
-	}
+	v = split_comma(sets[1]);
+	for (int i = 0; i < v.size(); i++)
+		doList(ss, v[i]);
 }
 
 void	Frame::doList(Session *ss, std::string const& sets)
@@ -343,7 +310,7 @@ void	Frame::doList(Session *ss, std::string const& sets)
 	return ss->Rep_323();	//ListEnd
 }
 
-std::vector<std::string> split_comma(std::string s)
+std::vector<std::string>	Frame::split_comma(std::string s)
 {
 	std::vector<std::string>	res;
 	std::string::size_type		pos;
