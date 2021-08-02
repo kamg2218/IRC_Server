@@ -276,9 +276,9 @@ void	Session::Rep_353(std::string const& chname, std::string const& nick)
 
 	msg = "353 ";
 	msg += user().nick();
-	msg += " =";
+	msg += " = ";
 	msg += chname;
-	msg += " :";
+	msg += " :@";
 	msg += nick;
 	replyAsServer(msg);
 }
