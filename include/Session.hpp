@@ -65,11 +65,13 @@ class Session
 		void	Err_412(void);
 		void	Err_413(std::string const& mask);
 		void	Err_414(std::string const& mask);
+		void	Err_421(std::string const& cmd);
 		void	Err_431(void);
 		void	Err_432(std::string const& nick);
 		void	Err_433(std::string const& nick);
 		void	Err_442(std::string const& chanme);
 		void	Err_443(std::string const& nick, std::string const& chname);
+		void	Err_451(void);
 		void	Err_461(std::string const& cmd);
 		void	Err_462(void);
 		void	Err_464(void);

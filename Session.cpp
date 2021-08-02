@@ -444,6 +444,16 @@ void	Session::Err_414(std::string const& mask)
 	replyAsServer(msg);
 }
 
+void	Session::Err_421(std::string const& cmd)
+{
+	std::string msg;
+
+	msg += "421 ";
+	msg += cmd;
+	msg += " :Unknown command";
+	replyAsServer(msg);
+}
+
 void	Session::Err_431(void)
 {
 	std::string msg;
@@ -502,6 +512,15 @@ void	Session::Err_443(std::string const& nick, std::string const& chname)
 	msg += " #";
 	msg += chname;
 	msg += " :is already on channel";
+	replyAsServer(msg);
+}
+
+void	Session::Err_451(void)
+{
+	std::string msg;
+
+	msg += "451 ";
+	msg += ":You have not registered";
 	replyAsServer(msg);
 }
 
