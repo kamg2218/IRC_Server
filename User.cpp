@@ -173,8 +173,8 @@ bool	User::cmdPart(Session *ss, std::string const& chname, std::vector<std::stri
 	str = sets[0] + " " + chname;
 	for (int i = 2; i < sets.size(); i++)
 		str += " " + sets[i];
-	it->second->removeUser(this);
 	it->second->broadcast(ss, str);
+	it->second->removeUser(this);
 	if (it->second->userCount() == 0)
 	{
 		delete it->second;
@@ -189,8 +189,8 @@ void			User::cmdQuit(Session *ss, std::vector<std::string> const& sets, std::str
 	_pastNick.clear();
 	for (ChannelMap::iterator it = mChannels.begin(); it != mChannels.end(); it++)
 	{
-		it->second->removeUser(this);
 		it->second->broadcast(ss, msg);
+		it->second->removeUser(this);
 	}
 	mChannels.clear();
 }

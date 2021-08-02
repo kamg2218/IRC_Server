@@ -233,7 +233,7 @@ void	Session::Rep_322(Channel *ch)
 
 	msg = "322 ";
 	msg += user().nick();
-	msg += " ";
+	msg += " #";
 	msg += ch->name();
 	msg += " ";
 	msg += std::to_string(ch->userCount());
@@ -258,7 +258,7 @@ void	Session::Rep_331(std::string const& chname)
 
 	msg = "331 ";
 	msg += user().nick();
-	msg += " ";
+	msg += " #";
 	msg += chname;
 	msg += " :No topic is set";
 	replyAsServer(msg);
@@ -270,7 +270,7 @@ void	Session::Rep_332(std::string const& chname, std::string const& topic)
 
 	msg = "332 ";
 	msg += user().nick();
-	msg += " ";
+	msg += " #";
 	msg += chname;
 	msg += " :";
 	msg += topic;
@@ -283,7 +283,7 @@ void	Session::Rep_341(std::string const& chname, std::string const& nick)
 
 	msg = "341 ";
 	msg += user().nick();
-	msg += " ";
+	msg += " #";
 	msg += chname;
 	msg += " ";
 	msg += nick;
@@ -296,7 +296,7 @@ void	Session::Rep_353(std::string const& chname, std::string const& nick)
 
 	msg = "353 ";
 	msg += user().nick();
-	msg += " = ";
+	msg += " = #";
 	msg += chname;
 	msg += " :@";
 	msg += nick;
@@ -309,7 +309,7 @@ void	Session::Rep_366(std::string const& chname)
 
 	msg = "366 ";
 	msg += user().nick();
-	msg += " ";
+	msg += " #";
 	msg += chname;
 	msg += " :End of NAMES list";
 	replyAsServer(msg);
@@ -355,7 +355,7 @@ void	Session::Err_403(std::string const& chname)
 	
 	msg += "403 ";
 	msg += user().nick();
-	msg += " ";
+	msg += " #";
 	msg += chname;
 	msg += " :No such channel";
 	replyAsServer(msg);
@@ -367,7 +367,7 @@ void	Session::Err_404(std::string const& chname)
 	
 	msg += "404 ";
 	msg += user().nick();
-	msg += " ";
+	msg += " #";
 	msg += chname;
 	msg += " :Cannot send to channel";
 	replyAsServer(msg);
@@ -485,7 +485,7 @@ void	Session::Err_442(std::string const& chname)
 
 	msg += "442 ";
 	msg += user().nick();
-	msg += " ";
+	msg += " #";
 	msg += chname;
 	msg += " :You;re not on that channel";
 	replyAsServer(msg);
@@ -499,7 +499,7 @@ void	Session::Err_443(std::string const& nick, std::string const& chname)
 	msg += user().nick();
 	msg += " ";
 	msg += nick;
-	msg += " ";
+	msg += " #";
 	msg += chname;
 	msg += " :is already on channel";
 	replyAsServer(msg);
@@ -545,7 +545,7 @@ void	Session::Err_482(std::string const& chname)
 
 	msg += "482 ";
 	msg += user().nick();
-	msg += " ";
+	msg += " #";
 	msg += chname;
 	msg += " :You're not channel operator";
 	replyAsServer(msg);
