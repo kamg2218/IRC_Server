@@ -26,10 +26,11 @@ class Frame
 		void	start(base const& bs);
 		bool	doesNicknameExists(std::string const& name);
 		bool	addUser(Session *new_user);
-		void	removeUser(std::string const& nick);
 		bool	doesChannelExists(std::string const& name);
 		void	addChannel(Channel* new_chan);
 		void	removeChannel(std::string const& name);
+		void	removeUser(std::string const& nick);
+		void	removeAllUser();
 		void	removeAllChannel();
 		bool	CheckNickname(std::string const& name);
 		bool	CheckChannelname(std::string const& name);
