@@ -19,7 +19,7 @@ int main(int argc, char *argv[])
 {
 	base a;
 	
-	if (argc != 3 || argc != 4)
+	if (argc != 3 && argc != 4)
 		return (-1);
 	if (argc == 4)
 	{
