@@ -77,7 +77,6 @@ void	Channel::cmdJoin(Session *ss)
 	std::string	str;
 	Usermap::iterator	it;
 
-	addUser(ss);
 	if (topic() == "")
 		ss->Rep_331(name());
 	else
