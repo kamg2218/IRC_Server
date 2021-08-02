@@ -54,7 +54,6 @@ class MainServer
 		};
 		MainServer();
 		void	create(base const& bs);
-
 		void	handleRead(std::map<int, Session*>::iterator temp);
 		void	handleAccept(Service *p);
 		void	handleDecline(std::map<int, Session*>::iterator& pos);

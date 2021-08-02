@@ -3,17 +3,7 @@
 #include <vector>
 #include <string>
 #include <cstring>
-/*
-typedef struct base
-{
-    std::string host;
-    int server_port;
-    std::string password_network;
-    int port;
-    std::string password;
-  
-} base;
-*/
+
 int ft_atoi(char *str)
 {
   int n = 0;

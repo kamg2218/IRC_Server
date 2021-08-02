@@ -115,7 +115,6 @@ bool	User::addNick(std::vector<std::string> const& sets)
 	sNickname = sets[1];
 	didNick = true;
 	return true;
-
 }
 
 void	User::cmdNick(std::vector<std::string> const& sets)
@@ -155,30 +154,44 @@ void	User::optionJoin(Session *ss, std::vector<std::string> const& sets, std::st
 	{
 		it->second->removeUser(this);
 		it->second->broadcast(ss, msg);
-		mChannels.erase(it);
 		if (it->second->userCount() == 0)
+		{
+			delete it->second;
 			Frame::instance()->removeChannel(it->first);
+		}
+		mChannels.erase(it);
 	}
-	ss->replyAsServer("");	//success
 }
 
-bool	User::cmdPart(Session *ss, std::string const& sets, std::string const& msg)
+std::string	User::MakeLower(std::string const& str)
+{
+	std::string	low;
+
+	low = "";
+	for (int i = 0; i < str.size(); i++)
+		low += std::tolower((char)str[i]);
+	return low;
+}
+
+bool	User::cmdPart(Session *ss, std::string const& chname, std::vector<std::string> const& sets)
 {
 	ChannelMap::iterator	it;
 	std::string				str;
 
-	it = mChannels.find(sets.substr(1));
+	it = mChannels.find(MakeLower(chname.substr(1)));
 	if (it == mChannels.end())
 		return false;
-	str = nick() + " left " + it->first + "\n";
+	str = sets[0] + " " + chname;
+	for (int i = 2; i < sets.size(); i++)
+		str += " " + sets[i];
 	it->second->removeUser(this);
-	if (msg == "")
-		it->second->broadcast(ss, str);
-	else
-		it->second->broadcast(ss, msg);
-	mChannels.erase(it);
+	it->second->broadcast(ss, str);
 	if (it->second->userCount() == 0)
+	{
+		delete it->second;
 		Frame::instance()->removeChannel(it->first);
+	}
+	mChannels.erase(it);
 	return true;
 }
 
