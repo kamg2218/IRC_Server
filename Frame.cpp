@@ -554,10 +554,13 @@ void		Frame::cmdPrivmsg(Session *ss, std::vector<std::string> const& sets)
 
 	if (sets.size() == 1)
         return (ss->Err_411(sets[0]));   // ERR_NORECIPIENT
-	if (sets[1][0] == ':')
-        return (ss->Err_411(sets[0]));   // ERR_NORECIPIENT
-    else if (sets[2][0] != ':')
-        return (ss->Err_412());   // ERR_NOTEXTTOSEND
+	if (sets.size() != 3)
+	{
+		if (sets[1][0] == ':')
+        	return (ss->Err_411(sets[0]));   // ERR_NORECIPIENT
+    	else if (sets[2][0] != ':')
+        	return (ss->Err_412());   // ERR_NOTEXTTOSEND
+	}
     // receiver에 콤마로 split해서 저장하기
     receivers = split_comma(sets[1]);
     std::vector<std::string>::iterator receiverit = receivers.begin();
