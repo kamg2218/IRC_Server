@@ -26,6 +26,7 @@ MainServer::MainServer() :_name("ft_irc") {}
 
 void	MainServer::create(base const& bs)
 {
+	setPass(bs.password);
 	_sd = _sock.makeSocket(bs.port);
 	if ((bind(_sd, (struct sockaddr *)&(_sock.sin()), sizeof(_sock.sin()))) == -1)
 		throw BindException();
@@ -43,7 +44,6 @@ void	MainServer::handleAccept(Service* p)
 {
 	int			on;
 	int			cs;
-
 	Session		*se;
 
 	se = Session().create();
@@ -91,7 +91,7 @@ void	MainServer::setPass(std::string const& pass)
 	_pass = pass;
 }
 
-std::string	MainServer::msgHeader()
+std::string		MainServer::msgHeader()
 {
 	return (inet_ntoa(_sock.sin().sin_addr));
 }
