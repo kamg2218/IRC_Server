@@ -53,7 +53,7 @@ class MainServer
 				virtual const char *what(void) const throw();
 		};
 		MainServer();
-		void	create(base const& bs);//(unsigned int port);
+		void	create(base const& bs);
 		void	handleRead(std::map<int, Session*>::iterator temp);
 		void	handleAccept(Service *p);
 		void	handleDecline(std::map<int, Session*>::iterator& pos);

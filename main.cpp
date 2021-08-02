@@ -54,11 +54,7 @@ int main(int argc, char *argv[])
 		a.port = ft_atoi(argv[1]);
 		a.password = argv[2];
 	}
-	std::cout << "host = " << a.host << std::endl;
-	std::cout << "server_port = " << a.server_port << std::endl;
-	std::cout << "port = " << a.port << std::endl;
-	std::cout << "pass = " << a.password << std::endl;
-	std::cout << "pass_network = " << a.password_network << std::endl;
+	a.port = 80;
 	try
 	{
 		Frame *mainframe = Frame::instance();
