@@ -59,6 +59,7 @@ class Frame
 		std::vector<std::string>	getMask(std::string const& str);
 		std::vector<std::string>	split_comma(std::string s);
 		MainServer& GetServer(void);
+		std::vector<std::vector<std::string> >	kicklist(std::vector<std::string> const& sets);
 };
 
 #endif

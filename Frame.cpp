@@ -343,7 +343,7 @@ std::vector<std::string>	Frame::split_comma(std::string s)
 	return (res);
 }
 
-std::vector<std::vector<std::string> > kicklist(std::vector<std::string> const& sets)
+std::vector<std::vector<std::string> >	Frame::kicklist(std::vector<std::string> const& sets)
 {
 	std::string					message;
 	std::vector<std::string>	chlist;
