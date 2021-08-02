@@ -38,7 +38,6 @@ int main(int argc, char *argv[])
 		a.port = std::strtod(argv[1], 0);
 		a.password = argv[2];
 	}
-	std::cout << "a.port = " << a.port << std::endl;
 	try
 	{
 		Frame *mainframe = Frame::instance();
