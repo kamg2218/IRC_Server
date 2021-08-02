@@ -4,6 +4,7 @@ Frame * Frame::pInstance = NULL;
 
 Frame::~Frame()
 {
+	removeAllUser();
 	removeAllChannel();
 }
 
@@ -40,6 +41,10 @@ bool Frame::addUser(Session *new_user)
 
 void	Frame::removeUser(std::string const& nick)
 {
+	Session	*ss;
+
+	ss = findUser(nick);
+	delete ss;
 	mUsers.erase(nick);
 }
 
@@ -57,6 +62,20 @@ void	Frame::addChannel(Channel* new_chan)
 void	Frame::removeChannel(std::string const& name)
 {
 	mChannels.erase(name);
+}
+
+void	Frame::removeAllUser()
+{
+	UserMap::iterator it;
+	UserMap::iterator tmp;
+	
+	for (it = mUsers.begin() ; it != mUsers.end() ;)
+	{
+		tmp = it;
+		it++;
+		delete (tmp->second);
+		mUsers.erase(tmp);
+	}
 }
 
 void	Frame::removeAllChannel()
@@ -324,7 +343,7 @@ std::vector<std::string>	Frame::split_comma(std::string s)
 	return (res);
 }
 
-std::vector<std::vector<std::string> > kicklist(std::vector<std::string> const& sets)
+std::vector<std::vector<std::string> >	Frame::kicklist(std::vector<std::string> const& sets)
 {
 	std::string					message;
 	std::vector<std::string>	chlist;
