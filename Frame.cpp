@@ -324,6 +324,7 @@ std::vector<std::string>	Frame::split_comma(std::string s)
 	return (res);
 }
 
+// frame 에 추가해야 함. 
 std::vector<std::vector<std::string> > kicklist(std::vector<std::string> const& sets)
 {
 	std::string					message;
@@ -383,7 +384,7 @@ void	Frame::cmdKick(Session *ss, std::vector<std::string> const& sets)
 			{
 				target = findUser(cmd[2]);
 				channel->broadcast(ss, vectorToString(cmd));
-				target->user().cmdPart(ss, cmd[0], cmd[2]); //temp 
+				//target->user().cmdPart(ss, cmd[0], cmd[2]); //temp 
 			}
 		}
 		cmdsets.erase(cmdsets.begin());
