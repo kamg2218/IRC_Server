@@ -224,6 +224,7 @@ void	Frame::cmdNick(Session *ss, std::vector<std::string> const& sets)
 			}
 		}
 		ss->user().cmdNick(sets);
+		//ss->replyAsUser(ss, vectorToString(sets));//temp
 	}
 }
 
@@ -247,9 +248,9 @@ void	Frame::cmdPass(Session *ss, std::vector<std::string> const& sets)
 {
 	if (sets.size() != 2)
 		return ss->Err_461("PASS");	//NeedMoreParams
-	else if (ss->user().CheckUser() && ss->user().CheckNick())
+	else if (ss->user().IsConnected())
 		return ss->Err_462();		//AlreadyRegistered
-	else if (server.checkPass(sets[2]))
+	else if (server.checkPass(sets[1]))
 		ss->user().setPass(true);
 	else
 		ss->user().setPass(false);

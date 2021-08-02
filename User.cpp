@@ -9,7 +9,18 @@ User::User()
 User::~User()
 {
 	if (!is_properly_quit)
-	{//call cmdQuit
+	{
+		Frame	*frame;
+		ChannelMap::iterator it;
+
+		frame = Frame::instance();
+		it = mChannels.begin();
+		for (; it != mChannels.end() ; ++it)
+		{
+			it->second->removeUser(this);
+			it->second->broadcast(frame->findUser(sNickname), "QUIT #" + it->second->name());
+		}
+		//call cmdQuit
 		/*
 		ChannelMap::iterator it;
 

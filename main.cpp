@@ -4,13 +4,15 @@
 #include <string>
 #include <cstring>
 
-std::vector<std::string> split(std::string str, std::string divid)
+std::vector<std::string> split(std::string str)
 {
-	std::vector<std::string> v;
-	char* c = strtok((char*)str.c_str(), divid.c_str());
-	while (c) {
-		v.push_back(c);
-		c = strtok(NULL, divid.c_str());
+	std::vector<std::string>	v;
+	std::string::size_type		pos;
+
+	while ((pos = str.find(":")) != std::string::npos)
+	{
+		v.push_back(str.substr(0, pos));
+		str.erase(0, str.find(":") + 1);
 	}
 	return v;
 }
@@ -23,11 +25,11 @@ int main(int argc, char *argv[])
 		return (-1);
 	if (argc == 4)
 	{
-		std::vector<std::string> v = split(argv[1], ":");
+		std::vector<std::string> v;
+
+		v = split(argv[1]);
 		a.host = v[0];
-		char ch[100];
-		strcpy(ch,v[1].c_str());
-		a.server_port = std::strtod(ch, 0);
+		a.server_port = std::strtod(v[1].c_str(), 0);
 		a.password_network = v[2];
 
 		a.port = std::strtod(argv[2], 0);
