@@ -116,13 +116,22 @@ void	Session::Rep_313(Session *ss)
 	msg += " :is an IRC operator";
 	replyAsServer(msg);
 }
+/* whowas
+void	Session::Rep_314(std::string const& str)
+{
+	std::string msg;
 
-void	Session::Rep_318(std::string const& str)
+	msg = "314 ";
+	msg += str;
+	replyAsServer(msg);
+}
+*/
+void	Session::Rep_318(std::string const& nick)
 {
 	std::string msg;
 
 	msg = "318 ";
-	msg += str;
+	msg += nick;
 	msg += " :End of /WHOIS list";
 	replyAsServer(msg);
 }
@@ -135,6 +144,17 @@ void	Session::Rep_319(std::string const& str)
 	msg += str;
 	replyAsServer(msg);
 }
+/* whowas
+void	Session::Rep_369(std::string const& nick)
+{
+	std::string msg;
+
+	msg = "369 ";
+	msg += nick;
+	msg += " :End of WHOWAS";
+	replyAsServer(msg);
+}
+*/
 
 void	Session::replyAsServer(std::string const& str)
 {

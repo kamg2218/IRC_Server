@@ -15,16 +15,6 @@ typedef struct base
 } base;
 */
 
-int ft_atoi(char *str)
-{
-	int n = 0;
-	while (*str >= '0' && *str <= '9')
-	{
-		n = n * 10 + (*str++ - '0');
-	}
-	return n;
-}
-
 std::vector<std::string> split(std::string str, std::string divid)
 {
 	std::vector<std::string> v;
@@ -40,7 +30,7 @@ int main(int argc, char *argv[])
 {
 	base a;
 	
-	if (argc > 4 || argc < 3)
+	if (argc != 3 || argc != 4)
 	{
 		std::cout << "Wrong Input" << std::endl;
 		return (1);
@@ -54,18 +44,17 @@ int main(int argc, char *argv[])
 		a.host = v[0];
 		char ch[100];
 		strcpy(ch,v[1].c_str());
-		a.server_port = ft_stoi(ch);
+		a.server_port = std::strtod(ch, 0);
 		a.password_network = v[2];
 
-		a.port = ft_stoi(argv[2]);
+		a.port = std::strtod(argv[2], 0);
 		a.password = argv[3];
 	}
 	else
 	{
-		a.port = ft_stoi(argv[1]);
+		a.port = std::strtod(argv[1], 0);
 		a.password = argv[2];
 	}
-	a.port = 80;
 	try
 	{
 		Frame *mainframe = Frame::instance();
