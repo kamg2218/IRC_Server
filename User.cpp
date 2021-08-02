@@ -3,7 +3,7 @@
 #include "include/Frame.hpp"
 
 User::User()
-	: didUser(false), didNick(false), is_properly_quit(false), manager(false)
+	: didUser(false), didNick(false), is_properly_quit(false), manager(false), password(false)
 {}
 
 User::~User()
@@ -46,6 +46,10 @@ void			User::setUser(std::string const& s)
 {
 	sUsername = s;
 }
+void			User::setPass(bool pass)
+{
+	password = pass;
+}
 std::string		User::name() const
 {
 	return sRealname;
@@ -64,7 +68,10 @@ std::string		User::user() const
 {
 	return sUsername;
 }
-
+bool			User::pass() const
+{
+	return password;
+}
 const ChannelMap&		User::channel() const
 {
 	return mChannels;
@@ -189,8 +196,8 @@ void			User::cmdQuit(Session *ss, std::vector<std::string> const& sets, std::str
 	_pastNick.clear();
 	for (ChannelMap::iterator it = mChannels.begin(); it != mChannels.end(); it++)
 	{
-		it->second->broadcast(ss, msg);
 		it->second->removeUser(this);
+		it->second->broadcast(ss, msg);
 	}
 	mChannels.clear();
 }
