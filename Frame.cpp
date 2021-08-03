@@ -448,11 +448,19 @@ bool		Frame::checkMask(std::string const& str, std::string const& name, int wild
 {
 	int		s;
 
-	s = str.size() - wild - 1;
-	if (str.substr(0, wild) != name.substr(0, wild))
-		return false;
-	else if (str.substr(wild + 1, s) != name.substr(name.size() - s, s))
-		return false;
+	if (wild == -1)
+	{
+		if (MakeLower(str) != name)
+			return false;
+	}
+	else
+	{
+		s = str.size() - wild - 1;
+		if (MakeLower(str.substr(0, wild)) != name.substr(0, wild))
+			return false;
+		else if (MakeLower(str.substr(wild + 1, s)) != name.substr(name.size() - s, s))
+			return false;
+	}
 	return true;
 }
 
