@@ -69,14 +69,19 @@ bool			Channel::hasPass() const
 
 void	Channel::cmdNick(std::string const& name, std::string const& nick)
 {
-	for (Usermap::iterator it = mUsers.begin(); it != mUsers.end(); it++)
+	Usermap::iterator	it;
+
+	it = mUsers.find(name);
+	if (it != mUsers.end())
 	{
-		if (it->first == name)
-		{
-			mUsers.insert(std::pair<std::string, Session*>(nick, it->second));
-			mUsers.erase(it);
-			return ;
-		}
+		mUsers.insert(std::pair<std::string, Session*>(nick, it->second));
+		mUsers.erase(it);
+	}
+	it = mOperators.find(name);
+	if (it != mOperators.end())
+	{
+		mOperators.insert(std::pair<std::string, Session*>(nick, it->second));
+		mOperators.erase(it);
 	}
 }
 
