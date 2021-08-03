@@ -309,33 +309,28 @@ void	Frame::cmdTopic(Session *ss, std::vector<std::string> const& sets)
 
 void	Frame::cmdList(Session *ss, std::vector<std::string> const& sets)
 {
+	ChannelMap::iterator		it;
 	std::vector<std::string>	v;
 
 	if (sets.size() == 1)
-		return doList(ss, "");
-	v = split_comma(sets[1]);
-	for (int i = 0; i < v.size(); i++)
-		doList(ss, v[i]);
-}
-
-void	Frame::doList(Session *ss, std::string const& sets)
-{
-	ChannelMap::iterator	it;
-
-	ss->Rep_321();	//ListStart
-	if (sets == "")
 	{
+		ss->Rep_321();	//ListStart
 		for (it = mChannels.begin(); it != mChannels.end(); it++)
 			ss->Rep_322(it->second);	//List
 		return ss->Rep_323();	//ListEnd
 	}
-	if (CheckChannelname(sets) == false)
-		return ss->Rep_323();	//ListEnd
-	else if (!(doesChannelExists(MakeLower(sets.substr(1)))))
-		return ss->Rep_323();	//ListEnd
-	it = mChannels.find(MakeLower(sets.substr(1)));
-	ss->Rep_322(it->second);
-	return ss->Rep_323();	//ListEnd
+	v = split_comma(sets[1]);
+	for (int i = 0; i < v.size(); i++)
+	{
+		ss->Rep_321();	//ListStart
+		if (CheckChannelname(v[i])
+				&& doesChannelExists(MakeLower(v[i].substr(1))))
+		{
+			it = mChannels.find(MakeLower(v[i].substr(1)));
+			ss->Rep_322(it->second);
+		}
+		ss->Rep_323();	//ListEnd
+	}
 }
 
 std::vector<std::string>	Frame::split_comma(std::string s)
