@@ -20,6 +20,7 @@ User::~User()
 			it->second->removeUser(this);
 			it->second->broadcast(frame->findUser(sNickname), "QUIT #" + it->second->name());
 		}
+		frame->removeUser(sNickname);
 		//call cmdQuit
 		/*
 		ChannelMap::iterator it;

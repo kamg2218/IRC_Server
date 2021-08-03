@@ -419,7 +419,7 @@ void	Frame::cmdInvite(Session *ss, std::vector<std::string> const& sets)
 	Channel *channel;
 	Session	*target;
 	std::vector<std::string>	joincmd;
-
+// channel 변수 초기화 필요:ww
 	if (sets.size() < 3)
 	{
 		ss->Err_461("INVITE"); // NOT ENOUGH PARAM
@@ -431,9 +431,9 @@ void	Frame::cmdInvite(Session *ss, std::vector<std::string> const& sets)
 		ss->Err_403(sets[2].substr(1)); //NO SUCH CHANNEL
 	else if (!(ss->user().isMemOfChannel(sets[2].substr(1))))
 		ss->Err_442(sets[2].substr(1)); //ERR_NOTONCHANNEL;
-	else if (!doesNicknameExists(sets[2]))
+	else if (!doesNicknameExists(sets[1]))
 		ss->Err_401(sets[1]); //ERR_NOSUCHNICK
-	else if (!(target = findUser(sets[1]))->user().isMemOfChannel(channel->name()))
+	else if (!(target = findUser(sets[1]))->user().isMemOfChannel(channel->name())) //else if (!((target = findUser(sets[1]))->user().isMemOfChannel(channel->name())))
 		ss->Err_443(sets[1], channel->name()); //ERR_USERONCHANNEL;
 	else
 	{
