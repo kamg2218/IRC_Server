@@ -523,11 +523,15 @@ void	Frame::cmdWho(Session *ss, std::vector<std::string> const& sets)
 	{
 		for (itu = mUsers.begin(); itu != mUsers.end(); ++itu)
 			ss->Rep_352(itu->second->user().userVector());
+		ss->Rep_315("");
 	}
 	else
 	{
 		std::vector<std::string> v;
-		v = getMask(sets[1]);
+		if (CheckChannelname(sets[1]))
+			v = getMask(sets[1].substr(1));
+		else
+			v = getMask(sets[1]);
 		for (int i = 0; i < v.size(); i++)
 		{
 			if (doesChannelExists(v[i]))	// channel
@@ -556,8 +560,8 @@ void	Frame::cmdWho(Session *ss, std::vector<std::string> const& sets)
 				}
 			}
 		}
+		ss->Rep_315(sets[1]);
 	}
-	ss->Rep_315(sets[1]);
 }
 
 void		Frame::cmdPrivmsg(Session *ss, std::vector<std::string> const& sets)
