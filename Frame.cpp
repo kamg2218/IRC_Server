@@ -224,6 +224,7 @@ void	Frame::cmdNick(Session *ss, std::vector<std::string> const& sets)
 			}
 		}
 		ss->user().cmdNick(sets);
+		//ss->replyAsUser(ss, vectorToString(sets));//temp
 	}
 }
 
@@ -247,9 +248,9 @@ void	Frame::cmdPass(Session *ss, std::vector<std::string> const& sets)
 {
 	if (sets.size() != 2)
 		return ss->Err_461("PASS");	//NeedMoreParams
-	else if (ss->user().CheckUser() && ss->user().CheckNick())
+	else if (ss->user().IsConnected())
 		return ss->Err_462();		//AlreadyRegistered
-	else if (server.checkPass(sets[2]))
+	else if (server.checkPass(sets[1]))
 		ss->user().setPass(true);
 	else
 		ss->user().setPass(false);
@@ -562,10 +563,13 @@ void		Frame::cmdPrivmsg(Session *ss, std::vector<std::string> const& sets)
 
 	if (sets.size() == 1)
         return (ss->Err_411(sets[0]));   // ERR_NORECIPIENT
-	if (sets[1][0] == ':')
-        return (ss->Err_411(sets[0]));   // ERR_NORECIPIENT
-    else if (sets[2][0] != ':')
-        return (ss->Err_412());   // ERR_NOTEXTTOSEND
+	if (sets.size() != 3)
+	{
+		if (sets[1][0] == ':')
+        	return (ss->Err_411(sets[0]));   // ERR_NORECIPIENT
+    	else if (sets[2][0] != ':')
+        	return (ss->Err_412());   // ERR_NOTEXTTOSEND
+	}
     // receiver에 콤마로 split해서 저장하기
     receivers = split_comma(sets[1]);
     std::vector<std::string>::iterator receiverit = receivers.begin();

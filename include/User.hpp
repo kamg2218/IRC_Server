@@ -25,6 +25,7 @@ class User
 		bool	password;
 		bool	is_properly_quit;
 		std::list<std::string>	_pastNick;
+
 	public:
 		User();
 		~User();
