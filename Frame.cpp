@@ -639,7 +639,8 @@ void	Frame::cmdWhois(Session *ss, std::vector<std::string> const& sets)
 		session = findUser(*it);
 		//ss->cmdWhois(v[i]);
 		ss->Rep_311(session);
-		ss->Rep_313(session);
+		if (session->user().CheckManager())
+			ss->Rep_313(session);
 		resline = session->user().User::cmdWhois();	// check!
 		for (it2 = resline.begin(); it2 != resline.end(); it2++)
 			ss->Rep_319(*it2);
