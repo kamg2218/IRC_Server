@@ -166,13 +166,6 @@ void	Session::replyAsServer(std::string const& str)
 	std::cout << "replied as SV: " <<msg << "\n";
 	msg += "\r\n";
 	send(_soc.sd(), msg.c_str(), msg.length(), 0);
-	/*
-
-	std::string res = str;	
-	std::cout << "replied : " << str << "\n";
-	res += "\r\n";
-	send(_soc.sd(), res.c_str(), res.length(), 0);
-	*/
 }
 
 void	Session::replyAsUser(Session *target, std::string const& str)

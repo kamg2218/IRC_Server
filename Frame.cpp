@@ -370,7 +370,7 @@ std::vector<std::vector<std::string> >	Frame::kicklist(std::vector<std::string> 
 	}
 	for (int i = 0 ; i < chlist.size() || i < tgtlist.size() ; i++)
 	{
-		chlist.push_back("KICK");
+		subres.push_back("KICK");
 		if (chlist.size() == 1)
 			subres.push_back(chlist[0]);
 		else if (i < chlist.size())
@@ -397,7 +397,7 @@ void	Frame::cmdKick(Session *ss, std::vector<std::string> const& sets)
 		cmd = cmdsets[0];
 		if (cmd.size() < 3)
 			ss->Err_461("KICK"); //ERR_NEEDMOREPARAMS
-		else if (cmd[1].find("#") == std::string::npos || cmd[1].find("&") == std::string::npos)
+		else if (cmd[1].find("#") == std::string::npos && cmd[1].find("&") == std::string::npos)
 			ss->Err_461("KICK"); //ERR_NEEDMOREPARAMS
 		else if (!doesChannelExists(MakeLower(cmd[1].substr(1))))
 			ss->Err_403(cmd[1].substr(1)); //ERR_NOSUCHCHANNEL
@@ -423,13 +423,10 @@ void	Frame::cmdInvite(Session *ss, std::vector<std::string> const& sets)
 	Channel *channel;
 	Session	*target;
 	std::vector<std::string>	joincmd;
-// channel 변수 초기화 필요:ww
+	
 	if (sets.size() < 3)
-	{
 		ss->Err_461("INVITE"); // NOT ENOUGH PARAM
-		return ;
-	}
-	if (sets[2].find("#") == std::string::npos && sets[2].find("&") == std::string::npos)
+	else if (sets[2].find("#") == std::string::npos && sets[2].find("&") == std::string::npos)
 		ss->Err_461("INVITE"); // NOT ENOUGH PARAM
 	else if (!doesChannelExists(sets[2].substr(1)))
 		ss->Err_403(sets[2].substr(1)); //NO SUCH CHANNEL
@@ -437,15 +434,20 @@ void	Frame::cmdInvite(Session *ss, std::vector<std::string> const& sets)
 		ss->Err_442(sets[2].substr(1)); //ERR_NOTONCHANNEL;
 	else if (!doesNicknameExists(sets[1]))
 		ss->Err_401(sets[1]); //ERR_NOSUCHNICK
-	else if (!(target = findUser(sets[1]))->user().isMemOfChannel(channel->name())) //else if (!((target = findUser(sets[1]))->user().isMemOfChannel(channel->name())))
-		ss->Err_443(sets[1], channel->name()); //ERR_USERONCHANNEL;
 	else
 	{
-		ss->Rep_341(channel->name(), target->user().nick());
-		target->Rep_341(channel->name(), target->user().nick());
-		joincmd.push_back("JOIN");
-		joincmd.push_back("#" + channel->name());
-		cmdJoin(target, joincmd);
+		target = findUser(sets[1]);
+		channel = findChannel(sets[2].substr(1));
+		if (target->user().isMemOfChannel(channel->name()))
+			ss->Err_443(sets[1], channel->name()); //ERR_USERONCHANNEL;
+		else
+		{
+			ss->Rep_341(channel->name(), target->user().nick());
+			target->Rep_341(channel->name(), target->user().nick());
+			joincmd.push_back("JOIN");
+			joincmd.push_back("#" + channel->name());
+			cmdJoin(target, joincmd);
+		}
 	}
 }
 
@@ -556,8 +558,8 @@ void	Frame::cmdWho(Session *ss, std::vector<std::string> const& sets)
 				}
 			}
 		}
+		ss->Rep_315(sets[1]);
 	}
-	ss->Rep_315(sets[1]);
 }
 
 void		Frame::cmdPrivmsg(Session *ss, std::vector<std::string> const& sets)
