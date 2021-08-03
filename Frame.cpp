@@ -179,6 +179,7 @@ void	Frame::cmdJoin(Session *ss, std::vector<std::string> const& sets)
 		if (!(CheckChannelname(v[i])))
 			return ss->Err_403(v[i]);	//NoSuchChannel
 		doJoin(ss, sets, v[i]);
+		printcommand(ss);
 	}
 }
 
@@ -523,7 +524,7 @@ MainServer&	Frame::GetServer()
 void	Frame::cmdWho(Session *ss, std::vector<std::string> const& sets)
 {
 	UserMap::iterator itu;
-	
+
 	if (sets.size() == 1 || (sets.size() == 2 && sets[1] == "*"))
 	{
 		for (itu = mUsers.begin(); itu != mUsers.end(); ++itu)
@@ -642,7 +643,10 @@ void	Frame::cmdWhois(Session *ss, std::vector<std::string> const& sets)
 	for (int i = 0; i < v.size(); i++)
 	{
 		if (!doesNicknameExists(v[i]))
-			return (ss->Err_401(v[i]));
+		{
+			ss->Err_401(v[i]);
+			return (ss->Rep_318(sets[1]));
+		}
 	}
 	for (it = v.begin(); it != v.end(); it++)
 	{
@@ -650,7 +654,6 @@ void	Frame::cmdWhois(Session *ss, std::vector<std::string> const& sets)
 		int check;
 
 		session = findUser(*it);
-		//ss->cmdWhois(v[i]);
 		ss->Rep_311(session);
 		if (session->user().CheckManager())
 			ss->Rep_313(session);
@@ -659,4 +662,24 @@ void	Frame::cmdWhois(Session *ss, std::vector<std::string> const& sets)
 			ss->Rep_319(*it2);
 	}
 	ss->Rep_318(sets[1]);
+}
+
+void	Frame::printcommand(Session *ss)
+{
+	ss->replyAsServer("<Command>");
+	//ss->replyAsServer("WHO <nick> [o]");
+	//ss->replyAsServer("WHOIS <nickmask>[,<nickmask>]");
+	//ss->replyAsServer("PRIVMSG <receiver>[,<receiver>] <text to be send>");
+	ss->replyAsServer("JOIN <channel>[,<channel>] [<key>[,<key>]");
+	ss->replyAsServer("PART <channel>[,<channel>]");
+	ss->replyAsServer("TOPIC <channel> [<topic>]");
+	//ss->replyAsServer("NAMES");
+	ss->replyAsServer("LIST [<channel>[,<channel>]]");
+	ss->replyAsServer("INVITE <nick> <channel>");
+	ss->replyAsServer("KICK <channel> <user> [<comment>]");
+	//ss->replyAsServer("NICK");
+	//ss->replyAsServer("USER");
+	//ss->replyAsServer("PASS");
+	//ss->replyAsServer("OPER");
+	//ss->replyAsServer("QUIT");
 }
