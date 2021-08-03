@@ -525,11 +525,15 @@ void	Frame::cmdWho(Session *ss, std::vector<std::string> const& sets)
 	{
 		for (itu = mUsers.begin(); itu != mUsers.end(); ++itu)
 			ss->Rep_352(itu->second->user().userVector());
+		ss->Rep_315("");
 	}
 	else
 	{
 		std::vector<std::string> v;
-		v = getMask(sets[1]);
+		if (CheckChannelname(sets[1]))
+			v = getMask(sets[1].substr(1));
+		else
+			v = getMask(sets[1]);
 		for (int i = 0; i < v.size(); i++)
 		{
 			if (doesChannelExists(v[i]))	// channel
@@ -645,7 +649,8 @@ void	Frame::cmdWhois(Session *ss, std::vector<std::string> const& sets)
 		session = findUser(*it);
 		//ss->cmdWhois(v[i]);
 		ss->Rep_311(session);
-		ss->Rep_313(session);
+		if (session->user().CheckManager())
+			ss->Rep_313(session);
 		resline = session->user().User::cmdWhois();	// check!
 		for (it2 = resline.begin(); it2 != resline.end(); it2++)
 			ss->Rep_319(*it2);

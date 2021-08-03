@@ -234,6 +234,7 @@ std::vector<std::string> User::userVector()
 	ChannelMap::iterator it;
 	std::vector<std::string> res;
 	std::string servername = "ft_irc";
+	std::cout << "uservector\n";
 
 	for (it = mChannels.begin(); it != mChannels.end(); ++it)
 	{
