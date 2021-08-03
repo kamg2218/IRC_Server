@@ -178,20 +178,25 @@ void	Frame::cmdJoin(Session *ss, std::vector<std::string> const& sets)
 	{
 		if (!(CheckChannelname(v[i])))
 			return ss->Err_403(v[i]);	//NoSuchChannel
-		doJoin(ss, v[i], vectorToString(sets));
+		doJoin(ss, sets, v[i]);
 	}
 }
-//reply check
-void	Frame::doJoin(Session *ss, std::string const& sets, std::string const& msg)
+
+void	Frame::doJoin(Session *ss, std::vector<std::string> const& sets, std::string const& chname)
 {
 	std::vector<std::string>	v;
+	std::string					msg;
 	Channel*					ch;
-	
-	if (doesChannelExists(MakeLower(sets.substr(1))))
-		ch = findChannel(MakeLower(sets.substr(1)));
+
+	msg = sets[0];
+	msg += " " + chname;
+	for (int i = 2; i < sets.size(); i++)
+		msg += " " + sets[i];
+	if (doesChannelExists(MakeLower(chname.substr(1))))
+		ch = findChannel(MakeLower(chname.substr(1)));
 	else
 	{
-		ch = new Channel(ss, MakeLower(sets.substr(1)));
+		ch = new Channel(ss, MakeLower(chname.substr(1)));
 		addChannel(ch);
 	}
 	ch->addUser(ss);
@@ -224,7 +229,6 @@ void	Frame::cmdNick(Session *ss, std::vector<std::string> const& sets)
 			}
 		}
 		ss->user().cmdNick(sets);
-		//ss->replyAsUser(ss, vectorToString(sets));//temp
 	}
 }
 
@@ -646,54 +650,3 @@ void	Frame::cmdWhois(Session *ss, std::vector<std::string> const& sets)
 	}
 	ss->Rep_318(sets[1]);
 }
-/* delete
-void	Frame::cmdWhowas(Session *ss, std::vector<std::string> const& sets)
-{
-	std::vector<std::string>::reverse_iterator itv = mUsers.rbegin();
-	std::list<std::string>::reverse_iterator itl;
-	std::vector<std::string> findline;
-	std::string checkline;
-	int count = -1;
-	bool check = 0;
-	bool fin = 0;
-	int num = 0;
-
-	if (sets.size() == 1)
-	{
-		ss->Err_431();
-		ss->Rep_369(sets[1]);
-		return ;
-	}
-	if (sets.size() > 2)
-		count = stoi(sets[2]);
-	while (!(itv == mUsers.rend() && (itl = itv->second.user().pastnick().begin())))
-	//			&& fin == 1))
-	{
-		for (itv = mUsers.rbegin(); itv != mUsers.rend(); itv++)
-		{
-			Session *session;
-			session = findUser(*itv);
-			checkline = session->user().cmdWhowas(sets[1], num);	//findUser로 session 못찾으면? end()반환인데 작동?
-			if (checkline != "")
-			{
-				findline.push_back(checkline);
-				check = 1;
-			}
-			//if ((itv + 1) == mUsers.rend() && )
-			//	fin = 1;
-		}
-		num++;
-	}
-	if (!check)
-		ss->Err_406(sets[1]);
-	for (std::vector<std::string>::iterator it = findline.begin(); it != findline.end(); it++)
-	{
-		if (count == 0)
-			break ;
-		ss->Rep_314(*it);
-		count--;
-	}
-	ss->Rep_369(sets[1]);
-}
-*/
-
