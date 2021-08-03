@@ -450,17 +450,14 @@ bool		Frame::checkMask(std::string const& str, std::string const& name, int wild
 {
 	int		s;
 
-	if (wild == -1)
-	{
-		if (MakeLower(str) != name)
-			return false;
-	}
-	else
+	if (wild == -1 && str != name)
+		return false;
+	else if (wild != -1)
 	{
 		s = str.size() - wild - 1;
-		if (MakeLower(str.substr(0, wild)) != name.substr(0, wild))
+		if (str.substr(0, wild) != name.substr(0, wild))
 			return false;
-		else if (MakeLower(str.substr(wild + 1, s)) != name.substr(name.size() - s, s))
+		else if (str.substr(wild + 1, s) != name.substr(name.size() - s, s))
 			return false;
 	}
 	return true;
@@ -480,7 +477,7 @@ std::vector<std::string>	Frame::getMask(std::string const& str)
 	//checkChannelName
 	for (ChannelMap::iterator it = mChannels.begin(); it != mChannels.end(); it++)
 	{
-		if (checkMask(str, it->first, wild))
+		if (checkMask(MakeLower(str), it->first, wild))
 			v.insert(v.end(), it->first);
 	}
 	if (v.size() != 0)
