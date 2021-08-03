@@ -46,14 +46,13 @@ class Frame
 		void	cmdOper(Session *ss, std::vector<std::string> const& sets);
 		void	cmdTopic(Session *ss, std::vector<std::string> const& sets);
 		void	cmdList(Session *ss, std::vector<std::string> const& sets);
-		void	doJoin(Session *ss, std::string const& sets, std::string const& msg);
+		void	doJoin(Session *ss, std::vector<std::string> const& sets, std::string const& chname);
 		void	doList(Session *ss, std::string const& sets);
 		void	cmdKick(Session *ss, std::vector<std::string> const& sets);
 		void	cmdInvite(Session *ss, std::vector<std::string> const& sets);
 		bool	checkMask(std::string const& str, std::string const& name, int wild);
 		void	cmdWho(Session *ss, std::vector<std::string> const& sets);
 		void	cmdWhois(Session *ss, std::vector<std::string> const& sets);
-		void	cmdWhowas(Session *ss, std::vector<std::string> const& sets);
 		void	cmdPrivmsg(Session *ss, std::vector<std::string> const& sets);
 		std::string	vectorToString(std::vector<std::string> const& sets);
 		std::vector<std::string>	getMask(std::string const& str);

@@ -27,6 +27,7 @@ class Channel
 		void	removeUser(User *user);
 		bool	hasUser(User *user);
 		void	broadcast(Session *ss, std::string const& message);
+		void	privmsgBroadcast(Session *ss, std::string const& message);
 		std::string password() const;
 		std::string topic() const;
 		std::string name() const;
@@ -34,7 +35,6 @@ class Channel
 		bool	hasPass() const;
 		bool	isOperator(std::string const& nick) const;
 		void	setTopic(std::string topic);
-		//void	cmdWho(Session *ss, int check);
 		std::vector<std::string> channelVector();
 		std::vector<std::string> channeloperVector();
 };
