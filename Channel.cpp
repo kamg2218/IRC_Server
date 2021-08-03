@@ -10,14 +10,11 @@ Channel::Channel(Session *creator, std::string const& name, std::string const& t
 
 Channel::~Channel()
 {
-	//write
 }
 
 void		Channel::addUser(Session *user)
 {
-	//write
 	mUsers[user->user().nick()] = user;
-	
 }
 
 void		Channel::removeUser(User *user)
@@ -27,7 +24,6 @@ void		Channel::removeUser(User *user)
 
 bool		Channel::hasUser(User *user)
 {
-	//write
 	Usermap::iterator it;
 
 	it = mUsers.find(user->nick());
@@ -45,6 +41,19 @@ void		Channel::broadcast(Session *ss, std::string const& message)
 		ss->replyAsUser(it->second, message);
 }
 
+void		Channel::privmsgBroadcast(Session *ss, std::string const& message)
+{
+	Usermap::iterator it;
+
+	it = mUsers.begin();
+	for (; it != mUsers.end() ; ++it)
+	{
+		if (ss->user().nick() == it->first)
+			continue ;
+		ss->replyAsUser(it->second, message);
+	}
+}
+
 std::string		Channel::password() const { return sPassword; }
 
 std::string		Channel::topic() const { return sTopic; }
@@ -55,7 +64,6 @@ int				Channel::userCount() const { return mUsers.size(); }
 
 bool			Channel::hasPass() const
 {
-	//write
 	return (false);
 }
 
@@ -108,33 +116,6 @@ void	Channel::setTopic(std::string const topic)
 	sTopic = topic;
 }
 
-/*
-void Channel::cmdWho(Session *ss, int check)
-{
-	std::string res;
-	Usermap::iterator it;
-
-	if (check)
-	{
-		for (it = mOperators.begin(); it != mOperators.end(); it++)
-		{
-			//res = sName + " " + it->second->user() + " " + it->second->user().host() + " ft_irc " + it->second->user().nick() + " :0 " + it->second->user().name();
-			ss->replyAsServer(res); // RPL_WHOREPLY
-			res.clear();
-		}
-	}
-	else
-	{
-		for (it = mUsers.begin(); it != mUsers.end(); it++)
-		{
-			res = it->second->user().channel() + " " + it->second->user() + " " + it->second->user().host() + " ft_irc " + it->second->user().nick() + " :0 " + it->second->user().name();
-			ss->replyAsServer(res); // RPL_WHOREPLY
-			res.clear();
-		}
-			
-	}
-}
-*/
 std::vector<std::string> Channel::channelVector()
 {
 	Usermap::iterator it;
