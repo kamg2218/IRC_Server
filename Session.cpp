@@ -99,6 +99,8 @@ void	Session::Rep_311(Session *ss)
 	msg = "311 ";
 	msg += ss->user().nick();
 	msg += " ";
+	msg += ss->user().nick();
+	msg += " ";
 	msg += ss->user().user();
 	msg += " ";
 	msg += ss->user().host();

@@ -58,6 +58,7 @@ class Frame
 		std::vector<std::string>	split_comma(std::string s);
 		MainServer& GetServer(void);
 		std::vector<std::vector<std::string> >	kicklist(std::vector<std::string> const& sets);
+		void	printcommand(Session *ss);
 };
 
 #endif

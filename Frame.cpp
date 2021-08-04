@@ -179,6 +179,7 @@ void	Frame::cmdJoin(Session *ss, std::vector<std::string> const& sets)
 		if (!(CheckChannelname(v[i])))
 			return ss->Err_403(v[i]);	//NoSuchChannel
 		doJoin(ss, sets, v[i]);
+		printcommand(ss);
 	}
 }
 
@@ -660,3 +661,5 @@ void	Frame::cmdWhois(Session *ss, std::vector<std::string> const& sets)
 	}
 	ss->Rep_318(sets[1]);
 }
+
+#include "nahkim.cpp"
