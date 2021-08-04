@@ -279,7 +279,7 @@ void	Session::Rep_353(std::string const& chname, std::string const& nick)
 	msg += user().nick();
 	msg += " = #";
 	msg += chname;
-	msg += " :@";
+	msg += " :";
 	msg += nick;
 	replyAsServer(msg);
 }
