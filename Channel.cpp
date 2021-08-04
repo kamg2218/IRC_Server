@@ -69,14 +69,19 @@ bool			Channel::hasPass() const
 
 void	Channel::cmdNick(std::string const& name, std::string const& nick)
 {
-	for (Usermap::iterator it = mUsers.begin(); it != mUsers.end(); it++)
+	Usermap::iterator	it;
+
+	it = mUsers.find(name);
+	if (it != mUsers.end())
 	{
-		if (it->first == name)
-		{
-			mUsers.insert(std::pair<std::string, Session*>(nick, it->second));
-			mUsers.erase(it);
-			return ;
-		}
+		mUsers.insert(std::pair<std::string, Session*>(nick, it->second));
+		mUsers.erase(it);
+	}
+	it = mOperators.find(name);
+	if (it != mOperators.end())
+	{
+		mOperators.insert(std::pair<std::string, Session*>(nick, it->second));
+		mOperators.erase(it);
 	}
 }
 
@@ -92,11 +97,19 @@ void	Channel::cmdJoin(Session *ss)
 	it = mUsers.begin();
 	if (it != mUsers.end())
 	{
-		str = it->first;
+		if (mOperators.find(it->first) != mOperators.end())
+			str = "@" + it->first;
+		else
+			str = it->first;
 		it++;
 	}
 	for (; it != mUsers.end(); it++)
-		str += " " + it->first;
+	{
+		str += " ";
+		if (mOperators.find(it->first) != mOperators.end())
+			str += "@";
+		str += it->first;
+	}
 	if (str != "")
 		ss->Rep_353(name(), str);
 	ss->Rep_366(name());
