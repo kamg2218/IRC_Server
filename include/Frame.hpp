@@ -59,6 +59,7 @@ class Frame
 		MainServer& GetServer(void);
 		std::vector<std::vector<std::string> >	kicklist(std::vector<std::string> const& sets);
 		void	printcommand(Session *ss);
+		std::string	vectorToStringpriv(std::vector<std::string> const& sets);
 };
 
 #endif

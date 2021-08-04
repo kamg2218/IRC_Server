@@ -145,7 +145,7 @@ bool		User::cmdUser(std::vector<std::string> const& sets)
 	str = sets[4];
 	if (sets[4][0] == ':')
 		str = sets[4].substr(1);
-	for (int i = 4; i < sets.size(); i++)
+	for (int i = 5; i < sets.size(); i++)
 		str += " " + sets[i];
 	setName(str);
 	return true;
@@ -237,11 +237,11 @@ std::vector<std::string> User::userVector()
 
 	if (it == mChannels.end())
 	{
-		res.push_back("<no Channel> " + user() + " " + host() + " " + servername + " " + nick() + " :0 " + name());
+		res.push_back("<no Channel> " + user() + " " + host() + " " + servername + " " + nick() + "H :0 " + name());
 	}
 	for (it = mChannels.begin(); it != mChannels.end(); ++it)
 	{
-		res.push_back(it->second->name() + " " + user() + " " + host() + " " + servername + " " + nick() + " :0 " + name());
+		res.push_back(it->second->name() + " " + user() + " " + host() + " " + servername + " " + nick() + "H :0 " + name());
 	}
 	return res;
 }

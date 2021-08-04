@@ -97,6 +97,8 @@ void	Session::Rep_311(Session *ss)
 	std::string msg;
 
 	msg = "311 ";
+	msg += user().nick();
+	msg += " ";
 	msg += ss->user().nick();
 	msg += " ";
 	msg += ss->user().user();
@@ -112,6 +114,8 @@ void	Session::Rep_313(Session *ss)
 	std::string msg;
 
 	msg = "313 ";
+	msg += user().nick();
+	msg += " ";
 	msg += ss->user().nick();
 	msg += " :is an IRC operator";
 	replyAsServer(msg);
@@ -122,6 +126,8 @@ void	Session::Rep_318(std::string const& nick)
 	std::string msg;
 
 	msg = "318 ";
+	msg += user().nick();
+	msg += " ";
 	msg += nick;
 	msg += " :End of /WHOIS list";
 	replyAsServer(msg);
@@ -132,6 +138,8 @@ void	Session::Rep_319(std::string const& str)
 	std::string msg;
 
 	msg = "319 ";
+	msg += user().nick();
+	msg += " ";
 	msg += str;
 	replyAsServer(msg);
 }
