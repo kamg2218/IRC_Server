@@ -297,7 +297,7 @@ void	Frame::cmdTopic(Session *ss, std::vector<std::string> const& sets)
 	it = mChannels.find(MakeLower(sets[1].substr(1)));
 	if (it == mChannels.end())
 		return ss->Err_442(sets[1].substr(1));	//NotOnChannel
-	if (sets.size() == 2)
+	if (sets.size() == 2 || sets[2][0] != ':')
 	{
 		if (it->second->topic() == "")
 			return ss->Rep_331(it->first);	//NoTopic
