@@ -97,11 +97,19 @@ void	Channel::cmdJoin(Session *ss)
 	it = mUsers.begin();
 	if (it != mUsers.end())
 	{
-		str = it->first;
+		if (mOperators.find(it->first) != mOperators.end())
+			str = "@" + it->first;
+		else
+			str = it->first;
 		it++;
 	}
 	for (; it != mUsers.end(); it++)
-		str += " " + it->first;
+	{
+		str += " ";
+		if (mOperators.find(it->first) != mOperators.end())
+			str += "@";
+		str += it->first;
+	}
 	if (str != "")
 		ss->Rep_353(name(), str);
 	ss->Rep_366(name());

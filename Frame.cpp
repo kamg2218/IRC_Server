@@ -147,11 +147,11 @@ void		Frame::cmdPart(Session *ss, std::vector<std::string> const& sets)
 	for (int i = 0; i < v.size(); i++)
 	{
 		if (CheckChannelname(v[i]) == false)
-			return ss->Err_403(v[i]);	//wrongChannelName
+			ss->Err_461("PART");	//NeedMoreParams
 		else if (mChannels.find(MakeLower(v[i].substr(1))) == mChannels.end())
-			return ss->Err_403(v[i].substr(1));	//NoSuchChannel
+			ss->Err_403(v[i].substr(1));	//NoSuchChannel
 		else if (ss->user().cmdPart(ss, v[i], sets) == false)
-			return ss->Err_442(v[i].substr(1));	//NotOnChannel
+			ss->Err_442(v[i].substr(1));	//NotOnChannel
 	}
 }
 
@@ -177,7 +177,10 @@ void	Frame::cmdJoin(Session *ss, std::vector<std::string> const& sets)
 	for (int i = 0; i < v.size(); i++)
 	{
 		if (!(CheckChannelname(v[i])))
-			return ss->Err_403(v[i]);	//NoSuchChannel
+		{
+			ss->Err_461("JOIN");	//NeedMoreParams
+			continue ;
+		}
 		doJoin(ss, sets, v[i]);
 	}
 }
@@ -207,6 +210,8 @@ void	Frame::doJoin(Session *ss, std::vector<std::string> const& sets, std::strin
 
 void	Frame::cmdNick(Session *ss, std::vector<std::string> const& sets)
 {
+	UserMap::iterator	it;
+
 	if (sets.size() < 2)
 		return ss->Err_431();	//noNicknameGiven
 	else if (ss->user().pass() == false)
@@ -219,15 +224,18 @@ void	Frame::cmdNick(Session *ss, std::vector<std::string> const& sets)
 		return ;	//success to register
 	else			//change Nickname
 	{
-		for (UserMap::iterator it = mUsers.begin(); it != mUsers.end(); it++)
+		it = mUsers.find(ss->user().nick());
+		if (it == mUsers.end())
+			return ;
+		for (UserMap::iterator tmp = mUsers.begin(); tmp != mUsers.end(); tmp++)
 		{
-			if (it->first == ss->user().nick())
-			{
-				mUsers.insert(std::pair<std::string, Session*>(sets[1], it->second));
-				mUsers.erase(it);
-				break ;
-			}
+			if (tmp->first == it->first)
+				continue ;
+			ss->replyAsUser(tmp->second, vectorToString(sets));
 		}
+		ss->replyAsServer(vectorToString(sets));
+		mUsers.insert(std::pair<std::string, Session*>(sets[1], it->second));
+		mUsers.erase(it);
 		ss->user().cmdNick(sets);
 	}
 }
@@ -283,6 +291,8 @@ void	Frame::cmdTopic(Session *ss, std::vector<std::string> const& sets)
 	std::string				str;
 
 	if (sets.size() < 2)
+		return ss->Err_461("TOPIC");	//NeedMoreParams
+	else if (!(CheckChannelname(sets[1])))
 		return ss->Err_461("TOPIC");	//NeedMoreParams
 	it = mChannels.find(MakeLower(sets[1].substr(1)));
 	if (it == mChannels.end())
