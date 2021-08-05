@@ -146,7 +146,7 @@ bool		User::cmdUser(std::vector<std::string> const& sets)
 	str = sets[4];
 	if (sets[4][0] == ':')
 		str = sets[4].substr(1);
-	for (int i = 4; i < sets.size(); i++)
+	for (int i = 5; i < sets.size(); i++)
 		str += " " + sets[i];
 	setName(str);
 	return true;
