@@ -1,143 +1,4 @@
-#include "include/Frame.hpp"
-
-Frame * Frame::pInstance = NULL;
-
-Frame::~Frame()
-{
-	removeAllUser();
-	removeAllChannel();
-}
-
-Frame* Frame::instance()
-{
-	if (!pInstance)
-	{
-		pInstance = new Frame();
-	}
-	return (pInstance);
-} 
-void	Frame::start(base const& bs)
-{
-	server.create(bs);
-	while(1)
-	{
-		service.do_select(server);
-		service.do_service(server);
-	}
-}
-
-bool Frame::doesNicknameExists(std::string const& name)
-{
-	return (mUsers.find(name) != mUsers.end());
-}
-
-bool Frame::addUser(Session *new_user)
-{
-	if (doesNicknameExists(new_user->user().nick()))
-		return (false);
-	mUsers[new_user->user().nick()] = new_user;
-	return (true);
-}
-
-void	Frame::removeUser(std::string const& nick)
-{
-	mUsers.erase(nick);
-}
-
-bool	Frame::doesChannelExists(std::string const& name)
-{
-	return (mChannels.find(name) != mChannels.end());
-}
-
-void	Frame::addChannel(Channel* new_chan)
-{
-	if (!doesChannelExists(new_chan->name()))
-		mChannels[new_chan->name()] = new_chan;
-}
-
-void	Frame::removeChannel(std::string const& name)
-{
-	mChannels.erase(name);
-}
-
-void	Frame::removeAllUser()
-{
-	UserMap::iterator it;
-	UserMap::iterator tmp;
-	
-	for (it = mUsers.begin() ; it != mUsers.end() ;)
-	{
-		tmp = it;
-		it++;
-		delete (tmp->second);
-		mUsers.erase(tmp);
-	}
-}
-
-void	Frame::removeAllChannel()
-{
-	ChannelMap::iterator it;
-	ChannelMap::iterator tmp;
-	
-	for (it = mChannels.begin() ; it != mChannels.end() ;)
-	{
-		tmp = it;
-		it++;
-		delete (tmp->second);
-		mChannels.erase(tmp);
-	}
-}
-
-Channel*	Frame::findChannel(std::string const& name)
-{
-	return mChannels.find(name)->second;
-}
-Session*	Frame::findUser(std::string const& name)
-{
-	return mUsers.find(name)->second;
-}
-
-bool		Frame::CheckNickname(std::string const& name)
-{
-	for (int i = 0; i < name.size(); i++)
-	{
-		if (name.size() > 9)
-			return false;
-		else if (name[i] == ' ' || name[i] == ',')
-			return false;
-		else if ((int)name[i] == 7)
-			return false;
-	}
-	return true;
-}
-
-bool		Frame::CheckChannelname(std::string const& name)
-{
-	for (int i = 0; i < name.size(); i++)
-	{
-		if (i == 0 && name[0] != '#' && name[0] != '!' && name[0] != '&' && name[0] != '+')
-			return false;
-		else if (name.size() > 50)
-			return false;
-		else if (name[i] == ' ' || name[i] == ',')
-			return false;
-		else if ((int)name[i] == 7)
-			return false;
-	}
-	return true;
-}
-
-std::string	Frame::MakeLower(std::string const& str)
-{
-	std::string	low;
-
-	low = "";
-	for (int i = 0; i < str.size(); i++)
-		low += std::tolower((char)str[i]);
-	return low;
-}
-
-void		Frame::cmdPart(Session *ss, std::vector<std::string> const& sets)
+cmdPart(Session *ss, std::vector<std::string> const& sets)
 {
 	std::vector<std::string>	v;
 
@@ -265,7 +126,10 @@ void	Frame::cmdPass(Session *ss, std::vector<std::string> const& sets)
 	else if (ss->user().IsConnected())
 		return ss->Err_462();		//AlreadyRegistered
 	else if (server.checkPass(sets[1]))
+	{
 		ss->user().setPass(true);
+		ss->setPing(true);
+	}
 	else
 		ss->user().setPass(false);
 }
