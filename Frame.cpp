@@ -162,6 +162,7 @@ void	Frame::cmdQuit(Session *ss, std::vector<std::string> const& sets)
 	msg = vectorToString(sets);
 	ss->user().cmdQuit(ss, sets, msg);
 	removeUser(ss->user().nick());
+	server.users().erase(ss->soc().sd());
 	ss->replyAsServer(msg);
 }
 
