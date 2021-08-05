@@ -54,7 +54,8 @@ void	Service::sendPing(Session *ss)
 
 	if (ss->ping() == false)
 	{
-		v[0] = "QUIT";
+		//v[0] = "QUIT";
+		v.insert(v.end(),"QUIT");
 		Frame::instance()->cmdQuit(ss, v);
 		return ;
 	}
