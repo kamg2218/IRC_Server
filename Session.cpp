@@ -4,10 +4,12 @@
 #include "include/Frame.hpp"
 
 Session::Session()
+	: _ping(true)
 {
 }
 
 Session::Session(int sd)
+	: _ping(true)
 {
 	_soc.setSd(sd);
 }
@@ -21,6 +23,13 @@ int		Session::socket() const
 {
 	return (_soc.sd());
 }
+
+void	Session::setPing(bool p)
+{
+	_ping = p;
+}
+
+bool	Session::ping() const { return _ping; }
 
 void	Session::StreamAppend(char *str, int r)
 {

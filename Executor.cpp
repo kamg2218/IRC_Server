@@ -124,5 +124,6 @@ void	Executor::execute(std::string& buff, Session* ss)
 	else if (splited_cmd[0] == "WHOIS")
 		frame->cmdWhois(ss, splited_cmd);
 	else if (splited_cmd[0] != "PONG")
-		ss->Err_421(splited_cmd[0]); //ss->replyAsServer("421");
+		frame->cmdPong(ss);
+		//ss->Err_421(splited_cmd[0]); //ss->replyAsServer("421");
 }

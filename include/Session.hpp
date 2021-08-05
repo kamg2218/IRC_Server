@@ -24,7 +24,7 @@ class Session
 		Socket		_soc;
 		User		_user;
 		std::string	rstream;
-
+		bool		_ping;
 	public:
 		typedef Session*	pointer;
 		Session();
@@ -33,6 +33,8 @@ class Session
 		int		socket() const;
 		Socket&	soc();
 		User&	user();
+		void	setPing(bool p);
+		bool	ping() const;
 		bool	handleRead(std::map<int, Session*> & ms, int fd);
 		void	replyAsServer(std::string const& str);
 		void	replyAsUser(Session *target, std::string const& str);

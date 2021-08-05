@@ -735,3 +735,8 @@ void	Frame::printcommand(Session *ss)
 	ss->replyAsServer(res + "INVITE <nick> <channel>");
 	ss->replyAsServer(res + "KICK <channel> <user> [<comment>]");
 }
+
+void	Frame::cmdPong(Session *ss)
+{
+	ss->setPing(true);
+}

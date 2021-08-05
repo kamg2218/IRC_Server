@@ -11,20 +11,18 @@
 class Service
 {
 	private:
-		//std::map<int, Session*>	mSessions;
 		fd_set			fd_read;
 		fd_set			fd_write;
 		int				max;
 		int				maxopen;
 		int				res;
 		struct timeval	tv;
-
 	public:
 		Service();
 		void	do_select(MainServer const& sv);
 		void	do_service(MainServer & sv);
+		void	cmdPing(Session *ss);
 		int		getMaxopen() const;
-		//void	deleteSession(std::map<int, Session*>::iterator& pos);
 		class SelectException : public std::exception
 		{
 			public:

@@ -37,6 +37,7 @@ class Frame
 		std::string	MakeLower(std::string const& str);
 		Session*	findUser(std::string const& name);
 		Channel*	findChannel(std::string const& name);
+		void	cmdPong(Session *ss);
 		void	cmdPart(Session *ss, std::vector<std::string> const& sets);
 		void	cmdQuit(Session *ss, std::vector<std::string> const& sets);
 		void	cmdUser(Session *ss, std::vector<std::string> const& sets);
