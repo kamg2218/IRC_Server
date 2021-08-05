@@ -137,7 +137,7 @@ std::vector<std::string> Channel::channelVector()
 
 	for (it = mUsers.begin(); it != mUsers.end(); ++it)
 	{
-		res.push_back("#" + name() + " " + it->second->user().user() + " " + it->second->user().host() + " " + servername + " " + it->second->user().nick() + "H :0 " + it->second->user().name());
+		res.push_back("#" + name() + " " + it->second->user().user() + " " + it->second->user().host() + " " + servername + " " + it->second->user().nick() + " H :0 " + it->second->user().name());
 	}
 	return (res);
 }
@@ -150,7 +150,7 @@ std::vector<std::string> Channel::channeloperVector()
 
 	for (it = mOperators.begin(); it != mOperators.end(); ++it)
 	{
-		res.push_back("#" + name() + " " + it->second->user().user() + " " + it->second->user().host() + " " + servername + " " + it->second->user().nick() + "H :0 " + it->second->user().name());
+		res.push_back("#" + name() + " " + it->second->user().user() + " " + it->second->user().host() + " " + servername + " " + it->second->user().nick() + " H :0 " + it->second->user().name());
 
 	}
 	return (res);

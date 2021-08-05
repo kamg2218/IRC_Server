@@ -182,7 +182,6 @@ void	Frame::cmdJoin(Session *ss, std::vector<std::string> const& sets)
 			continue ;
 		}
 		doJoin(ss, sets, v[i]);
-		//printcommand(ss);
 	}
 }
 
@@ -207,6 +206,7 @@ void	Frame::doJoin(Session *ss, std::vector<std::string> const& sets, std::strin
 	ch->broadcast(ss, msg);
 	ss->user().cmdJoin(ch);
 	ch->cmdJoin(ss);
+	printcommand(ss);
 }
 
 void	Frame::cmdNick(Session *ss, std::vector<std::string> const& sets)
@@ -581,10 +581,18 @@ void	Frame::cmdWho(Session *ss, std::vector<std::string> const& sets)
 			{
 				Channel *channel;
 				channel = findChannel(v[i]);
-				if (sets[2] == "o")
+				if (sets.size() > 2 && sets[2] == "o")
 					ss->Rep_352(channel->channeloperVector());
 				else
 					ss->Rep_352(channel->channelVector());
+				/*
+				if (sets.size() < 3)
+					ss->Rep_352(channel->channelVector());
+				else if (sets[2] == "o")
+					ss->Rep_352(channel->channeloperVector());
+				else
+					ss->Rep_352(channel->channelVector());
+					*/
 			}
 			else
 			{
@@ -664,14 +672,12 @@ void		Frame::cmdPrivmsg(Session *ss, std::vector<std::string> const& sets)
         {
 			Channel *channel;
 			channel = findChannel(MakeLower(receiver.substr(1)));
-			std::cout << vectorToStringpriv(sets);	// del
             channel->broadcast(ss, vectorToStringpriv(sets));
         }
         else
         {
 			Session *session;
 			session = findUser(receiver);
-			std::cout << vectorToStringpriv(sets);	// del
 			ss->replyAsUser(session, vectorToStringpriv(sets));
         }
     }
@@ -715,20 +721,17 @@ void	Frame::cmdWhois(Session *ss, std::vector<std::string> const& sets)
 
 void	Frame::printcommand(Session *ss)
 {
-	ss->replyAsServer("<Command>");
-	//ss->replyAsServer("WHO <nick> [o]");
-	//ss->replyAsServer("WHOIS <nickmask>[,<nickmask>]");
-	//ss->replyAsServer("PRIVMSG <receiver>[,<receiver>] <text to be send>");
-	ss->replyAsServer("JOIN <channel>[,<channel>] [<key>[,<key>]");
-	ss->replyAsServer("PART <channel>[,<channel>]");
-	ss->replyAsServer("TOPIC <channel> [<topic>]");
+	std::string res;
+
+	res += "PRIVMSG ";
+	res += ss->user().nick();
+	res += " :";
+	ss->replyAsServer(res + "<Command>");
+	ss->replyAsServer(res + "JOIN <channel>[,<channel>] [<key>[,<key>]");
+	ss->replyAsServer(res + "PART <channel>[,<channel>]");
+	ss->replyAsServer(res + "TOPIC <channel> [<topic>]");
 	//ss->replyAsServer("NAMES");
-	ss->replyAsServer("LIST [<channel>[,<channel>]]");
-	ss->replyAsServer("INVITE <nick> <channel>");
-	ss->replyAsServer("KICK <channel> <user> [<comment>]");
-	//ss->replyAsServer("NICK");
-	//ss->replyAsServer("USER");
-	//ss->replyAsServer("PASS");
-	//ss->replyAsServer("OPER");
-	//ss->replyAsServer("QUIT");
+	ss->replyAsServer(res + "LIST [<channel>[,<channel>]]");
+	ss->replyAsServer(res + "INVITE <nick> <channel>");
+	ss->replyAsServer(res + "KICK <channel> <user> [<comment>]");
 }

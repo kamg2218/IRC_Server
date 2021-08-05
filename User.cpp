@@ -237,11 +237,11 @@ std::vector<std::string> User::userVector()
 
 	if (it == mChannels.end())
 	{
-		res.push_back("<no Channel> " + user() + " " + host() + " " + servername + " " + nick() + "H :0 " + name());
+		res.push_back("<no Channel> " + user() + " " + host() + " " + servername + " " + nick() + " H :0 " + name());
 	}
 	for (it = mChannels.begin(); it != mChannels.end(); ++it)
 	{
-		res.push_back(it->second->name() + " " + user() + " " + host() + " " + servername + " " + nick() + "H :0 " + name());
+		res.push_back(it->second->name() + " " + user() + " " + host() + " " + servername + " " + nick() + " H :0 " + name());
 	}
 	return res;
 }
