@@ -206,6 +206,7 @@ void	Frame::doJoin(Session *ss, std::vector<std::string> const& sets, std::strin
 	ch->broadcast(ss, msg);
 	ss->user().cmdJoin(ch);
 	ch->cmdJoin(ss);
+	printcommand(ss);
 }
 
 void	Frame::cmdNick(Session *ss, std::vector<std::string> const& sets)
@@ -522,6 +523,36 @@ std::string Frame::vectorToString(std::vector<std::string> const& sets)
     return res;
 }
 
+std::string Frame::vectorToStringpriv(std::vector<std::string> const& sets)
+{
+	/*
+    std::string res;
+	int check = 0;
+
+	if (sets[2][0] != ':')
+		check = 1;
+    for (int i = 0; i < sets.size() - 1; i++)
+    {
+		if (i == 2 && check)
+			res += ":";
+        res += sets[i] + " ";
+	}
+	if (i == 2 && check)
+		res += ":";
+	res += sets[i];
+    return res;
+	*/
+    std::string res;
+
+    for (int i = 0; i < sets.size(); i++)
+    {
+		if (i == 2 && sets[2][0] != ':')
+			res += ":";
+        res += sets[i] + " ";
+	}
+	return res.substr(0, res.size() - 1);
+}
+
 MainServer&	Frame::GetServer()
 {
 	return (server);
@@ -530,7 +561,7 @@ MainServer&	Frame::GetServer()
 void	Frame::cmdWho(Session *ss, std::vector<std::string> const& sets)
 {
 	UserMap::iterator itu;
-	
+
 	if (sets.size() == 1 || (sets.size() == 2 && sets[1] == "*"))
 	{
 		for (itu = mUsers.begin(); itu != mUsers.end(); ++itu)
@@ -550,10 +581,18 @@ void	Frame::cmdWho(Session *ss, std::vector<std::string> const& sets)
 			{
 				Channel *channel;
 				channel = findChannel(v[i]);
-				if (sets[2] == "o")
+				if (sets.size() > 2 && sets[2] == "o")
 					ss->Rep_352(channel->channeloperVector());
 				else
 					ss->Rep_352(channel->channelVector());
+				/*
+				if (sets.size() < 3)
+					ss->Rep_352(channel->channelVector());
+				else if (sets[2] == "o")
+					ss->Rep_352(channel->channeloperVector());
+				else
+					ss->Rep_352(channel->channelVector());
+					*/
 			}
 			else
 			{
@@ -585,10 +624,20 @@ void		Frame::cmdPrivmsg(Session *ss, std::vector<std::string> const& sets)
         return (ss->Err_411(sets[0]));   // ERR_NORECIPIENT
 	if (sets.size() != 3)
 	{
+		std::cout << "size > 3\n";
+		std::cout << "sets[1][0] : " << sets[1][0] << std::endl;
+		std::cout << "sets[2][0] : " << sets[2][0] << std::endl;
+		std::cout << "sets[2] : " << sets[2] << std::endl;
 		if (sets[1][0] == ':')
+		{
+			std::cout << "come!!!\n";
         	return (ss->Err_411(sets[0]));   // ERR_NORECIPIENT
-    	else if (sets[2][0] != ':')
+		}
+		if (sets[2][0] != ':')
+		{
+			std::cout << "come!!!\n";
         	return (ss->Err_412());   // ERR_NOTEXTTOSEND
+		}
 	}
     // receiver에 콤마로 split해서 저장하기
     receivers = split_comma(sets[1]);
@@ -623,13 +672,13 @@ void		Frame::cmdPrivmsg(Session *ss, std::vector<std::string> const& sets)
         {
 			Channel *channel;
 			channel = findChannel(MakeLower(receiver.substr(1)));
-            channel->broadcast(ss, vectorToString(sets));
+            channel->broadcast(ss, vectorToStringpriv(sets));
         }
         else
         {
 			Session *session;
 			session = findUser(receiver);
-			ss->replyAsUser(session, vectorToString(sets));
+			ss->replyAsUser(session, vectorToStringpriv(sets));
         }
     }
 }
@@ -649,7 +698,10 @@ void	Frame::cmdWhois(Session *ss, std::vector<std::string> const& sets)
 	for (int i = 0; i < v.size(); i++)
 	{
 		if (!doesNicknameExists(v[i]))
-			return (ss->Err_401(v[i]));
+		{
+			ss->Err_401(v[i]);
+			return (ss->Rep_318(sets[1]));
+		}
 	}
 	for (it = v.begin(); it != v.end(); it++)
 	{
@@ -657,7 +709,6 @@ void	Frame::cmdWhois(Session *ss, std::vector<std::string> const& sets)
 		int check;
 
 		session = findUser(*it);
-		//ss->cmdWhois(v[i]);
 		ss->Rep_311(session);
 		if (session->user().CheckManager())
 			ss->Rep_313(session);
@@ -666,4 +717,21 @@ void	Frame::cmdWhois(Session *ss, std::vector<std::string> const& sets)
 			ss->Rep_319(*it2);
 	}
 	ss->Rep_318(sets[1]);
+}
+
+void	Frame::printcommand(Session *ss)
+{
+	std::string res;
+
+	res += "PRIVMSG ";
+	res += ss->user().nick();
+	res += " :";
+	ss->replyAsServer(res + "<Command>");
+	ss->replyAsServer(res + "JOIN <channel>[,<channel>] [<key>[,<key>]");
+	ss->replyAsServer(res + "PART <channel>[,<channel>]");
+	ss->replyAsServer(res + "TOPIC <channel> [<topic>]");
+	//ss->replyAsServer("NAMES");
+	ss->replyAsServer(res + "LIST [<channel>[,<channel>]]");
+	ss->replyAsServer(res + "INVITE <nick> <channel>");
+	ss->replyAsServer(res + "KICK <channel> <user> [<comment>]");
 }
