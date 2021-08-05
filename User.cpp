@@ -18,8 +18,9 @@ User::~User()
 		for (; it != mChannels.end() ; ++it)
 		{
 			it->second->removeUser(this);
-			it->second->broadcast(frame->findUser(sNickname), "QUIT #" + it->second->name());
+			it->second->broadcast(frame->findUser(sNickname), "PART #" + it->second->name());
 		}
+		Frame().
 		frame->removeUser(sNickname);
 		//call cmdQuit
 		/*
