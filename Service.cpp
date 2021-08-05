@@ -43,11 +43,11 @@ void	Service::do_service(MainServer & sv)
 		if (FD_ISSET(temp->first, &fd_read))
 			sv.handleRead(temp);
 		else
-			cmdPing(temp->second);
+			sendPing(temp->second);
 	}
 }
 
-void	Service::cmdPing(Session *ss)
+void	Service::sendPing(Session *ss)
 {
 	std::string	msg;
 	std::vector<std::string>	v;

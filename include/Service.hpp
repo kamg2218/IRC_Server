@@ -21,7 +21,7 @@ class Service
 		Service();
 		void	do_select(MainServer const& sv);
 		void	do_service(MainServer & sv);
-		void	cmdPing(Session *ss);
+		void	sendPing(Session *ss);
 		int		getMaxopen() const;
 		class SelectException : public std::exception
 		{
