@@ -231,14 +231,17 @@ bool	User::isMemOfChannel(std::string const& chname) const
 
 std::vector<std::string> User::userVector()
 {
-	ChannelMap::iterator it;
+	ChannelMap::iterator it = mChannels.begin();
 	std::vector<std::string> res;
 	std::string servername = "ft_irc";
-	std::cout << "uservector\n";
 
+	if (it == mChannels.end())
+	{
+		res.push_back("<no Channel> " + user() + " " + host() + " " + servername + " " + nick() + " H :0 " + name());
+	}
 	for (it = mChannels.begin(); it != mChannels.end(); ++it)
 	{
-		res.push_back(it->second->name() + " " + user() + " " + host() + " " + servername + " " + nick() + " :0 " + name());
+		res.push_back(it->second->name() + " " + user() + " " + host() + " " + servername + " " + nick() + " H :0 " + name());
 	}
 	return res;
 }
@@ -257,21 +260,3 @@ std::vector<std::string> User::cmdWhois()
 	}
 	return res;
 }
-/*whowas
-std::string User::cmdWhowas(std::string nickname, int num)
-{
-	std::string res;
-	std::list<std::string>::reverse_iterator it;
-
-	it = _pastNick.rbegin();
-	//it = it + num;
-	while (num--)
-		it++;
-	if (it != _pastNick.rend())
-	{
-		if (*it == nickname)
-			res = nick() + " " + user() + " " + host() + " * :" + name();
-	}
-	return res;
-}
-*/
