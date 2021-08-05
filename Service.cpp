@@ -55,7 +55,7 @@ void	Service::sendPing(Session *ss)
 	if (ss->ping() == false)
 	{
 		v.insert(v.end(),"QUIT");
-		v.insert(v.end(), ":client is missing");
+		v.insert(v.end(), ":" + ss->soc().sd() + " client is missing");
 		Frame::instance()->cmdQuit(ss, v);
 		return ;
 	}
