@@ -33,6 +33,11 @@ void	Session::StreamAppend(char *str, int r)
 	}
 }
 
+void	Session::CloseSoc()
+{
+	//write
+}
+
 bool	Session::handleRead(std::map<int, Session*> & ms, int sd)
 {
 	int		r;
@@ -54,6 +59,7 @@ bool	Session::handleRead(std::map<int, Session*> & ms, int sd)
 	}
 	if (r <= 0)
 	{
+		user().SetProperlyQuit(true);
 		std::cout << "client gone\n";
 		return (true);
 	}
@@ -555,4 +561,3 @@ void	Session::Err_491(void)
 	msg += ":No O-lines for your host";
 	replyAsServer(msg);
 }
-

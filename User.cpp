@@ -17,10 +17,11 @@ User::~User()
 		it = mChannels.begin();
 		for (; it != mChannels.end() ; ++it)
 		{
-			it->second->removeUser(this);
 			it->second->broadcast(frame->findUser(sNickname), "PART #" + it->second->name());
+			it->second->removeUser(this);
 		}
-		Frame().
+		mChannels.clear();
+		frame->BroadcastAll(frame->findUser(sNickname), "QUIT :User lost connection");
 		frame->removeUser(sNickname);
 		//call cmdQuit
 		/*
@@ -206,6 +207,7 @@ bool	User::cmdPart(Session *ss, std::string const& chname, std::vector<std::stri
 
 void			User::cmdQuit(Session *ss, std::vector<std::string> const& sets, std::string const& msg)
 {
+	// is_properly_quit = true;
 	_pastNick.clear();
 	for (ChannelMap::iterator it = mChannels.begin(); it != mChannels.end(); it++)
 	{
@@ -258,6 +260,12 @@ std::vector<std::string> User::cmdWhois()
 	}
 	return res;
 }
+
+void	User::SetProperlyQuit(bool state)
+{
+	is_properly_quit = state;
+}
+
 /*whowas
 std::string User::cmdWhowas(std::string nickname, int num)
 {

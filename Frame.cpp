@@ -417,6 +417,7 @@ void	Frame::cmdKick(Session *ss, std::vector<std::string> const& sets)
 			{
 				target = findUser(cmd[2]);
 				channel->broadcast(ss, vectorToString(cmd));
+				channel->removeUser(&(target->user()));
 				//target->user().cmdPart(ss, cmd[0], cmd[2]);
 			}
 		}
@@ -669,4 +670,15 @@ void	Frame::cmdWhois(Session *ss, std::vector<std::string> const& sets)
 	ss->Rep_318(sets[1]);
 }
 
+void	Frame::BroadcastAll(Session *ss, std::string const& str)
+{
+	UserMap::iterator	it;
+
+	it = mUsers.begin();
+	for (; it != mUsers.end(); ++it)
+	{
+		if (it->second != ss)
+			ss->replyAsUser(it->second, str);
+	}
+}
 #include "nahkim.cpp"
