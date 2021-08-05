@@ -60,6 +60,7 @@ class Frame
 		std::vector<std::vector<std::string> >	kicklist(std::vector<std::string> const& sets);
 		void	printcommand(Session *ss);
 		void	BroadcastAll(Session *ss, std::string const& str);
+		std::string	vectorToStringpriv(std::vector<std::string> const& sets);
 };
 
 #endif
