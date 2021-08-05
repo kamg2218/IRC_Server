@@ -152,6 +152,7 @@ void		Frame::cmdPart(Session *ss, std::vector<std::string> const& sets)
 			ss->Err_403(v[i].substr(1));	//NoSuchChannel
 		else if (ss->user().cmdPart(ss, v[i], sets) == false)
 			ss->Err_442(v[i].substr(1));	//NotOnChannel
+		server.users().erase(ss->soc().sd());
 	}
 }
 
@@ -265,10 +266,7 @@ void	Frame::cmdPass(Session *ss, std::vector<std::string> const& sets)
 	else if (ss->user().IsConnected())
 		return ss->Err_462();		//AlreadyRegistered
 	else if (server.checkPass(sets[1]))
-	{
 		ss->user().setPass(true);
-		ss->setPing(true);
-	}
 	else
 		ss->user().setPass(false);
 }
