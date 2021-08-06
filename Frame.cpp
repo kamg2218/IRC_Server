@@ -34,9 +34,9 @@ bool Frame::doesNicknameExists(std::string const& name)
 bool Frame::addUser(Session *new_user)
 {
 	if (doesNicknameExists(new_user->user().nick()))
-		return (false);
+		return false;
 	mUsers[new_user->user().nick()] = new_user;
-	return (true);
+	return true;
 }
 
 void	Frame::removeUser(std::string const& nick)
