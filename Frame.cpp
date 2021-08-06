@@ -231,12 +231,7 @@ void	Frame::cmdNick(Session *ss, std::vector<std::string> const& sets)
 		if (it == mUsers.end())
 			return ;
 		for (UserMap::iterator tmp = mUsers.begin(); tmp != mUsers.end(); tmp++)
-		{
-			if (tmp->first == it->first)
-				continue ;
 			ss->replyAsUser(tmp->second, vectorToString(sets));
-		}
-		ss->replyAsServer(vectorToString(sets));
 		mUsers.insert(std::pair<std::string, Session*>(sets[1], it->second));
 		mUsers.erase(it);
 		ss->user().cmdNick(sets);
