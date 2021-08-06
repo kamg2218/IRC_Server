@@ -6,29 +6,49 @@ Service::Service()
 {
 }
 
-void	Service::do_select(MainServer const& sv)
+Service(const Service& other)
 {
-	res = 0;
-	FD_ZERO(&fd_read);
-	FD_SET(sv.socket(), &fd_read);
-	tv.tv_sec = 5;
-	tv.tv_usec = 0;
-	max = sv.socket();
-	for (std::map<int, Session*>::const_iterator it = sv.users().begin() ; it != sv.users().end() ; ++it)
-	{
-		FD_SET(it->first, &fd_read);
-		max = std::max(max, it->first);
-	}
-	res = select(max + 1, &fd_read, NULL, NULL, &tv);
-	if (res == -1)
-		throw SelectException();
+	*this = other;
 }
 
-void	Service::do_service(MainServer & sv)
+Service&	Service::operator=(const Service& other)
 {
-	if (res <= 0)
+	if (this == &other)
+		return *this;
+	this->_fdRead = other._fdRead;
+	this->_fdWrite = other._fdWrite;
+	this->_max = other._max;
+	this->_res = other._res;
+	this->_tv = other._tv;
+}
+
+Service::~Service()
+{
+}
+
+void	Service::doSelect(MainServer const& sv)
+{
+	_res = 0;
+	FD_ZERO(&_fdRead);
+	FD_SET(sv.socket(), &_fdRead);
+	_tv.tv_sec = 5;
+	_tv.tv_usec = 0;
+	_max = sv.socket();
+	for (std::map<int, Session*>::const_iterator it = sv.users().begin() ; it != sv.users().end() ; ++it)
+	{
+		FD_SET(it->first, &_fdRead);
+		_max = std::max(_max, it->first);
+	}
+	_res = select(_max + 1, &_fdRead, NULL, NULL, &_tv);
+	if (_res == -1)
+		throw selectException();
+}
+
+void	Service::doService(MainServer & sv)
+{
+	if (_res <= 0)
 		return ;
-	if (FD_ISSET(sv.socket(), &fd_read))
+	if (FD_ISSET(sv.socket(), &_fdRead))
 	{
 		sv.handleAccept(this);
 		std::cout << "client is accepted\n";
@@ -36,7 +56,7 @@ void	Service::do_service(MainServer & sv)
 	for (std::map<int, Session*>::iterator it = sv.users().begin(); it != sv.users().end() ; )
 	{
 		std::map<int, Session*>::iterator temp = it++;
-		if (FD_ISSET(temp->first, &fd_read))
+		if (FD_ISSET(temp->first, &_fdRead))
 			sv.handleRead(temp);
 		else
 			sendPing(temp->second);
@@ -60,4 +80,9 @@ void	Service::sendPing(Session *ss)
 	msg += "\r\n";
 	send(ss->soc().sd(), msg.c_str(), msg.length(), 0);
 	ss->setPing(false);
+}
+
+const char*	Service::selectException::what(void) const throw()
+{
+	return "Select Error\n";
 }

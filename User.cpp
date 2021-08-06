@@ -3,26 +3,49 @@
 #include "include/Frame.hpp"
 
 User::User()
-	: didUser(false), didNick(false), is_properly_quit(false), manager(false), password(true)
+	: _didUser(false), _didNick(false), _isProperlyQuit(false), _manager(false), _password(true)
 {}
+
+User::User(const User& other)
+	: _didUser(false), _didNick(false), _isProperlyQuit(false), _manager(false), _password(true)
+{
+	*this = other;
+}
+
+User&	User::operator=(const User& other)
+{
+	if (this == &other)
+		return *this;
+	this->_sRealname = other._sRealname;
+	this->_sNickname = other._sNickname;
+	this->_sHostname = other._sHostname;
+	this->_sUsername = other._sUsername;
+	this->_didNick = other._didNick;
+	this->_didUser = other._didUser;
+	this->_manager = other._manager;
+	this->_password = other._password;
+	this->_isProperlyQuit = other._isProperlyQuit;
+	this->_pastNick = other._pastNick;
+	return *this;
+}
 
 User::~User()
 {
-	if (IsConnected() && !is_properly_quit)
+	if (isConnected() && !_isProperlyQuit)
 	{
 		Frame	*frame;
 		ChannelMap::iterator it;
 
 		frame = Frame::instance();
-		it = mChannels.begin();
-		for (; it != mChannels.end() ; ++it)
+		it = _mChannels.begin();
+		for (; it != _mChannels.end() ; ++it)
 		{
-			it->second->broadcast(frame->findUser(sNickname), "PART #" + it->second->name());
+			it->second->broadcast(frame->findUser(_sNickname), "PART #" + it->second->name());
 			it->second->removeUser(this);
 		}
-		mChannels.clear();
-		frame->BroadcastAll(frame->findUser(sNickname), "QUIT :User lost connection");
-		frame->removeUser(sNickname);
+		_mChannels.clear();
+		frame->broadcastAll(frame->findUser(_sNickname), "QUIT :User lost connection");
+		frame->removeUser(_sNickname);
 	}
 }
 
@@ -33,103 +56,98 @@ User*			User::create()
 
 void			User::setName(std::string const& s)
 {
-	sRealname = s;
+	_sRealname = s;
 }
 void			User::setNick(std::string const& s)
 {
-	sNickname = s;
+	_sNickname = s;
 }
 void			User::setHost(std::string const& s)
 {
-	sHostname = s;
+	_sHostname = s;
 }
 void			User::setUser(std::string const& s)
 {
-	sUsername = s;
+	_sUsername = s;
 }
 void			User::setPass(bool pass)
 {
-	password = pass;
+	_password = pass;
 }
 std::string		User::name() const
 {
-	return sRealname;
+	return _sRealname;
 }
-
 std::string		User::nick() const
 {
-	return sNickname;
+	return _sNickname;
 }
-
 std::string		User::host() const
 {
-	return sHostname;
+	return _sHostname;
 }
 std::string		User::user() const
 {
-	return sUsername;
+	return _sUsername;
 }
 bool			User::pass() const
 {
-	return password;
+	return _password;
 }
 const ChannelMap&		User::channel() const
 {
-	return mChannels;
+	return _mChannels;
 }
 
 std::string		User::msgHeader() const
 {
-	return std::string(":" + sNickname + "!" + sUsername + "@" + sHostname+ " ");
+	return std::string(":" + _sNickname + "!" + _sUsername + "@" + _sHostname+ " ");
 }
 
-bool	User::CheckNick() const
+bool	User::checkNick() const
 {
-	return didNick;
+	return _didNick;
 }
-
-bool	User::CheckUser() const
+bool	User::checkUser() const
 {
-	return didUser;
+	return _didUser;
 }
-
-bool	User::IsConnected() const
+bool	User::isConnected() const
 {
-	if (CheckNick() && CheckUser())
+	if (checkNick() && checkUser())
 		return true;
 	return false;
 }
-
-bool	User::CheckManager() const
+bool	User::checkManager() const
 {
-	return manager;
+	return _manager;
 }
 
 bool	User::addNick(std::vector<std::string> const& sets)
 {
-	if (didNick)
+	if (_didNick)
 		return false;	//alreadyRegistered
-	sNickname = sets[1];
-	didNick = true;
+	_sNickname = sets[1];
+	_didNick = true;
 	return true;
 }
 
 void	User::cmdNick(std::vector<std::string> const& sets)
 {
-	_pastNick.insert(_pastNick.end(), sNickname);
-	for (ChannelMap::iterator it = mChannels.begin(); it != mChannels.end(); it++)
-		it->second->cmdNick(sNickname, sets[1]);
-	sNickname = sets[1];
-	return ; //success
+	_pastNick.insert(_pastNick.end(), _sNickname);
+	for (ChannelMap::iterator it = _mChannels.begin(); it != _mChannels.end(); it++)
+		it->second->cmdNick(_sNickname, sets[1]);
+	_sNickname = sets[1];
+	return ;
 }
 
 bool		User::cmdUser(std::vector<std::string> const& sets)
 {
 	std::string	str;
 
-	if (didUser == true)
+	if (_didUser == true)
 		return false;
-	didUser = true;
+	_didUser = true;
 	setUser(sets[1]);
 	str = sets[4];
 	if (sets[4][0] == ':')
@@ -142,12 +160,12 @@ bool		User::cmdUser(std::vector<std::string> const& sets)
 
 void	User::cmdJoin(Channel* ch)
 {
-	mChannels.insert(std::pair<std::string, Channel*>(ch->name(), ch));
+	_mChannels.insert(std::pair<std::string, Channel*>(ch->name(), ch));
 }
 
 void	User::optionJoin(Session *ss, std::vector<std::string> const& sets, std::string const& msg)
 {
-	for (ChannelMap::iterator it = mChannels.begin(); it != mChannels.end(); it++)
+	for (ChannelMap::iterator it = _mChannels.begin(); it != _mChannels.end(); it++)
 	{
 		it->second->removeUser(this);
 		it->second->broadcast(ss, msg);
@@ -156,11 +174,11 @@ void	User::optionJoin(Session *ss, std::vector<std::string> const& sets, std::st
 			delete it->second;
 			Frame::instance()->removeChannel(it->first);
 		}
-		mChannels.erase(it);
+		_mChannels.erase(it);
 	}
 }
 
-std::string	User::MakeLower(std::string const& str)
+std::string	User::makeLower(std::string const& str)
 {
 	std::string	low;
 
@@ -175,8 +193,8 @@ bool	User::cmdPart(Session *ss, std::string const& chname, std::vector<std::stri
 	ChannelMap::iterator	it;
 	std::string				str;
 
-	it = mChannels.find(MakeLower(chname.substr(1)));
-	if (it == mChannels.end())
+	it = _mChannels.find(makeLower(chname.substr(1)));
+	if (it == _mChannels.end())
 		return false;
 	str = sets[0] + " " + chname;
 	for (int i = 2; i < sets.size(); i++)
@@ -188,48 +206,48 @@ bool	User::cmdPart(Session *ss, std::string const& chname, std::vector<std::stri
 		delete it->second;
 		Frame::instance()->removeChannel(it->first);
 	}
-	mChannels.erase(it);
+	_mChannels.erase(it);
 	return true;
 }
 
 void			User::cmdQuit(Session *ss, std::vector<std::string> const& sets, std::string const& msg)
 {
-	is_properly_quit = true;
+	_isProperlyQuit = true;
 	_pastNick.clear();
-	for (ChannelMap::iterator it = mChannels.begin(); it != mChannels.end(); it++)
+	for (ChannelMap::iterator it = _mChannels.begin(); it != _mChannels.end(); it++)
 	{
 		it->second->removeUser(this);
 		it->second->broadcast(ss, msg);
 	}
-	mChannels.clear();
+	_mChannels.clear();
 }
 
 void	User::cmdOper()
 {
-	manager = true;
+	_manager = true;
 }
 
 bool	User::isMemOfChannel(std::string const& chname) const
 {
 	ChannelMap::const_iterator	res;
 
-	res = mChannels.find(chname);
-	if (res == mChannels.end())
+	res = _mChannels.find(chname);
+	if (res == _mChannels.end())
 		return false;
 	return true;
 }
 
 std::vector<std::string> User::userVector()
 {
-	ChannelMap::iterator it = mChannels.begin();
+	ChannelMap::iterator it = _mChannels.begin();
 	std::vector<std::string> res;
 	std::string servername = "ft_irc";
 
-	if (it == mChannels.end())
+	if (it == _mChannels.end())
 	{
 		res.push_back("<no Channel> " + user() + " " + host() + " " + servername + " " + nick() + " H :0 " + name());
 	}
-	for (it = mChannels.begin(); it != mChannels.end(); ++it)
+	for (it = _mChannels.begin(); it != _mChannels.end(); ++it)
 	{
 		res.push_back(it->second->name() + " " + user() + " " + host() + " " + servername + " " + nick() + " H :0 " + name());
 	}
@@ -241,9 +259,9 @@ std::vector<std::string> User::cmdWhois()
 	ChannelMap::iterator it;
 	std::vector<std::string> res;
 
-	for (it = mChannels.begin(); it != mChannels.end(); ++it)
+	for (it = _mChannels.begin(); it != _mChannels.end(); ++it)
 	{
-		if (manager)
+		if (_manager)
 			res.push_back(nick() + " :@" + it->second->name() + " ");
 		else
 			res.push_back(nick() + " :" + it->second->name() + " ");
@@ -251,12 +269,12 @@ std::vector<std::string> User::cmdWhois()
 	return res;
 }
 
-void	User::SetProperlyQuit(bool state)
+void	User::setProperlyQuit(bool state)
 {
-	is_properly_quit = state;
+	_isProperlyQuit = state;
 }
 
-void	User::PartChannel(Channel *ch)
+void	User::partChannel(Channel *ch)
 {
-	mChannels.erase(ch->name());
+	_mChannels.erase(ch->name());
 }

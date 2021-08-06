@@ -11,23 +11,23 @@
 class Service
 {
 	private:
-		fd_set			fd_read;
-		fd_set			fd_write;
-		int				max;
-		int				res;
-		struct timeval	tv;
+		fd_set			_fdRead;
+		fd_set			_fdWrite;
+		int				_max;
+		int				_res;
+		struct timeval	_tv;
 	public:
 		Service();
-		void	do_select(MainServer const& sv);
-		void	do_service(MainServer & sv);
-		void	sendPing(Session *ss);
-		class SelectException : public std::exception
+		Service(const Service& other);
+		Service&	operator=(const Service& other);
+		~Service();
+		void		doSelect(MainServer const& sv);
+		void		doService(MainServer & sv);
+		void		sendPing(Session *ss);
+		class 		selectException : public std::exception
 		{
 			public:
-				virtual const char *what(void) const throw()
-				{
-					return "Select Error\n";
-				}
+				virtual const char *what(void) const throw();
 		};
 };
 
