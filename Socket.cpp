@@ -6,13 +6,13 @@ Socket::Socket(void)
 {
 }
 
-Socket::Socket(const Socket& other)
+Socket::Socket(Socket const& other)
 	: _sd(0), _port(0), _len(0), _proto(0)
 {
 	*this = other;
 }
 
-Socket&		Socket::operator=(const Socket& other)
+Socket&		Socket::operator=(Socket const& other)
 {
 	if (this == &other)
 		return *this;
@@ -28,12 +28,30 @@ Socket::~Socket(void)
 {
 }
 
-void		Socket::setSd(int sd) { _sd = sd; }
-int			Socket::sd(void) const { return _sd; }
-unsigned int&	Socket::port(void) { return _port; }
-unsigned int&	Socket::len(void) { return _len; }
-sockaddr_in&	Socket::sin(void) { return _sin; }
-protoent*		Socket::proto(void){ return _proto;}
+void		Socket::setSd(int sd)
+{
+	_sd = sd;
+}
+int			Socket::sd(void) const
+{
+	return _sd;
+}
+unsigned int&	Socket::port(void)
+{
+	return _port;
+}
+unsigned int&	Socket::len(void)
+{
+	return _len;
+}
+sockaddr_in&	Socket::sin(void)
+{
+	return _sin;
+}
+protoent*		Socket::proto(void)
+{
+	return _proto;
+}
 
 int				Socket::makeSocket(unsigned int port)
 {

@@ -18,8 +18,8 @@ class Service
 		struct timeval	_tv;
 	public:
 		Service(void);
-		Service(const Service& other);
-		Service&	operator=(const Service& other);
+		Service(Service const& other);
+		Service&	operator=(Service const& other);
 		~Service(void);
 		void		doSelect(MainServer const& sv);
 		void		doService(MainServer & sv);

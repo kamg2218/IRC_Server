@@ -6,12 +6,12 @@ Service::Service(void)
 {
 }
 
-Service::Service(const Service& other)
+Service::Service(Service const& other)
 {
 	*this = other;
 }
 
-Service&	Service::operator=(const Service& other)
+Service&	Service::operator=(Service const& other)
 {
 	if (this == &other)
 		return *this;

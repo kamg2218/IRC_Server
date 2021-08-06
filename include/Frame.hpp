@@ -21,6 +21,9 @@ class Frame
 		MainServer		_server;
 		Service			_service;
 	public:
+		Frame(void);
+		Frame(Frame const& other);
+		Frame&	operator=(Frame const& other);
 		~Frame(void);
 		static Frame*		instance(void);
 		void		start(base const& bs);

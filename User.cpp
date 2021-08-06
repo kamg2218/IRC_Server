@@ -4,15 +4,16 @@
 
 User::User(void)
 	: _didUser(false), _didNick(false), _isProperlyQuit(false), _manager(false), _password(true)
-{}
+{
+}
 
-User::User(const User& other)
+User::User(User const& other)
 	: _didUser(false), _didNick(false), _isProperlyQuit(false), _manager(false), _password(true)
 {
 	*this = other;
 }
 
-User&	User::operator=(const User& other)
+User&	User::operator=(User const& other)
 {
 	if (this == &other)
 		return *this;

@@ -27,8 +27,8 @@ class User
 		std::list<std::string>	_pastNick;
 	public:
 		User(void);
-		User(const User& other);
-		User&		operator=(const User& other);
+		User(User const& other);
+		User&		operator=(User const& other);
 		~User(void);
 		static User*		create(void);
 		bool		addNick(std::vector<std::string> const& sets);

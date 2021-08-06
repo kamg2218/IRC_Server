@@ -2,6 +2,26 @@
 
 Frame * Frame::_pInstance = NULL;
 
+Frame::Frame(void)
+{
+}
+
+Frame::Frame(Frame const& other)
+{
+	*this = other;
+}
+
+Frame&	Frame::operator=(Frame const& other)
+{
+	if (this == &other)
+		return *this;
+	this->_mUsers = other._mUsers;
+	this->_mChannels = other._mChannels;
+	this->_server = other._server;
+	this->_service = other._service;
+	return *this;
+}
+
 Frame::~Frame(void)
 {
 	removeAllUser();

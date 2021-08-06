@@ -20,8 +20,8 @@ class	Socket
 		protoent*		_proto;
 	public:
 		Socket(void);
-		Socket(const Socket& other);
-		Socket&		operator=(const Socket& other);
+		Socket(Socket const& other);
+		Socket&		operator=(Socket const& other);
 		~Socket(void);
 		int					sd(void) const;
 		unsigned int&		port(void);
