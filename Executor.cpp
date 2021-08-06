@@ -101,7 +101,7 @@ void	Executor::execute(std::string& buff, Session* ss)
 		return frame->cmdUser(ss, splited_cmd);
 	else if (splited_cmd[0] == "PASS")
 		return frame->cmdPass(ss, splited_cmd);
-	if (!(ss->user().IsConnected()))
+	if (!(ss->user().isConnected()))
 		ss->Err_451();
 	else if (splited_cmd[0] == "PRIVMSG")
 		frame->cmdPrivmsg(ss, splited_cmd);

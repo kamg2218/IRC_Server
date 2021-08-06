@@ -1,18 +1,18 @@
 #include <iostream>
 #include "include/Socket.hpp"
 
-Socket::Socket()
+Socket::Socket(void)
 	: _sd(0), _port(0), _len(0), _proto(0)
 {
 }
 
-Socket::Socket(Socket& other)
+Socket::Socket(Socket const& other)
 	: _sd(0), _port(0), _len(0), _proto(0)
 {
 	*this = other;
 }
 
-Socket&		Socket::operator=(Socket& other)
+Socket&		Socket::operator=(Socket const& other)
 {
 	if (this == &other)
 		return *this;
@@ -24,16 +24,34 @@ Socket&		Socket::operator=(Socket& other)
 	return *this;
 }
 
-Socket::~Socket()
+Socket::~Socket(void)
 {
 }
 
-void		Socket::setSd(int sd) { _sd = sd; }
-int			Socket::sd() const { return _sd; }
-unsigned int&	Socket::port() { return _port; }
-unsigned int&	Socket::len() { return _len; }
-sockaddr_in&	Socket::sin() { return _sin; }
-protoent*		Socket::proto(){ return _proto;}
+void		Socket::setSd(int sd)
+{
+	_sd = sd;
+}
+int			Socket::sd(void) const
+{
+	return _sd;
+}
+unsigned int&	Socket::port(void)
+{
+	return _port;
+}
+unsigned int&	Socket::len(void)
+{
+	return _len;
+}
+sockaddr_in&	Socket::sin(void)
+{
+	return _sin;
+}
+protoent*		Socket::proto(void)
+{
+	return _proto;
+}
 
 int				Socket::makeSocket(unsigned int port)
 {
@@ -41,13 +59,13 @@ int				Socket::makeSocket(unsigned int port)
 
 	_proto = getprotobyname("tcp");
 	if (!_proto)
-		throw ProtoException();
+		throw protoException();
 	_sd = socket(AF_INET, SOCK_STREAM, _proto->p_proto);
 	if (_sd == -1)
-		throw SocketException();
+		throw socketException();
 	on = 1;
 	if (setsockopt(_sd, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on)) == -1)
-		throw SocketException();
+		throw socketException();
 	_sin.sin_family = AF_INET;
 	_sin.sin_port = htons(port);
 	_sin.sin_addr.s_addr = htonl(INADDR_ANY);
@@ -60,25 +78,34 @@ int				Socket::makeSocket(unsigned int port, unsigned long addr)
 
 	_proto = getprotobyname("tcp");
 	if (!_proto)
-		throw ProtoException();
+		throw protoException();
 	_sd = socket(AF_INET, SOCK_STREAM, _proto->p_proto);
 	if (_sd == -1)
-		throw SocketException();
+		throw socketException();
 	on = 1;
 	if (setsockopt(_sd, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on)) == -1)
-		throw SocketException();
+		throw socketException();
 	_sin.sin_family = AF_INET;
 	_sin.sin_port = htons(port);
 	_sin.sin_addr.s_addr = htonl(addr);
 	return _sd;
 }
 
-void			Socket::makeNonBlocking()
+void			Socket::makeNonBlocking(void)
 {
 	int			flag;
 
-	std::cout << "sd = " << _sd << std::endl;
 	flag = fcntl(_sd, F_GETFL, 0);
 	if (fcntl(_sd, F_SETFL, flag | O_NONBLOCK) == -1)
-		throw SocketException();
+		throw socketException();
+}
+
+const char*		Socket::protoException::what(void) const throw()
+{
+	return "Proto Error\n";
+}
+
+const char*		Socket::socketException::what(void) const throw()
+{
+	return "Socket Error\n";
 }

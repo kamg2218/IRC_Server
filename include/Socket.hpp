@@ -19,34 +19,28 @@ class	Socket
 		sockaddr_in		_sin;
 		protoent*		_proto;
 	public:
-		Socket();
-		Socket(Socket& other);
-		Socket&		operator=(Socket& other);
-		~Socket();
-		int				sd() const;
-		unsigned int&	port();
-		unsigned int&	len();
-		sockaddr_in&	sin();
-		protoent*		proto();
-		void			setSd(int sd);
-		void			makeNonBlocking();
-		int				makeSocket(unsigned int port);
-		int				makeSocket(unsigned int port, unsigned long addr);
-		class			ProtoException : public std::exception
+		Socket(void);
+		Socket(Socket const& other);
+		Socket&		operator=(Socket const& other);
+		~Socket(void);
+		int					sd(void) const;
+		unsigned int&		port(void);
+		unsigned int&		len(void);
+		sockaddr_in&		sin(void);
+		protoent*			proto(void);
+		void		setSd(int sd);
+		void		makeNonBlocking(void);
+		int			makeSocket(unsigned int port);
+		int			makeSocket(unsigned int port, unsigned long addr);
+		class		protoException : public std::exception
 		{
 			public:
-				virtual const char* what(void) const throw()
-				{
-					return "Proto Error\n";
-				}
+				virtual const char* what(void) const throw();
 		};
-		class			SocketException : public std::exception
+		class		socketException : public std::exception
 		{
 			public:
-				virtual const char* what(void) const throw()
-				{
-					return "Socket Error\n";
-				}
+				virtual const char* what(void) const throw();
 		};
 };
 

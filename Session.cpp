@@ -143,7 +143,7 @@ void	Session::replyAsServer(std::string const& str)
 	std::string msg;
 
 	msg += ":";
-	msg += Frame::instance()->GetServer().msgHeader() + " ";
+	msg += Frame::instance()->getServer().msgHeader() + " ";
 	msg += str;
 	std::cout << "replied as SV: " <<msg << "\n";
 	msg += "\r\n";
