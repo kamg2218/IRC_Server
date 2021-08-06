@@ -23,7 +23,7 @@ class Session
 	private:
 		Socket		_soc;
 		User		_user;
-		std::string	rstream;
+		std::string	_rstream;
 
 	public:
 		typedef Session*	pointer;
