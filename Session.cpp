@@ -24,18 +24,14 @@ int		Session::socket() const
 
 void	Session::StreamAppend(char *str, int r)
 {
+	// 수정필요
 	char ctrld = 4;
 
 	for (int i = 0 ; i < r ; i++)
 	{
 		if (str[i] != ctrld)
-			rstream += str[i];
+			_rstream += str[i];
 	}
-}
-
-void	Session::CloseSoc()
-{
-	//write
 }
 
 bool	Session::handleRead(std::map<int, Session*> & ms, int sd)
@@ -44,58 +40,39 @@ bool	Session::handleRead(std::map<int, Session*> & ms, int sd)
 	int		bufsize = 512;
 	char	buf[512] = {0,};
 	Executor	executor;
-	//char	buf[bufsize];
 
-	//std::cout << "handle Read\n";
 	r = recv(_soc.sd(), buf, bufsize, 0);
 
 	if (r)
 		StreamAppend(buf, r);
-	while (executor.gotFullMsg(rstream))
+	while (executor.gotFullMsg(_rstream))
 	{
-		std::cout << "Got msg : " << executor.getMessage(rstream) << std::endl;
-		executor.execute(rstream, this);
-		executor.reset(rstream);
+		std::cout << "Got msg : " << executor.getMessage(_rstream) << std::endl;
+		executor.execute(_rstream, this);
+		executor.reset(_rstream);
 	}
 	if (r <= 0)
 	{
-		user().SetProperlyQuit(true);
 		std::cout << "client gone\n";
 		return (true);
 	}
 	return (false);
-
-	/*
-	if (r <= 0)
-	{
-		std::cout << "client gone\n";
-		// rstream 처리후에 종료:
-		// QUIT 메시지 대신 작성해야함. 
-		return (true);
-	}
-	else if (r)
-	{
-	//	rstream.append(buf, r);
-	//	if (!executor.gotFullMsg(rstream))
-	//		return (false);
-		StreamAppend(buf, r);
-		while (executor.gotFullMsg(rstream))
-		{
-			std::cout << "Got msg : " << executor.getMessage(rstream) << std::endl;
-			executor.execute(rstream, this);
-			executor.reset(rstream);
-		}
-	}
-	return (false);
-	*/
 }
 
 void	Session::Rep_352(std::vector<std::string> const& res)
 {
+	std::string msg;
 	std::vector<std::string>::const_iterator it;
 
 	for (it = res.begin(); it != res.end(); it++)
-		replyAsServer(*it); // RPL_WHOREPLY
+	{
+		msg.clear();
+		msg += "352 ";
+		msg += user().nick();
+		msg += " ";
+		msg += (*it);
+		replyAsServer(msg); // RPL_WHOREPLY
+	}
 }
 
 void	Session::Rep_311(Session *ss)

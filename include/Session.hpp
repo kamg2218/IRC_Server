@@ -23,7 +23,7 @@ class Session
 	private:
 		Socket		_soc;
 		User		_user;
-		std::string	rstream;
+		std::string	_rstream;
 
 	public:
 		typedef Session*	pointer;
@@ -37,7 +37,6 @@ class Session
 		void	replyAsServer(std::string const& str);
 		void	replyAsUser(Session *target, std::string const& str);
 		void	StreamAppend(char *str, int r);
-		void	CloseSoc();
 		void	Rep_001(User *us);
 		void	Rep_311(Session *ss);
 		void	Rep_313(Session *ss);

@@ -1,5 +1,6 @@
 #include "include/Channel.hpp"
 #include "include/Session.hpp"
+#include "include/Frame.hpp"
 
 Channel::Channel(Session *creator, std::string const& name, std::string const& topic)
 	: sName(name), sTopic(topic)

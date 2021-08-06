@@ -60,6 +60,7 @@ class User
 		std::vector<std::string> cmdWhois();
 		void	SetProperlyQuit(bool state);
 		//std::string cmdWhowas(std::string nickname, int num);
+		void	PartChannel(Channel *ch);
 };
 
 #endif

@@ -68,7 +68,6 @@ void		MainServer::handleDecline(std::map<int, Session*>::iterator& pos)
 
 	temp = (*pos).second;
 	mSessions.erase(pos);
-	temp->CloseSoc();
 	delete (temp);
 	std::cout << "client is removed\n";
 }
