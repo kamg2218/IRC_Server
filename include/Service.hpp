@@ -17,10 +17,10 @@ class Service
 		int				_res;
 		struct timeval	_tv;
 	public:
-		Service();
+		Service(void);
 		Service(const Service& other);
 		Service&	operator=(const Service& other);
-		~Service();
+		~Service(void);
 		void		doSelect(MainServer const& sv);
 		void		doService(MainServer & sv);
 		void		sendPing(Session *ss);

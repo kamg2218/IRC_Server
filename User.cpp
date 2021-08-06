@@ -2,7 +2,7 @@
 #include "include/Session.hpp"
 #include "include/Frame.hpp"
 
-User::User()
+User::User(void)
 	: _didUser(false), _didNick(false), _isProperlyQuit(false), _manager(false), _password(true)
 {}
 
@@ -29,7 +29,7 @@ User&	User::operator=(const User& other)
 	return *this;
 }
 
-User::~User()
+User::~User(void)
 {
 	if (isConnected() && !_isProperlyQuit)
 	{
@@ -49,7 +49,7 @@ User::~User()
 	}
 }
 
-User*			User::create()
+User*			User::create(void)
 {
 	return new User();
 }
@@ -74,51 +74,51 @@ void			User::setPass(bool pass)
 {
 	_password = pass;
 }
-std::string		User::name() const
+std::string		User::name(void) const
 {
 	return _sRealname;
 }
-std::string		User::nick() const
+std::string		User::nick(void) const
 {
 	return _sNickname;
 }
-std::string		User::host() const
+std::string		User::host(void) const
 {
 	return _sHostname;
 }
-std::string		User::user() const
+std::string		User::user(void) const
 {
 	return _sUsername;
 }
-bool			User::pass() const
+bool			User::pass(void) const
 {
 	return _password;
 }
-const ChannelMap&		User::channel() const
+const ChannelMap&		User::channel(void) const
 {
 	return _mChannels;
 }
 
-std::string		User::msgHeader() const
+std::string		User::msgHeader(void) const
 {
 	return std::string(":" + _sNickname + "!" + _sUsername + "@" + _sHostname+ " ");
 }
 
-bool	User::checkNick() const
+bool	User::checkNick(void) const
 {
 	return _didNick;
 }
-bool	User::checkUser() const
+bool	User::checkUser(void) const
 {
 	return _didUser;
 }
-bool	User::isConnected() const
+bool	User::isConnected(void) const
 {
 	if (checkNick() && checkUser())
 		return true;
 	return false;
 }
-bool	User::checkManager() const
+bool	User::checkManager(void) const
 {
 	return _manager;
 }
@@ -222,7 +222,7 @@ void			User::cmdQuit(Session *ss, std::vector<std::string> const& sets, std::str
 	_mChannels.clear();
 }
 
-void	User::cmdOper()
+void	User::cmdOper(void)
 {
 	_manager = true;
 }
@@ -237,7 +237,7 @@ bool	User::isMemOfChannel(std::string const& chname) const
 	return true;
 }
 
-std::vector<std::string> User::userVector()
+std::vector<std::string> User::userVector(void)
 {
 	ChannelMap::iterator it = _mChannels.begin();
 	std::vector<std::string> res;
@@ -254,7 +254,7 @@ std::vector<std::string> User::userVector()
 	return res;
 }
 
-std::vector<std::string> User::cmdWhois()
+std::vector<std::string> User::cmdWhois(void)
 {
 	ChannelMap::iterator it;
 	std::vector<std::string> res;

@@ -19,19 +19,19 @@ class	Socket
 		sockaddr_in		_sin;
 		protoent*		_proto;
 	public:
-		Socket();
+		Socket(void);
 		Socket(const Socket& other);
 		Socket&		operator=(const Socket& other);
-		~Socket();
-		int		sd() const;
-		unsigned int&		port();
-		unsigned int&		len();
-		sockaddr_in&		sin();
-		protoent*		proto();
+		~Socket(void);
+		int					sd(void) const;
+		unsigned int&		port(void);
+		unsigned int&		len(void);
+		sockaddr_in&		sin(void);
+		protoent*			proto(void);
 		void		setSd(int sd);
-		void		makeNonBlocking();
-		int		makeSocket(unsigned int port);
-		int		makeSocket(unsigned int port, unsigned long addr);
+		void		makeNonBlocking(void);
+		int			makeSocket(unsigned int port);
+		int			makeSocket(unsigned int port, unsigned long addr);
 		class		protoException : public std::exception
 		{
 			public:

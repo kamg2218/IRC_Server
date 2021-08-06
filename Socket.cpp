@@ -1,7 +1,7 @@
 #include <iostream>
 #include "include/Socket.hpp"
 
-Socket::Socket()
+Socket::Socket(void)
 	: _sd(0), _port(0), _len(0), _proto(0)
 {
 }
@@ -24,16 +24,16 @@ Socket&		Socket::operator=(const Socket& other)
 	return *this;
 }
 
-Socket::~Socket()
+Socket::~Socket(void)
 {
 }
 
 void		Socket::setSd(int sd) { _sd = sd; }
-int			Socket::sd() const { return _sd; }
-unsigned int&	Socket::port() { return _port; }
-unsigned int&	Socket::len() { return _len; }
-sockaddr_in&	Socket::sin() { return _sin; }
-protoent*		Socket::proto(){ return _proto;}
+int			Socket::sd(void) const { return _sd; }
+unsigned int&	Socket::port(void) { return _port; }
+unsigned int&	Socket::len(void) { return _len; }
+sockaddr_in&	Socket::sin(void) { return _sin; }
+protoent*		Socket::proto(void){ return _proto;}
 
 int				Socket::makeSocket(unsigned int port)
 {
@@ -73,11 +73,10 @@ int				Socket::makeSocket(unsigned int port, unsigned long addr)
 	return _sd;
 }
 
-void			Socket::makeNonBlocking()
+void			Socket::makeNonBlocking(void)
 {
 	int			flag;
 
-	std::cout << "sd = " << _sd << std::endl;
 	flag = fcntl(_sd, F_GETFL, 0);
 	if (fcntl(_sd, F_SETFL, flag | O_NONBLOCK) == -1)
 		throw socketException();

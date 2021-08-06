@@ -21,14 +21,14 @@ class Frame
 		MainServer		_server;
 		Service			_service;
 	public:
-		~Frame();
-		static Frame*		instance();
+		~Frame(void);
+		static Frame*		instance(void);
 		void		start(base const& bs);
 		void		addChannel(Channel* new_chan);
 		void		removeChannel(std::string const& name);
 		void		removeUser(std::string const& nick);
-		void		removeAllUser();
-		void		removeAllChannel();
+		void		removeAllUser(void);
+		void		removeAllChannel(void);
 		bool		addUser(Session *new_user);
 		bool		checkNickname(std::string const& name);
 		bool		checkChannelname(std::string const& name);

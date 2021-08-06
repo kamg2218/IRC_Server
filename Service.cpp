@@ -2,11 +2,11 @@
 #include "include/User.hpp"
 #include "include/Frame.hpp"
 
-Service::Service()
+Service::Service(void)
 {
 }
 
-Service(const Service& other)
+Service::Service(const Service& other)
 {
 	*this = other;
 }
@@ -20,9 +20,10 @@ Service&	Service::operator=(const Service& other)
 	this->_max = other._max;
 	this->_res = other._res;
 	this->_tv = other._tv;
+	return *this;
 }
 
-Service::~Service()
+Service::~Service(void)
 {
 }
 
@@ -49,10 +50,7 @@ void	Service::doService(MainServer & sv)
 	if (_res <= 0)
 		return ;
 	if (FD_ISSET(sv.socket(), &_fdRead))
-	{
 		sv.handleAccept(this);
-		std::cout << "client is accepted\n";
-	}
 	for (std::map<int, Session*>::iterator it = sv.users().begin(); it != sv.users().end() ; )
 	{
 		std::map<int, Session*>::iterator temp = it++;

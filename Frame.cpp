@@ -2,19 +2,17 @@
 
 Frame * Frame::_pInstance = NULL;
 
-Frame::~Frame()
+Frame::~Frame(void)
 {
 	removeAllUser();
 	removeAllChannel();
 }
 
-Frame*		Frame::instance()
+Frame*		Frame::instance(void)
 {
 	if (!_pInstance)
-	{
 		_pInstance = new Frame();
-	}
-	return (_pInstance);
+	return _pInstance;
 } 
 void		Frame::start(base const& bs)
 {
@@ -28,7 +26,7 @@ void		Frame::start(base const& bs)
 
 bool		Frame::doesNicknameExists(std::string const& name)
 {
-	return (_mUsers.find(name) != _mUsers.end());
+	return _mUsers.find(name) != _mUsers.end();
 }
 
 bool		Frame::addUser(Session *new_user)
@@ -46,7 +44,7 @@ void		Frame::removeUser(std::string const& nick)
 
 bool		Frame::doesChannelExists(std::string const& name)
 {
-	return (_mChannels.find(name) != _mChannels.end());
+	return _mChannels.find(name) != _mChannels.end();
 }
 
 void		Frame::addChannel(Channel* new_chan)
@@ -60,7 +58,7 @@ void		Frame::removeChannel(std::string const& name)
 	_mChannels.erase(name);
 }
 
-void		Frame::removeAllUser()
+void		Frame::removeAllUser(void)
 {
 	UserMap::iterator it;
 	UserMap::iterator tmp;
@@ -92,6 +90,7 @@ Channel*		Frame::findChannel(std::string const& name)
 {
 	return _mChannels.find(name)->second;
 }
+
 Session*	Frame::findUser(std::string const& name)
 {
 	return _mUsers.find(name)->second;
@@ -215,7 +214,7 @@ void		Frame::cmdNick(Session *ss, std::vector<std::string> const& sets)
 	UserMap::iterator	it;
 
 	if (sets.size() < 2)
-		return ss->Err_431();	//noNicknameGiven
+		return ss->Err_431();			//noNicknameGiven
 	else if (ss->user().pass() == false)
 		return ;
 	else if (!(checkNickname(sets[1])))
@@ -223,8 +222,8 @@ void		Frame::cmdNick(Session *ss, std::vector<std::string> const& sets)
 	else if (doesNicknameExists(sets[1]))
 		return ss->Err_433(sets[1]);	//NicknameInUse
 	else if (ss->user().addNick(sets) == true)
-		return ;	//success to register
-	else			//change Nickname
+		return ;						//success to register
+	else								//change Nickname
 	{
 		it = _mUsers.find(ss->user().nick());
 		if (it == _mUsers.end())
@@ -240,15 +239,15 @@ void		Frame::cmdNick(Session *ss, std::vector<std::string> const& sets)
 void		Frame::cmdUser(Session *ss, std::vector<std::string> const& sets)
 {
 	if (sets.size() < 5)
-		return ss->Err_461("USER");	//needMoreParams
+		return ss->Err_461("USER");		//needMoreParams
 	else if (ss->user().pass() == false)
 		return ;
 	else if (ss->user().checkNick() == false)
-		return ;	//ignore
+		return ;
 	else if (ss->user().cmdUser(sets) == false)
-		return ss->Err_462();	//AlreadyRegistered
+		return ss->Err_462();			//AlreadyRegistered
 	else if (addUser(ss) == false)
-		return ss->Err_462();	//AlreadyRegistered
+		return ss->Err_462();			//AlreadyRegistered
 	ss->user().setHost(inet_ntoa(ss->soc().sin().sin_addr));
 	return ss->Rep_001(&(ss->user()));	//Success
 }
@@ -256,9 +255,9 @@ void		Frame::cmdUser(Session *ss, std::vector<std::string> const& sets)
 void		Frame::cmdPass(Session *ss, std::vector<std::string> const& sets)
 {
 	if (sets.size() != 2)
-		return ss->Err_461("PASS");	//NeedMoreParams
+		return ss->Err_461("PASS");		//NeedMoreParams
 	else if (ss->user().isConnected())
-		return ss->Err_462();		//AlreadyRegistered
+		return ss->Err_462();			//AlreadyRegistered
 	else if (_server.checkPass(sets[1]))
 		ss->user().setPass(true);
 	else
@@ -268,7 +267,7 @@ void		Frame::cmdPass(Session *ss, std::vector<std::string> const& sets)
 void		Frame::cmdOper(Session *ss, std::vector<std::string> const& sets)
 {
 	if (sets.size() != 3)
-		return ss->Err_461("OPER");	//NeedMoreParams
+		return ss->Err_461("OPER");		//NeedMoreParams
 	for (UserMap::iterator it = _mUsers.begin(); it != _mUsers.end(); it++)
 	{
 		if (it->first == sets[1])
@@ -276,10 +275,10 @@ void		Frame::cmdOper(Session *ss, std::vector<std::string> const& sets)
 			if (_server.checkPass(sets[2]) == false)
 				return ss->Err_464();	//passwdMismatch
 			it->second->user().cmdOper();
-			return ss->Rep_381();	//RPL_YOUREOPER
+			return ss->Rep_381();		//RPL_YOUREOPER
 		}
 	}
-	return ss->Err_491();	//NoOperHost
+	return ss->Err_491();				//NoOperHost
 }
 
 void		Frame::cmdTopic(Session *ss, std::vector<std::string> const& sets)
@@ -288,19 +287,19 @@ void		Frame::cmdTopic(Session *ss, std::vector<std::string> const& sets)
 	std::string				str;
 
 	if (sets.size() < 2)
-		return ss->Err_461("TOPIC");	//NeedMoreParams
+		return ss->Err_461("TOPIC");			//NeedMoreParams
 	else if (!(checkChannelname(sets[1])))
-		return ss->Err_461("TOPIC");	//NeedMoreParams
+		return ss->Err_461("TOPIC");			//NeedMoreParams
 	it = _mChannels.find(makeLower(sets[1].substr(1)));
 	if (it == _mChannels.end())
 		return ss->Err_442(sets[1].substr(1));	//NotOnChannel
 	if (sets.size() == 2 || sets[2][0] != ':')
 	{
 		if (it->second->topic() == "")
-			return ss->Rep_331(it->first);	//NoTopic
+			return ss->Rep_331(it->first);		//NoTopic
 		else if (it->second->hasUser(&(ss->user())))
 			return ss->replyAsServer(it->second->topic());
-		return ss->Err_442(it->first);	//NotOnChannel
+		return ss->Err_442(it->first);			//NotOnChannel
 	}
 	else
 	{
@@ -308,9 +307,9 @@ void		Frame::cmdTopic(Session *ss, std::vector<std::string> const& sets)
 		for (int i = 3; i < sets.size(); i++)
 			str += " " + sets[i];
 		if (it->second->isOperator(ss->user().nick()) == false)
-			return ss->Err_482(it->first);	//ChanOprivsNeeded
+			return ss->Err_482(it->first);		//ChanOprivsNeeded
 		it->second->setTopic(str);
-		return ss->Rep_332(it->first, str);	//Topic
+		return ss->Rep_332(it->first, str);		//Topic
 	}
 }
 
@@ -321,22 +320,22 @@ void		Frame::cmdList(Session *ss, std::vector<std::string> const& sets)
 
 	if (sets.size() == 1)
 	{
-		ss->Rep_321();	//ListStart
+		ss->Rep_321();							//ListStart
 		for (it = _mChannels.begin(); it != _mChannels.end(); it++)
-			ss->Rep_322(it->second);	//List
-		return ss->Rep_323();	//ListEnd
+			ss->Rep_322(it->second);			//List
+		return ss->Rep_323();					//ListEnd
 	}
 	v = split_comma(sets[1]);
 	for (int i = 0; i < v.size(); i++)
 	{
-		ss->Rep_321();	//ListStart
+		ss->Rep_321();							//ListStart
 		if (checkChannelname(v[i])
 				&& doesChannelExists(makeLower(v[i].substr(1))))
 		{
 			it = _mChannels.find(makeLower(v[i].substr(1)));
 			ss->Rep_322(it->second);
 		}
-		ss->Rep_323();	//ListEnd
+		ss->Rep_323();							//ListEnd
 	}
 }
 
@@ -351,7 +350,7 @@ std::vector<std::string>		Frame::split_comma(std::string s)
 		s.erase(0, pos + 1);
 	}
 	res.push_back(s);
-	return (res);
+	return res;
 }
 
 std::vector<std::vector<std::string> >		Frame::kicklist(std::vector<std::string> const& sets)
@@ -383,7 +382,7 @@ std::vector<std::vector<std::string> >		Frame::kicklist(std::vector<std::string>
 		res.push_back(subres);
 		subres.clear();
 	}
-	return (res);
+	return res;
 }
 
 void		Frame::cmdKick(Session *ss, std::vector<std::string> const& sets)
@@ -596,12 +595,12 @@ void		Frame::cmdPrivmsg(Session *ss, std::vector<std::string> const& sets)
 		if (sets[1][0] == ':')
 		{
 			std::cout << "come!!!\n";
-        	return (ss->Err_411(sets[0]));   // ERR_NORECIPIENT
+        	return ss->Err_411(sets[0]);   // ERR_NORECIPIENT
 		}
 		if (sets[2][0] != ':')
 		{
 			std::cout << "come!!!\n";
-        	return (ss->Err_412());   // ERR_NOTEXTTOSEND
+        	return ss->Err_412();   // ERR_NOTEXTTOSEND
 		}
 	}
     // receiver에 콤마로 split해서 저장하기
@@ -616,16 +615,16 @@ void		Frame::cmdPrivmsg(Session *ss, std::vector<std::string> const& sets)
         if (checkChannelname(*receiverit))
 		{
             if (!doesChannelExists(makeLower((*receiverit).substr(1))))
-                return (ss->Err_404(*receiverit));   // ERR_CANNOTSENDTOCHAN
+                return ss->Err_404(*receiverit);   // ERR_CANNOTSENDTOCHAN
         }
         else
         {
             if (!doesNicknameExists(*receiverit))
-                return (ss->Err_401(*receiverit));       // ERR_NOSUCHNICK
+                return ss->Err_401(*receiverit);       // ERR_NOSUCHNICK
 			for (tmp = receiverit + 1; tmp != receivers.end(); tmp++)
             {
                 if (*(tmp - 1) == *tmp)
-                    return (ss->Err_407(*tmp));       // ERR_TOOMANYTARGETS
+                    return ss->Err_407(*tmp);       // ERR_TOOMANYTARGETS
             }
         }
         receiverit++;
@@ -665,7 +664,7 @@ void		Frame::cmdWhois(Session *ss, std::vector<std::string> const& sets)
 		if (!doesNicknameExists(v[i]))
 		{
 			ss->Err_401(v[i]);
-			return (ss->Rep_318(sets[1]));
+			return ss->Rep_318(sets[1]);
 		}
 	}
 	for (it = v.begin(); it != v.end(); it++)
