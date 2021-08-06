@@ -1,8 +1,9 @@
 SRC=main.cpp Executor.cpp Frame.cpp Session.cpp Service.cpp \
 	MainServer.cpp User.cpp Channel.cpp Socket.cpp
 
-OBJ=$(SRC.c=.o)
+OBJ=$(SRC:.cpp=.o)
 NAME=ircserv
+TEMP=$(NAME:=.dSYM)
 CFLAGS = -Wall -Werror -Wextra
 DFLAGS = -fsanitize=address
 
@@ -16,5 +17,6 @@ clean :
 
 fclean: clean
 	rm -rf $(NAME)
+	rm -rf $(TEMP)
 	
 re : fclean all
