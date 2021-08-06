@@ -207,7 +207,7 @@ bool	User::cmdPart(Session *ss, std::string const& chname, std::vector<std::stri
 
 void			User::cmdQuit(Session *ss, std::vector<std::string> const& sets, std::string const& msg)
 {
-	// is_properly_quit = true;
+	is_properly_quit = true;
 	_pastNick.clear();
 	for (ChannelMap::iterator it = mChannels.begin(); it != mChannels.end(); it++)
 	{
