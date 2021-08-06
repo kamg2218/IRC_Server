@@ -80,7 +80,7 @@ const ChannelMap&		User::channel() const
 
 std::string		User::msgHeader() const
 {
-	return std::string(":" + sNickname + "!" + sUsername + "@" + sHostname+ " ");
+	return std::string(sNickname + "!" + sUsername + "@" + sHostname);
 }
 
 bool	User::CheckNick() const

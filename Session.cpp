@@ -14,28 +14,43 @@ Session::Session(int sd)
 	_soc.setSd(sd);
 }
 
+Session::Session(Session const& ref)
+{
+	//write
+}
+
+Session&	Session::operator=(Session const& ref)
+{
+	//write
+	return *this;
+}
+
 Session::pointer	Session::create()
 {
-	return (new Session());
+	return new Session();
 }
 
 int		Session::socket() const
 {
-	return (_soc.sd());
+	return _soc.sd();
 }
 
-void	Session::setPing(bool p)
+void		Session::setPing(bool p)
 {
 	_ping = p;
 }
 
-bool	Session::ping() const { return _ping; }
+bool	Session::ping() const
+{ 
+	return _ping; 
+}
 
-void	Session::StreamAppend(char *str, int r)
+void		Session::StreamAppend(char *str, int r)
 {
 	// 수정필요
-	char ctrld = 4;
+	char	ctrld;
 
+	ctrld = 4;
 	for (int i = 0 ; i < r ; i++)
 	{
 		if (str[i] != ctrld)
@@ -45,13 +60,11 @@ void	Session::StreamAppend(char *str, int r)
 
 bool	Session::handleRead(std::map<int, Session*> & ms, int sd)
 {
-	int		r;
-	int		bufsize = 512;
-	char	buf[512] = {0,};
+	int			r;
+	char		buf[BUFSIZE] = {0,};
 	Executor	executor;
 
-	r = recv(_soc.sd(), buf, bufsize, 0);
-
+	r = recv(_soc.sd(), buf, BUFSIZE, 0);
 	if (r)
 		StreamAppend(buf, r);
 	while (executor.gotFullMsg(_rstream))
@@ -63,14 +76,14 @@ bool	Session::handleRead(std::map<int, Session*> & ms, int sd)
 	if (r <= 0)
 	{
 		std::cout << "client gone\n";
-		return (true);
+		return true;
 	}
-	return (false);
+	return false;
 }
 
-void	Session::Rep_352(std::vector<std::string> const& res)
+void		Session::Rep_352(std::vector<std::string> const& res)
 {
-	std::string msg;
+	std::string		msg;
 	std::vector<std::string>::const_iterator it;
 
 	for (it = res.begin(); it != res.end(); it++)
@@ -80,13 +93,13 @@ void	Session::Rep_352(std::vector<std::string> const& res)
 		msg += user().nick();
 		msg += " ";
 		msg += (*it);
-		replyAsServer(msg); // RPL_WHOREPLY
+		replyAsServer(msg);
 	}
 }
 
-void	Session::Rep_311(Session *ss)
+void		Session::Rep_311(Session *ss)
 {
-	std::string msg;
+	std::string		msg;
 
 	msg = "311 ";
 	msg += user().nick();
@@ -103,9 +116,9 @@ void	Session::Rep_311(Session *ss)
 	replyAsServer(msg);
 }
 
-void	Session::Rep_313(Session *ss)
+void		Session::Rep_313(Session *ss)
 {
-	std::string msg;
+	std::string		msg;
 
 	msg = "313 ";
 	msg += user().nick();
@@ -115,9 +128,9 @@ void	Session::Rep_313(Session *ss)
 	replyAsServer(msg);
 }
 
-void	Session::Rep_318(std::string const& nick)
+void		Session::Rep_318(std::string const& nick)
 {
-	std::string msg;
+	std::string		msg;
 
 	msg = "318 ";
 	msg += user().nick();
@@ -127,9 +140,9 @@ void	Session::Rep_318(std::string const& nick)
 	replyAsServer(msg);
 }
 
-void	Session::Rep_319(std::string const& str)
+void		Session::Rep_319(std::string const& str)
 {
-	std::string msg;
+	std::string		msg;
 
 	msg = "319 ";
 	msg += user().nick();
@@ -138,36 +151,45 @@ void	Session::Rep_319(std::string const& str)
 	replyAsServer(msg);
 }
 
-void	Session::replyAsServer(std::string const& str)
+void		Session::replyAsServer(std::string const& str)
 {
-	std::string msg;
+	std::string		msg;
 
 	msg += ":";
-	msg += Frame::instance()->GetServer().msgHeader() + " ";
+	msg += Frame::instance()->GetServer().msgHeader();
+	msg += " ";
 	msg += str;
 	std::cout << "replied as SV: " <<msg << "\n";
 	msg += "\r\n";
 	send(_soc.sd(), msg.c_str(), msg.length(), 0);
 }
 
-void	Session::replyAsUser(Session *target, std::string const& str)
+void		Session::replyAsUser(Session *target, std::string const& str)
 {
-	std::string msg;
+	std::string		msg;
 
+	msg += ":";
 	msg += user().msgHeader();
+	msg += " ";
 	msg += str;
 	std::cout << "replied as US: " <<msg << "\n";
 	msg += "\r\n";
 	send(target->soc().sd(), msg.c_str(), msg.length(), 0);
 }
 
-Socket&	Session::soc() { return _soc; }
-
-User&	Session::user() { return _user; }
-
-void	Session::Rep_001(User *us)
+Socket&	Session::soc()
 {
-	std::string	msg;
+	return _soc;
+}
+
+User&	Session::user()
+{
+	return _user;
+}
+
+void		Session::Rep_001(User *us)
+{
+	std::string		msg;
 
 	msg = "001 ";
 	msg += user().nick();
@@ -180,9 +202,9 @@ void	Session::Rep_001(User *us)
 	replyAsServer(msg);
 }
 
-void	Session::Rep_315(std::string const& str)
+void		Session::Rep_315(std::string const& str)
 {
-	std::string msg;
+	std::string		msg;
 
 	msg = "315 ";
 	msg += user().nick();
@@ -192,9 +214,9 @@ void	Session::Rep_315(std::string const& str)
 	replyAsServer(msg);
 }
 
-void	Session::Rep_321()
+void		Session::Rep_321(void)
 {
-	std::string	msg;
+	std::string		msg;
 
 	msg = "321 ";
 	msg += user().nick();
@@ -202,9 +224,9 @@ void	Session::Rep_321()
 	replyAsServer(msg);
 }
 
-void	Session::Rep_322(Channel *ch)
+void		Session::Rep_322(Channel *ch)
 {
-	std::string	msg;
+	std::string		msg;
 
 	msg = "322 ";
 	msg += user().nick();
@@ -217,9 +239,9 @@ void	Session::Rep_322(Channel *ch)
 	replyAsServer(msg);
 }
 
-void	Session::Rep_323()
+void		Session::Rep_323(void)
 {
-	std::string	msg;
+	std::string		msg;
 
 	msg = "323 ";
 	msg += user().nick();
@@ -227,9 +249,9 @@ void	Session::Rep_323()
 	replyAsServer(msg);
 }
 
-void	Session::Rep_331(std::string const& chname)
+void		Session::Rep_331(std::string const& chname)
 {
-	std::string	msg;
+	std::string		msg;
 
 	msg = "331 ";
 	msg += user().nick();
@@ -239,9 +261,9 @@ void	Session::Rep_331(std::string const& chname)
 	replyAsServer(msg);
 }
 
-void	Session::Rep_332(std::string const& chname, std::string const& topic)
+void		Session::Rep_332(std::string const& chname, std::string const& topic)
 {
-	std::string	msg;
+	std::string		msg;
 
 	msg = "332 ";
 	msg += user().nick();
@@ -252,9 +274,9 @@ void	Session::Rep_332(std::string const& chname, std::string const& topic)
 	replyAsServer(msg);
 }
 
-void	Session::Rep_341(std::string const& chname, std::string const& nick)
+void		Session::Rep_341(std::string const& chname, std::string const& nick)
 {
-	std::string	msg;
+	std::string		msg;
 
 	msg = "341 ";
 	msg += user().nick();
@@ -265,9 +287,9 @@ void	Session::Rep_341(std::string const& chname, std::string const& nick)
 	replyAsServer(msg);
 }
 
-void	Session::Rep_353(std::string const& chname, std::string const& nick)
+void		Session::Rep_353(std::string const& chname, std::string const& nick)
 {
-	std::string	msg;
+	std::string		msg;
 
 	msg = "353 ";
 	msg += user().nick();
@@ -278,9 +300,9 @@ void	Session::Rep_353(std::string const& chname, std::string const& nick)
 	replyAsServer(msg);
 }
 
-void	Session::Rep_366(std::string const& chname)
+void		Session::Rep_366(std::string const& chname)
 {
-	std::string	msg;
+	std::string		msg;
 
 	msg = "366 ";
 	msg += user().nick();
@@ -290,9 +312,9 @@ void	Session::Rep_366(std::string const& chname)
 	replyAsServer(msg);
 }
 
-void	Session::Rep_381()
+void		Session::Rep_381(void)
 {
-	std::string	msg;
+	std::string		msg;
 
 	msg = "381 ";
 	msg += user().nick();
@@ -300,9 +322,9 @@ void	Session::Rep_381()
 	replyAsServer(msg);
 }
 
-void	Session::Err_401(std::string const& nick)
+void		Session::Err_401(std::string const& nick)
 {
-	std::string msg;
+	std::string		msg;
 
 	msg += "401 ";
 	msg += user().nick();
@@ -312,9 +334,9 @@ void	Session::Err_401(std::string const& nick)
 	replyAsServer(msg);
 }
 
-void	Session::Err_402(std::string const& name)
+void		Session::Err_402(std::string const& name)
 {
-	std::string msg;
+	std::string		msg;
 
 	msg += "402 ";
 	msg += user().nick();
@@ -324,9 +346,9 @@ void	Session::Err_402(std::string const& name)
 	replyAsServer(msg);
 }
 
-void	Session::Err_403(std::string const& chname)
+void		Session::Err_403(std::string const& chname)
 {
-	std::string msg;
+	std::string		msg;
 	
 	msg += "403 ";
 	msg += user().nick();
@@ -336,9 +358,9 @@ void	Session::Err_403(std::string const& chname)
 	replyAsServer(msg);
 }
 
-void	Session::Err_404(std::string const& chname)
+void		Session::Err_404(std::string const& chname)
 {
-	std::string msg;
+	std::string		msg;
 	
 	msg += "404 ";
 	msg += user().nick();
@@ -348,9 +370,9 @@ void	Session::Err_404(std::string const& chname)
 	replyAsServer(msg);
 }
 
-void	Session::Err_406(std::string const& nick)
+void		Session::Err_406(std::string const& nick)
 {
-	std::string msg;
+	std::string		msg;
 
 	msg += "406 ";
 	msg += user().nick();
@@ -360,9 +382,9 @@ void	Session::Err_406(std::string const& nick)
 	replyAsServer(msg);
 }
 
-void	Session::Err_407(std::string const& nick)
+void		Session::Err_407(std::string const& nick)
 {
-	std::string msg;
+	std::string		msg;
 
 	msg += "407 ";
 	msg += user().nick();
@@ -372,9 +394,9 @@ void	Session::Err_407(std::string const& nick)
 	replyAsServer(msg);
 }
 
-void	Session::Err_411(std::string const &cmd)
+void		Session::Err_411(std::string const &cmd)
 {
-	std::string msg;
+	std::string		msg;
 
 	msg += "411 ";
 	msg += user().nick();
@@ -384,9 +406,9 @@ void	Session::Err_411(std::string const &cmd)
 	replyAsServer(msg);
 }
 
-void	Session::Err_412(void)
+void		Session::Err_412(void)
 {
-	std::string msg;
+	std::string		msg;
 
 	msg += "412 ";
 	msg += user().nick();
@@ -395,9 +417,9 @@ void	Session::Err_412(void)
 	replyAsServer(msg);
 }
 
-void	Session::Err_413(std::string const& mask)
+void		Session::Err_413(std::string const& mask)
 {
-	std::string msg;
+	std::string		msg;
 
 	msg += "413 ";
 	msg += user().nick();
@@ -407,9 +429,9 @@ void	Session::Err_413(std::string const& mask)
 	replyAsServer(msg);
 }
 
-void	Session::Err_414(std::string const& mask)
+void		Session::Err_414(std::string const& mask)
 {
-	std::string msg;
+	std::string		msg;
 	
 	msg += "414 ";
 	msg += user().nick();
@@ -419,9 +441,9 @@ void	Session::Err_414(std::string const& mask)
 	replyAsServer(msg);
 }
 
-void	Session::Err_421(std::string const& cmd)
+void		Session::Err_421(std::string const& cmd)
 {
-	std::string msg;
+	std::string		msg;
 
 	msg += "421 ";
 	msg += cmd;
@@ -429,9 +451,9 @@ void	Session::Err_421(std::string const& cmd)
 	replyAsServer(msg);
 }
 
-void	Session::Err_431(void)
+void		Session::Err_431(void)
 {
-	std::string msg;
+	std::string		msg;
 	
 	msg += "431 ";
 	msg += user().nick();
@@ -440,9 +462,9 @@ void	Session::Err_431(void)
 	replyAsServer(msg);
 }
 
-void	Session::Err_432(std::string const& nick)
+void		Session::Err_432(std::string const& nick)
 {
-	std::string msg;
+	std::string		msg;
 	
 	msg += "432 ";
 	msg += user().nick();
@@ -452,9 +474,9 @@ void	Session::Err_432(std::string const& nick)
 	replyAsServer(msg);
 }
 
-void	Session::Err_433(std::string const& nick)
+void		Session::Err_433(std::string const& nick)
 {
-	std::string msg;
+	std::string		msg;
 
 	msg += "433 ";
 	msg += user().nick();
@@ -464,9 +486,9 @@ void	Session::Err_433(std::string const& nick)
 	replyAsServer(msg);
 }
 
-void	Session::Err_442(std::string const& chname)
+void		Session::Err_442(std::string const& chname)
 {
-	std::string msg;
+	std::string		msg;
 
 	msg += "442 ";
 	msg += user().nick();
@@ -476,9 +498,9 @@ void	Session::Err_442(std::string const& chname)
 	replyAsServer(msg);
 }
 
-void	Session::Err_443(std::string const& nick, std::string const& chname)
+void		Session::Err_443(std::string const& nick, std::string const& chname)
 {
-	std::string msg;
+	std::string		msg;
 
 	msg += "443 ";
 	msg += user().nick();
@@ -490,18 +512,18 @@ void	Session::Err_443(std::string const& nick, std::string const& chname)
 	replyAsServer(msg);
 }
 
-void	Session::Err_451(void)
+void		Session::Err_451(void)
 {
-	std::string msg;
+	std::string		msg;
 
 	msg += "451 ";
 	msg += ":You have not registered";
 	replyAsServer(msg);
 }
 
-void	Session::Err_461(std::string const& cmd)
+void		Session::Err_461(std::string const& cmd)
 {
-	std::string msg;
+	std::string		msg;
 
 	msg += "461 ";
 	msg += user().nick();
@@ -511,9 +533,9 @@ void	Session::Err_461(std::string const& cmd)
 	replyAsServer(msg);
 }
 
-void	Session::Err_462(void)
+void		Session::Err_462(void)
 {
-	std::string msg;
+	std::string		msg;
 
 	msg += "462 ";
 	msg += user().nick();
@@ -522,9 +544,9 @@ void	Session::Err_462(void)
 	replyAsServer(msg);
 }
 
-void	Session::Err_464(void)
+void		Session::Err_464(void)
 {
-	std::string msg;
+	std::string		msg;
 
 	msg += "464 ";
 	msg += user().nick();
@@ -533,9 +555,9 @@ void	Session::Err_464(void)
 	replyAsServer(msg);
 }
 
-void	Session::Err_482(std::string const& chname)
+void		Session::Err_482(std::string const& chname)
 {
-	std::string msg;
+	std::string		msg;
 
 	msg += "482 ";
 	msg += user().nick();
@@ -545,9 +567,9 @@ void	Session::Err_482(std::string const& chname)
 	replyAsServer(msg);
 }
 
-void	Session::Err_491(void)
+void		Session::Err_491(void)
 {
-	std::string msg;
+	std::string		msg;
 
 	msg += "491 ";
 	msg += user().nick();

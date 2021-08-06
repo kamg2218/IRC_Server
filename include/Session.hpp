@@ -18,21 +18,25 @@ class Service;
 #include "Service.hpp"
 #include "Socket.hpp"
 
+# define BUFSIZE 512
+
 class Session
 {
 	private:
-		Socket		_soc;
-		User		_user;
-		std::string	_rstream;
-		bool		_ping;
-	public:
 		typedef Session*	pointer;
-		Session();
+		Socket			_soc;
+		User			_user;
+		bool			_ping;
+		std::string		_rstream;
+		Session(Session const& ref);
+		Session&	operator=(Session const& ref);
+	public:
+		Session(void);
 		Session(int sd);
-		static pointer	create();
-		int		socket() const;
-		Socket&	soc();
-		User&	user();
+		static pointer	create(void);
+		int		socket(void) const;
+		Socket&		soc(void);
+		User&		user(void);
 		void	setPing(bool p);
 		bool	ping() const;
 		bool	handleRead(std::map<int, Session*> & ms, int fd);
@@ -42,21 +46,19 @@ class Session
 		void	Rep_001(User *us);
 		void	Rep_311(Session *ss);
 		void	Rep_313(Session *ss);
-		//void	Rep_314(std::string const& str);
 		void	Rep_315(std::string const& str);
 		void	Rep_318(std::string const& nick);
 		void	Rep_319(std::string const& str);
-		void	Rep_321();
+		void	Rep_321(void);
 		void	Rep_322(Channel *ch);
-		void	Rep_323();
+		void	Rep_323(void);
 		void	Rep_331(std::string const& chname);
 		void	Rep_332(std::string const& chname, std::string const& topic);
 		void	Rep_341(std::string const& chname, std::string const& nick);
 		void	Rep_352(std::vector<std::string> const& v);
 		void	Rep_353(std::string const& chname, std::string const& nic);
 		void	Rep_366(std::string const& chname);
-		//void	Rep_369(std::string const& nick);
-		void	Rep_381();
+		void	Rep_381(void);
 		void	Err_401(std::string const& nick);
 		void	Err_402(std::string const& name);
 		void	Err_403(std::string const& chname);
