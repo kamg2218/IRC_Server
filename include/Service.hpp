@@ -14,7 +14,6 @@ class Service
 		fd_set			fd_read;
 		fd_set			fd_write;
 		int				max;
-		int				maxopen;
 		int				res;
 		struct timeval	tv;
 	public:
@@ -22,7 +21,6 @@ class Service
 		void	do_select(MainServer const& sv);
 		void	do_service(MainServer & sv);
 		void	sendPing(Session *ss);
-		int		getMaxopen() const;
 		class SelectException : public std::exception
 		{
 			public:

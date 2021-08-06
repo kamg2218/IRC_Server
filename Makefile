@@ -1,5 +1,5 @@
 SRC=main.cpp Executor.cpp Frame.cpp Session.cpp Service.cpp \
-	MainServer.cpp User.cpp Channel.cpp Socket.cpp 
+	MainServer.cpp User.cpp Channel.cpp Socket.cpp
 
 OBJ=$(SRC.c=.o)
 NAME=ircserv

@@ -8,7 +8,7 @@ User::User()
 
 User::~User()
 {
-	if (!is_properly_quit)
+	if (IsConnected() && !is_properly_quit)
 	{
 		Frame	*frame;
 		ChannelMap::iterator it;
@@ -17,23 +17,12 @@ User::~User()
 		it = mChannels.begin();
 		for (; it != mChannels.end() ; ++it)
 		{
+			it->second->broadcast(frame->findUser(sNickname), "PART #" + it->second->name());
 			it->second->removeUser(this);
-			it->second->broadcast(frame->findUser(sNickname), "QUIT #" + it->second->name());
 		}
+		mChannels.clear();
+		frame->BroadcastAll(frame->findUser(sNickname), "QUIT :User lost connection");
 		frame->removeUser(sNickname);
-		//call cmdQuit
-		/*
-		ChannelMap::iterator it;
-
-		it = mChannels.begin()
-		for (; it != mChaneels.end() ; ++it)
-		{
-			(*it).removeUser(this);
-			mChaneels.erase(*it);
-		}
-		Mainframe::instance()->removeUser(sNickName);
-		Mainframe::instance()->updateChannels();
-		 */
 	}
 }
 
@@ -260,4 +249,14 @@ std::vector<std::string> User::cmdWhois()
 			res.push_back(nick() + " :" + it->second->name() + " ");
 	}
 	return res;
+}
+
+void	User::SetProperlyQuit(bool state)
+{
+	is_properly_quit = state;
+}
+
+void	User::PartChannel(Channel *ch)
+{
+	mChannels.erase(ch->name());
 }

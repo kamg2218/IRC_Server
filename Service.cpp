@@ -4,10 +4,6 @@
 
 Service::Service()
 {
-	struct rlimit rlp;
-	
-	getrlimit(RLIMIT_NOFILE, &rlp);
-	maxopen = rlp.rlim_cur;
 }
 
 void	Service::do_select(MainServer const& sv)
@@ -64,9 +60,4 @@ void	Service::sendPing(Session *ss)
 	msg += "\r\n";
 	send(ss->soc().sd(), msg.c_str(), msg.length(), 0);
 	ss->setPing(false);
-}
-
-int		Service::getMaxopen() const
-{
-	return (maxopen);
 }

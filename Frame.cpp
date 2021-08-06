@@ -152,7 +152,6 @@ void		Frame::cmdPart(Session *ss, std::vector<std::string> const& sets)
 			ss->Err_403(v[i].substr(1));	//NoSuchChannel
 		else if (ss->user().cmdPart(ss, v[i], sets) == false)
 			ss->Err_442(v[i].substr(1));	//NotOnChannel
-		server.users().erase(ss->soc().sd());
 	}
 }
 
@@ -389,33 +388,29 @@ std::vector<std::vector<std::string> >	Frame::kicklist(std::vector<std::string> 
 
 void	Frame::cmdKick(Session *ss, std::vector<std::string> const& sets)
 {
+	Session									*target;
+	Channel									*channel;
+	std::vector<std::string>				cmd;
 	std::vector<std::vector<std::string> >	cmdsets;
-	std::vector<std::string>	cmd;
-	Session	*target;
-	Channel *channel;
 
 	cmdsets = kicklist(sets);
 	while(cmdsets.size())
 	{
 		cmd = cmdsets[0];
-		if (cmd.size() < 3)
-			ss->Err_461("KICK"); //ERR_NEEDMOREPARAMS
-		else if (cmd[1].find("#") == std::string::npos && cmd[1].find("&") == std::string::npos)
-			ss->Err_461("KICK"); //ERR_NEEDMOREPARAMS
+		if (cmd.size() < 3 || (!CheckChannelname(sets[1])))
+			ss->Err_461("KICK");
 		else if (!doesChannelExists(MakeLower(cmd[1].substr(1))))
-			ss->Err_403(cmd[1].substr(1)); //ERR_NOSUCHCHANNEL
+			ss->Err_403(cmd[1].substr(1));
 		else if (!(ss->user().isMemOfChannel(cmd[1].substr(1))))
-			ss->Err_442(cmd[1].substr(1)); //ERR_NOTONCHANNEL;
+			ss->Err_442(cmd[1].substr(1));
 		else if (!((channel = findChannel(MakeLower(cmd[1].substr(1))))->isOperator(ss->user().nick())))
-			ss->Err_482(cmd[1].substr(1)); //ERR_CHANOPRIVSNEEDED
-		else
+			ss->Err_482(cmd[1].substr(1));
+		else if (doesNicknameExists(cmd[2]))
 		{
-			if (doesNicknameExists(cmd[2]))
-			{
-				target = findUser(cmd[2]);
-				channel->broadcast(ss, vectorToString(cmd));
-				//target->user().cmdPart(ss, cmd[0], cmd[2]);
-			}
+			target = findUser(cmd[2]);
+			channel->broadcast(ss, vectorToString(cmd));
+			target->user().PartChannel(channel);
+			channel->removeUser(&(target->user()));
 		}
 		cmdsets.erase(cmdsets.begin());
 	}
@@ -423,26 +418,24 @@ void	Frame::cmdKick(Session *ss, std::vector<std::string> const& sets)
 
 void	Frame::cmdInvite(Session *ss, std::vector<std::string> const& sets)
 {
-	Channel *channel;
-	Session	*target;
+	Channel						*channel;
+	Session						*target;
 	std::vector<std::string>	joincmd;
 	
-	if (sets.size() < 3)
-		ss->Err_461("INVITE"); // NOT ENOUGH PARAM
-	else if (sets[2].find("#") == std::string::npos && sets[2].find("&") == std::string::npos)
-		ss->Err_461("INVITE"); // NOT ENOUGH PARAM
+	if (sets.size() < 3 || (!CheckChannelname(sets[2])))
+		ss->Err_461("INVITE");
 	else if (!doesChannelExists(sets[2].substr(1)))
-		ss->Err_403(sets[2].substr(1)); //NO SUCH CHANNEL
+		ss->Err_403(sets[2].substr(1));
 	else if (!(ss->user().isMemOfChannel(sets[2].substr(1))))
-		ss->Err_442(sets[2].substr(1)); //ERR_NOTONCHANNEL;
+		ss->Err_442(sets[2].substr(1));
 	else if (!doesNicknameExists(sets[1]))
-		ss->Err_401(sets[1]); //ERR_NOSUCHNICK
+		ss->Err_401(sets[1]);
 	else
 	{
 		target = findUser(sets[1]);
-		channel = findChannel(sets[2].substr(1));
+		channel = findChannel(MakeLower(sets[2].substr(1)));
 		if (target->user().isMemOfChannel(channel->name()))
-			ss->Err_443(sets[1], channel->name()); //ERR_USERONCHANNEL;
+			ss->Err_443(sets[1], channel->name());
 		else
 		{
 			ss->Rep_341(channel->name(), target->user().nick());
@@ -713,6 +706,18 @@ void	Frame::cmdWhois(Session *ss, std::vector<std::string> const& sets)
 			ss->Rep_319(*it2);
 	}
 	ss->Rep_318(sets[1]);
+}
+
+void	Frame::BroadcastAll(Session *ss, std::string const& str)
+{
+	UserMap::iterator	it;
+
+	it = mUsers.begin();
+	for (; it != mUsers.end(); ++it)
+	{
+		if (it->second != ss)
+			ss->replyAsUser(it->second, str);
+	}
 }
 
 void	Frame::printcommand(Session *ss)
