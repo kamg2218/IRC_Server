@@ -4,7 +4,7 @@ SRC=main.cpp Executor.cpp Frame.cpp Session.cpp Service.cpp \
 OBJ=$(SRC.c=.o)
 NAME=ircserv
 CFLAGS = -Wall -Werror -Wextra
-DFLAGS = -fsanitize=address
+DFLAGS = #-fsanitize=address
 
 all : $(NAME)
 
