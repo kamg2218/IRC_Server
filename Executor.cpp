@@ -3,13 +3,30 @@
 #include "include/Frame.hpp"
 #include "include/User.hpp"
 
-void	Executor::insert(std::string& buff, char *str, int r)
+Executor::Executor()
+{
+}
+
+Executor::~Executor()
+{
+}
+
+Executor::Executor(Executor const& ref)
+{
+}
+
+Executor&		Executor::operator=(Executor const& ref)
+{
+	return (*this);
+}
+
+void		Executor::insert(std::string& buff, char *str, int r)
 {
 	for (int i= 0 ; i < r ; i++)
 		buff += str[i];
 }
 
-bool	Executor::gotFullMsg(std::string const& buff) const
+bool		Executor::gotFullMsg(std::string const& buff) const
 
 {
 	std::string::size_type res;
@@ -20,20 +37,20 @@ bool	Executor::gotFullMsg(std::string const& buff) const
 	return (true);
 }
 
-std::string		Executor::getMessage(std::string& buff)
+std::string		Executor::getMessage(std::string const& buff) const
 {
-	std::string res;
+	std::string		res;
 
 	res = buff.substr(0, buff.find("\r\n"));
 	return (res);
 }
 
-void	Executor::reset(std::string& buff)
+void		Executor::reset(std::string& buff)
 {
 	buff.erase(0, buff.find("\r\n") + 2);
 }
 
-int		Executor::msglen(std::string& buff)
+int		Executor::msglen(std::string& buff) const
 {
 	std::string::size_type	res;
 
@@ -43,17 +60,17 @@ int		Executor::msglen(std::string& buff)
 	return (res);
 }
 
-bool	Executor::IsPrefix(std::string const& s)
+bool		Executor::isPrefix(std::string const& s) const
 {
 	if (*(s.begin()) == ':')
 		return (true);
 	return (false);
 }
 
-std::string	Executor::split(std::string& buff, std::vector<std::string> & v)
+std::string		Executor::split(std::string& buff, std::vector<std::string> & v)
 {
-	std::string			prefix;
-	std::string			msgline;
+	std::string		prefix;
+	std::string		msgline;
 	std::string::size_type	pos;
 	std::string::iterator	it;
 	
@@ -65,7 +82,7 @@ std::string	Executor::split(std::string& buff, std::vector<std::string> & v)
 	}
 	if (msgline.size())
 		v.push_back(msgline);
-	if (IsPrefix(v[0]))
+	if (isPrefix(v[0]))
 	{
 		prefix = v[0];
 		v.erase(v.begin());
@@ -76,24 +93,24 @@ std::string	Executor::split(std::string& buff, std::vector<std::string> & v)
 	return (prefix);
 }
 
-bool	Executor::DoesMatchNick(std::string const& prefix, std::string const& sender_nick)
+bool		Executor::doesMatchNick(std::string const& prefix, std::string const& sender_nick) const
 {
-	if (!IsPrefix(prefix))
+	if (!isPrefix(prefix))
 		return (true);
 	if (prefix.substr(1) == sender_nick)
 		return (true);
 	return (false);
 }
 
-void	Executor::execute(std::string& buff, Session* ss)
+void		Executor::execute(std::string& buff, Session* ss)
 {
-	std::string sender_prefix;
+	Frame			*frame;
+	std::string		sender_prefix;
 	std::vector<std::string>	splited_cmd;
-	Frame *frame;
-
+	
 	frame = Frame().instance();
 	sender_prefix = split(buff, splited_cmd);
-	if (!DoesMatchNick(sender_prefix, ss->user().nick()))
+	if (!doesMatchNick(sender_prefix, ss->user().nick()))
 		return ;
 	if (splited_cmd[0] == "NICK")
 		return frame->cmdNick(ss, splited_cmd);

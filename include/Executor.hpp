@@ -9,17 +9,20 @@
 class Executor
 {
 	private:
-		std::string	split(std::string& buff, std::vector<std::string>& v);
-		bool	IsPrefix(std::string const& s);
-		bool	DoesMatchNick(std::string const& prefix, std::string const& sender_nick);
+		Executor(Executor const& ref);
+		Executor&		operator=(Executor const& ref);
+		std::string		split(std::string& buff, std::vector<std::string>& v);
+		bool		isPrefix(std::string const& s) const;
+		bool		doesMatchNick(std::string const& prefix, std::string const& sender_nick) const;
 	public:
-		void	insert(std::string& buff, char *str, int r);
-		bool	gotFullMsg(std::string const& buff) const;
-		int		msglen(std::string& buff);
-		void	reset(std::string& buff);
-		void	execute(std::string& buff, Session* ss);
-
-		std::string		getMessage(std::string& buff);
+		Executor();
+		~Executor();
+		std::string		getMessage(std::string const& buff) const;
+		void		insert(std::string& buff, char *str, int r);
+		bool		gotFullMsg(std::string const& buff) const;
+		int			msglen(std::string& buff) const;
+		void		reset(std::string& buff);
+		void		execute(std::string& buff, Session* ss);
 };
 
 #endif
