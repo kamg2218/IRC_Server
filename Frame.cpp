@@ -182,7 +182,6 @@ void	Frame::cmdJoin(Session *ss, std::vector<std::string> const& sets)
 			continue ;
 		}
 		doJoin(ss, sets, v[i]);
-		printcommand(ss);
 	}
 }
 
