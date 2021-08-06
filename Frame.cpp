@@ -162,6 +162,7 @@ void	Frame::cmdQuit(Session *ss, std::vector<std::string> const& sets)
 	msg = vectorToString(sets);
 	ss->user().cmdQuit(ss, sets, msg);
 	removeUser(ss->user().nick());
+	server.users().erase(ss->soc().sd());
 	ss->replyAsServer(msg);
 }
 
@@ -229,12 +230,7 @@ void	Frame::cmdNick(Session *ss, std::vector<std::string> const& sets)
 		if (it == mUsers.end())
 			return ;
 		for (UserMap::iterator tmp = mUsers.begin(); tmp != mUsers.end(); tmp++)
-		{
-			if (tmp->first == it->first)
-				continue ;
 			ss->replyAsUser(tmp->second, vectorToString(sets));
-		}
-		ss->replyAsServer(vectorToString(sets));
 		mUsers.insert(std::pair<std::string, Session*>(sets[1], it->second));
 		mUsers.erase(it);
 		ss->user().cmdNick(sets);
@@ -298,7 +294,7 @@ void	Frame::cmdTopic(Session *ss, std::vector<std::string> const& sets)
 	it = mChannels.find(MakeLower(sets[1].substr(1)));
 	if (it == mChannels.end())
 		return ss->Err_442(sets[1].substr(1));	//NotOnChannel
-	if (sets.size() == 2)
+	if (sets.size() == 2 || sets[2][0] != ':')
 	{
 		if (it->second->topic() == "")
 			return ss->Rep_331(it->first);	//NoTopic
@@ -522,7 +518,6 @@ std::string Frame::vectorToStringpriv(std::vector<std::string> const& sets)
 	/*
     std::string res;
 	int check = 0;
-
 	if (sets[2][0] != ':')
 		check = 1;
     for (int i = 0; i < sets.size() - 1; i++)
@@ -740,4 +735,9 @@ void	Frame::printcommand(Session *ss)
 	ss->replyAsServer(res + "LIST [<channel>[,<channel>]]");
 	ss->replyAsServer(res + "INVITE <nick> <channel>");
 	ss->replyAsServer(res + "KICK <channel> <user> [<comment>]");
+}
+
+void	Frame::cmdPong(Session *ss)
+{
+	ss->setPing(true);
 }
