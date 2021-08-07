@@ -394,7 +394,7 @@ std::vector<std::vector<std::string> >		Frame::kicklist(std::vector<std::string>
 
 	chlist = split_comma(sets[1]);
 	tgtlist = split_comma(sets[2]);
-	for (std::vector<std::string>::sizey_type i = 3 ; i < sets.size() ; i++)
+	for (std::vector<std::string>::size_type i = 3 ; i < sets.size() ; i++)
 	{
 		if (i == 3 && sets[i][0] != ':')
 			break ;
