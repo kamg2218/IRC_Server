@@ -643,7 +643,7 @@ void		Frame::cmdPrivmsg(Session *ss, std::vector<std::string> const& sets)
                 return ss->err401(*receiverit);       // errNOSUCHNICK
 			for (tmp = receiverit + 1; tmp != receivers.end(); tmp++)
             {
-                if (*(tmp - 1) == *tmp || ss->user().nick() == *(tmp - 1))
+                if (*(tmp - 1) == *tmp)
                     return ss->err407(*tmp);       // errTOOMANYTARGETS
             }
         }
@@ -657,7 +657,7 @@ void		Frame::cmdPrivmsg(Session *ss, std::vector<std::string> const& sets)
 			Channel *channel;
 
 			channel = findChannel(makeLower(receiver.substr(1)));
-            channel->broadcast(ss, vectorToStringpriv(sets));
+            channel->privmsgBroadcast(ss, vectorToStringpriv(sets));
         }
         else
         {
