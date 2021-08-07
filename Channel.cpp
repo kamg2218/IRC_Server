@@ -54,11 +54,6 @@ void		Channel::privmsgBroadcast(Session *ss, std::string const& message)
 	}
 }
 
-std::string		Channel::password() const
-{
-	return _sPassword;
-}
-
 std::string		Channel::topic() const
 {
 	return _sTopic;
