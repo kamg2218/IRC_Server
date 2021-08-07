@@ -15,7 +15,6 @@ class Channel
 		const std::string	sName;
 		std::string 		sTopic;
 		std::string			sPassword;
-		bool				bPassword;
 		Usermap 			mUsers;
 		Usermap				mOperators;
 	public:
