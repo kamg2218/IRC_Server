@@ -238,8 +238,7 @@ void			User::cmdQuit(Session *ss, std::string const& msg)
 	for (it = _mChannels.begin(); it != _mChannels.end(); it++)
 	{
 		it->second->removeUser(this);
-		it->second->broadcast(ss, msg);
-	}
+		it->second->broadcast(ss, msg);  -> part : PART #hi 	}
 	_mChannels.clear();
 }
 
