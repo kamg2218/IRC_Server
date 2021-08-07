@@ -106,8 +106,6 @@ void		Session::Rep_311(Session *ss)
 	msg += " ";
 	msg += ss->user().nick();
 	msg += " ";
-	msg += ss->user().nick();
-	msg += " ";
 	msg += ss->user().user();
 	msg += " ";
 	msg += ss->user().host();

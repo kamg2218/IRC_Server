@@ -182,7 +182,9 @@ void		Frame::cmdQuit(Session *ss, std::vector<std::string> const& sets)
 	ss->user().cmdQuit(ss, sets, msg);
 	removeUser(ss->user().nick());
 	_server.users().erase(ss->soc().sd());
-	ss->replyAsServer(msg);
+	broadcastAll(ss, vectorToString(sets));
+
+	//ss->replyAsServer(msg);
 }
 
 void		Frame::cmdJoin(Session *ss, std::vector<std::string> const& sets)
