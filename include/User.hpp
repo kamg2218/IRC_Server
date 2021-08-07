@@ -50,7 +50,7 @@ class User
 		bool		checkNick(void) const;
 		bool		checkUser(void) const;
 		bool		checkManager(void) const;
-		bool		isConnected(void) const;
+		bool		isRegistered(void) const;
 		bool		isMemOfChannel(std::string const& chname) const;
 		std::string		name(void) const;
 		std::string		nick(void) const;

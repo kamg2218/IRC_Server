@@ -1,13 +1,12 @@
-#include <cctype>
 #include "include/Executor.hpp"
 #include "include/Frame.hpp"
-#include "include/User.hpp"
+#include "include/Session.hpp"
 
-Executor::Executor()
+Executor::Executor(void)
 {
 }
 
-Executor::~Executor()
+Executor::~Executor(void)
 {
 }
 
@@ -17,54 +16,48 @@ Executor::Executor(Executor const& ref)
 
 Executor&		Executor::operator=(Executor const& ref)
 {
-	return (*this);
-}
-
-void		Executor::insert(std::string& buff, char *str, int r)
-{
-	for (int i= 0 ; i < r ; i++)
-		buff += str[i];
+	return *this;
 }
 
 bool		Executor::gotFullMsg(std::string const& buff) const
 
 {
-	std::string::size_type res;
+	std::string::size_type		res;
 
-	res = buff.find("\r\n");
+	res = buff.find(DELI);
 	if (res == std::string::npos)
-		return (false);
-	return (true);
+		return false;
+	return true;
 }
 
 std::string		Executor::getMessage(std::string const& buff) const
 {
 	std::string		res;
 
-	res = buff.substr(0, buff.find("\r\n"));
-	return (res);
+	res = buff.substr(0, buff.find(DELI));
+	return res;
 }
 
 void		Executor::reset(std::string& buff)
 {
-	buff.erase(0, buff.find("\r\n") + 2);
+	buff.erase(0, buff.find(DELI) + 2);
 }
 
 int		Executor::msglen(std::string& buff) const
 {
-	std::string::size_type	res;
+	std::string::size_type		res;
 
-	res = buff.find("\r\n");
+	res = buff.find(DELI);
 	if (res == std::string::npos)
-		return (0);
-	return (res);
+		return 0;
+	return res;
 }
 
 bool		Executor::isPrefix(std::string const& s) const
 {
 	if (*(s.begin()) == ':')
-		return (true);
-	return (false);
+		return true;
+	return false;
 }
 
 std::string		Executor::split(std::string& buff, std::vector<std::string> & v)
@@ -90,16 +83,16 @@ std::string		Executor::split(std::string& buff, std::vector<std::string> & v)
 	it = v[0].begin();
 	for (; it != v[0].end() ; ++it)
 		(*it) = toupper(*it);
-	return (prefix);
+	return prefix;
 }
 
 bool		Executor::doesMatchNick(std::string const& prefix, std::string const& sender_nick) const
 {
 	if (!isPrefix(prefix))
-		return (true);
+		return true;
 	if (prefix.substr(1) == sender_nick)
-		return (true);
-	return (false);
+		return true;
+	return false;
 }
 
 void		Executor::execute(std::string& buff, Session* ss)
@@ -118,8 +111,8 @@ void		Executor::execute(std::string& buff, Session* ss)
 		return frame->cmdUser(ss, splited_cmd);
 	else if (splited_cmd[0] == "PASS")
 		return frame->cmdPass(ss, splited_cmd);
-	if (!(ss->user().isConnected()))
-		ss->Err_451();
+	if (!(ss->user().isRegistered()))
+		ss->err451();
 	else if (splited_cmd[0] == "PRIVMSG")
 		frame->cmdPrivmsg(ss, splited_cmd);
 	else if (splited_cmd[0] == "QUIT")
@@ -145,5 +138,5 @@ void		Executor::execute(std::string& buff, Session* ss)
 	else if (splited_cmd[0] == "PONG")
 		frame->cmdPong(ss);
 	else
-		ss->Err_421(splited_cmd[0]);
+		ss->err421(splited_cmd[0]);
 }

@@ -62,7 +62,7 @@ void		Service::doService(MainServer & sv)
 		if (FD_ISSET(temp->first, &_fdRead))
 			sv.handleRead(temp);
 		else
-			;//sendPing(temp->second);
+			sendPing(temp->second);
 	}
 }
 

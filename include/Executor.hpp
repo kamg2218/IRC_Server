@@ -4,7 +4,9 @@
 #include <string>
 #include <vector>
 #include <map>
-#include "User.hpp"
+class Session;
+
+# define DELI "\r\n"
 
 class Executor
 {
@@ -15,10 +17,9 @@ class Executor
 		bool		isPrefix(std::string const& s) const;
 		bool		doesMatchNick(std::string const& prefix, std::string const& sender_nick) const;
 	public:
-		Executor();
-		~Executor();
+		Executor(void);
+		~Executor(void);
 		std::string		getMessage(std::string const& buff) const;
-		void		insert(std::string& buff, char *str, int r);
 		bool		gotFullMsg(std::string const& buff) const;
 		int			msglen(std::string& buff) const;
 		void		reset(std::string& buff);
