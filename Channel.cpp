@@ -85,6 +85,15 @@ void	Channel::cmdNick(std::string const& name, std::string const& nick)
 	}
 }
 
+void	Channel::cmdTopic(std::string const& topic, std::string const& msg)
+{
+	Usermap::iterator	it;
+
+	setTopic(topic);
+	for (it = mUsers.begin(); it != mUsers.end(); it++)
+		broadcast(it->second, msg);
+}
+
 void	Channel::cmdJoin(Session *ss)
 {
 	std::string	str;
