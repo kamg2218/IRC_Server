@@ -394,13 +394,13 @@ std::vector<std::vector<std::string> >		Frame::kicklist(std::vector<std::string>
 
 	chlist = split_comma(sets[1]);
 	tgtlist = split_comma(sets[2]);
-	for (int i = 3 ; i < sets.size() ; i++)
+	for (std::vector<std::string>::sizey_type i = 3 ; i < sets.size() ; i++)
 	{
 		if (i == 3 && sets[i][0] != ':')
 			break ;
 		message += sets[i];
 	}
-	for (int i = 0 ; i < chlist.size() || i < tgtlist.size() ; i++)
+	for (std::vector<std::string>::size_type i = 0 ; i < chlist.size() || i < tgtlist.size() ; i++)
 	{
 		subres.push_back("KICK");
 		if (chlist.size() == 1)

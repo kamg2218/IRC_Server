@@ -12,10 +12,12 @@ Executor::~Executor(void)
 
 Executor::Executor(Executor const& ref)
 {
+	(void)ref;
 }
 
 Executor&		Executor::operator=(Executor const& ref)
 {
+	(void)ref;
 	return *this;
 }
 
