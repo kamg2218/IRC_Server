@@ -52,20 +52,31 @@ void		Service::doService(MainServer & sv)
 	std::map<int, Session*>::iterator	it;
 	std::map<int, Session*>::iterator	temp;
 
-	if (_res <= 0)
+	if (_res < 0)
 		return ;
-	if (FD_ISSET(sv.socket(), &_fdRead))
-		sv.handleAccept(this);
-	for (it = sv.users().begin(); it != sv.users().end() ; )
+	else if (_res == 0)
 	{
-		temp = it++;
-		if (FD_ISSET(temp->first, &_fdRead))
+		for (it = sv.users().begin(); it != sv.users().end() ;)
 		{
-			sv.handleRead(temp);
-			temp->second->setPing(true);
-		}
-		else
+			temp = it++;
 			sendPing(temp->second);
+		}
+	}
+	else
+	{
+		for (it = sv.users().begin(); it != sv.users().end() ; )
+		{
+			temp = it++;
+			if (FD_ISSET(temp->first, &_fdRead))
+			{
+				temp->second->setPing(true);
+				sv.handleRead(temp);
+			}
+			else
+				sendPing(temp->second);
+		}
+		if (FD_ISSET(sv.socket(), &_fdRead))
+			sv.handleAccept(this);
 	}
 }
 
@@ -88,6 +99,7 @@ void		Service::sendPing(Session *ss)
 	msg += ss->user().nick();
 	msg += "\r\n";
 	send(ss->soc().sd(), msg.c_str(), msg.length(), 0);
+	std::cout << "send ping\n";
 	ss->setPing(false);
 }
 
