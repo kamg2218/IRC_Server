@@ -32,7 +32,7 @@ User&	User::operator=(User const& other)
 
 User::~User(void)
 {
-	if (isConnected() && !_isProperlyQuit)
+	if (isRegistered() && !_isProperlyQuit)
 	{
 		Frame	*frame;
 		ChannelMap::iterator it;
@@ -102,7 +102,7 @@ const ChannelMap&	User::channel(void) const
 
 std::string		User::msgHeader(void) const
 {
-	return std::string(":" + _sNickname + "!" + _sUsername + "@" + _sHostname+ " ");
+	return std::string(_sNickname + "!" + _sUsername + "@" + _sHostname);
 }
 
 bool			User::checkNick(void) const
@@ -117,7 +117,7 @@ bool			User::checkUser(void) const
 /*
    * Check both Nick and User
  */
-bool			User::isConnected(void) const
+bool			User::isRegistered(void) const
 {
 	if (checkNick() && checkUser())
 		return true;

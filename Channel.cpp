@@ -91,9 +91,9 @@ void	Channel::cmdJoin(Session *ss)
 	Usermap::iterator	it;
 
 	if (topic() == "")
-		ss->Rep_331(name());
+		ss->rep331(name());
 	else
-		ss->Rep_332(name(), topic());
+		ss->rep332(name(), topic());
 	it = mUsers.begin();
 	if (it != mUsers.end())
 	{
@@ -111,8 +111,8 @@ void	Channel::cmdJoin(Session *ss)
 		str += it->first;
 	}
 	if (str != "")
-		ss->Rep_353(name(), str);
-	ss->Rep_366(name());
+		ss->rep353(name(), str);
+	ss->rep366(name());
 }
 
 bool			Channel::isOperator(std::string const& nick) const
