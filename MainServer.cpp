@@ -62,7 +62,7 @@ void	MainServer::handleAccept(Service* p)
 	mSessions.insert(std::pair<int, Session*>(cs, se));
 }
 
-void		MainServer::handleDecline(std::map<int, Session*>::iterator& pos)
+void		MainServer::handleDecline(std::map<int, Session*>::iterator const& pos)
 {
 	Session* temp;
 

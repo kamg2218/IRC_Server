@@ -188,7 +188,7 @@ void		Frame::cmdQuit(Session *ss, std::vector<std::string> const& sets)
 	std::string	msg;
 
 	msg = vectorToString(sets);
-	ss->user().cmdQuit(ss, msg);
+	ss->user().cmdQuit(ss, sets, msg);
 	removeUser(ss->user().nick());
 	_server.users().erase(ss->soc().sd());
 	ss->replyAsServer(msg);
@@ -338,8 +338,7 @@ void		Frame::cmdTopic(Session *ss, std::vector<std::string> const& sets)
 			str += " " + sets[i];
 		if (it->second->isOperator(ss->user().nick()) == false)
 			return ss->err482(it->first);		//ChanOprivsNeeded
-		it->second->setTopic(str);
-		return ss->rep332(it->first, str);		//Topic
+		it->second->cmdTopic(str, vectorToString(sets));
 	}
 }
 
