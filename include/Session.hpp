@@ -39,7 +39,7 @@ class Session
 		User&		user(void);
 		void		setPing(bool p);
 		bool		ping() const;
-		bool		handleRead(std::map<int, Session*> & ms, int fd);
+		bool		handleRead(void);
 		void		streamAppend(char *str, int r);
 		void		replyAsServer(std::string const& str);
 		void		replyAsUser(Session *target, std::string const& str);
