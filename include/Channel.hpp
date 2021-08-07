@@ -12,7 +12,6 @@ class Channel
 	private:
 		const std::string		_sName;
 		std::string		_sTopic;
-		std::string		_sPassword;
 		Usermap		_mUsers;
 		Usermap		_mOperators;
 	public:
