@@ -11,7 +11,7 @@ Service::Service(Service const& other)
 	*this = other;
 }
 
-Service&	Service::operator=(Service const& other)
+Service&		Service::operator=(Service const& other)
 {
 	if (this == &other)
 		return *this;
@@ -27,7 +27,7 @@ Service::~Service(void)
 {
 }
 
-void	Service::doSelect(MainServer const& sv)
+void		Service::doSelect(MainServer const& sv)
 {
 	_res = 0;
 	FD_ZERO(&_fdRead);
@@ -45,7 +45,7 @@ void	Service::doSelect(MainServer const& sv)
 		throw selectException();
 }
 
-void	Service::doService(MainServer & sv)
+void		Service::doService(MainServer & sv)
 {
 	if (_res <= 0)
 		return ;
@@ -61,7 +61,10 @@ void	Service::doService(MainServer & sv)
 	}
 }
 
-void	Service::sendPing(Session *ss)
+/*
+   * When there is no data, send Ping Message
+ */
+void		Service::sendPing(Session *ss)
 {
 	std::string	msg;
 	std::vector<std::string>	v;
@@ -80,7 +83,7 @@ void	Service::sendPing(Session *ss)
 	ss->setPing(false);
 }
 
-const char*	Service::selectException::what(void) const throw()
+const char*		Service::selectException::what(void) const throw()
 {
 	return "Select Error\n";
 }

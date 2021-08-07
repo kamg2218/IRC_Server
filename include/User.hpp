@@ -35,9 +35,9 @@ class User
 		void		cmdNick(std::vector<std::string> const& sets);
 		bool		cmdUser(std::vector<std::string> const& sets);
 		void		cmdJoin(Channel* ch);
-		void		optionJoin(Session *ss, std::vector<std::string> const& sets, std::string const& msg);
+		void		optionJoin(Session *ss, std::string const& msg);
 		bool		cmdPart(Session *ss, std::string const& chname, std::vector<std::string> const& sets);
-		void		cmdQuit(Session *ss, std::vector<std::string> const& sets, std::string const& msg);
+		void		cmdQuit(Session *ss, std::string const& msg);
 		void		cmdOper(void);
 		void		setPass(bool pass);
 		void		partChannel(Channel *ch);
