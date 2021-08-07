@@ -235,7 +235,6 @@ void		Frame::doJoin(Session *ss, std::vector<std::string> const& sets, std::stri
 	ch->broadcast(ss, msg);
 	ss->user().cmdJoin(ch);
 	ch->cmdJoin(ss);
-	printcommand(ss);
 }
 
 void		Frame::cmdNick(Session *ss, std::vector<std::string> const& sets)
@@ -278,7 +277,8 @@ void		Frame::cmdUser(Session *ss, std::vector<std::string> const& sets)
 	else if (addUser(ss) == false)
 		return ss->err462();			//AlreadyRegistered
 	ss->user().setHost(inet_ntoa(ss->soc().sin().sin_addr));
-	return ss->rep001(&(ss->user()));	//Success
+	ss->rep001(&(ss->user()));	//Success
+	printCommand(ss);
 }
 
 void		Frame::cmdPass(Session *ss, std::vector<std::string> const& sets)
@@ -533,7 +533,7 @@ std::vector<std::string>		Frame::getMask(std::string const& str)
 std::string		Frame::vectorToString(std::vector<std::string> const& sets)
 {
     std::string res;
-    int i = 0;
+	std::vector<std::string>::size_type i = 0;
 
     while (i < sets.size() - 1)
     {
@@ -548,7 +548,7 @@ std::string		Frame::vectorToStringpriv(std::vector<std::string> const& sets)
 {
     std::string res;
 
-    for (int i = 0; i < sets.size(); i++)
+    for (std::vector<std::string>::size_type i = 0; i < sets.size(); i++)
     {
 		if (i == 2 && sets[2][0] != ':')
 			res += ":";
@@ -579,7 +579,7 @@ void		Frame::cmdWho(Session *ss, std::vector<std::string> const& sets)
 			v = getMask(sets[1].substr(1));
 		else
 			v = getMask(sets[1]);
-		for (int i = 0; i < v.size(); i++)
+		for (std::vector<std::string>::size_type i = 0; i < v.size(); i++)
 		{
 			if (doesChannelExists(v[i]))	// channel
 			{
@@ -617,33 +617,22 @@ void		Frame::cmdPrivmsg(Session *ss, std::vector<std::string> const& sets)
     std::string receiver;
 
 	if (sets.size() == 1)
-        return (ss->err411(sets[0]));   // errNORECIPIENT
+        return ss->err411(sets[0]);   // errNORECIPIENT
 	if (sets.size() != 3)
 	{
-		std::cout << "size > 3\n";
-		std::cout << "sets[1][0] : " << sets[1][0] << std::endl;
-		std::cout << "sets[2][0] : " << sets[2][0] << std::endl;
-		std::cout << "sets[2] : " << sets[2] << std::endl;
 		if (sets[1][0] == ':')
-		{
-			std::cout << "come!!!\n";
         	return ss->err411(sets[0]);   // errNORECIPIENT
-		}
 		if (sets[2][0] != ':')
-		{
-			std::cout << "come!!!\n";
         	return ss->err412();   // errNOTEXTTOSEND
-		}
 	}
-    // receiver에 콤마로 split해서 저장하기
+    // split receivers
     receivers = split_comma(sets[1]);
-    std::vector<std::string>::iterator receiverit = receivers.begin();
-    std::vector<std::string>::iterator tmp;
+    std::vector<std::string>::iterator		receiverit = receivers.begin();
+    std::vector<std::string>::iterator		tmp;
     
-    // 메세지 전까지 확인하기
+    // check receivers
     while (receiverit != receivers.end())
     {
-        //if (sets[1][0] == '#')  // channel
         if (checkChannelname(*receiverit))
 		{
             if (!doesChannelExists(makeLower((*receiverit).substr(1))))
@@ -655,7 +644,7 @@ void		Frame::cmdPrivmsg(Session *ss, std::vector<std::string> const& sets)
                 return ss->err401(*receiverit);       // errNOSUCHNICK
 			for (tmp = receiverit + 1; tmp != receivers.end(); tmp++)
             {
-                if (*(tmp - 1) == *tmp)
+                if (*(tmp - 1) == *tmp || ss->user().nick() == *(tmp - 1))
                     return ss->err407(*tmp);       // errTOOMANYTARGETS
             }
         }
@@ -667,12 +656,14 @@ void		Frame::cmdPrivmsg(Session *ss, std::vector<std::string> const& sets)
         if (receiver[0] == '#')
         {
 			Channel *channel;
+
 			channel = findChannel(makeLower(receiver.substr(1)));
             channel->broadcast(ss, vectorToStringpriv(sets));
         }
         else
         {
 			Session *session;
+
 			session = findUser(receiver);
 			ss->replyAsUser(session, vectorToStringpriv(sets));
         }
@@ -681,17 +672,17 @@ void		Frame::cmdPrivmsg(Session *ss, std::vector<std::string> const& sets)
 
 void		Frame::cmdWhois(Session *ss, std::vector<std::string> const& sets)
 {
-	std::vector<std::string>::iterator it;
-	std::vector<std::string>::iterator it2;
-	std::vector<std::string> v;
-	Usermap::iterator itu;
-	std::string res;
-	std::vector<std::string> resline;
+	std::vector<std::string>::iterator		it;
+	std::vector<std::string>::iterator		it2;
+	std::vector<std::string>		v;
+	Usermap::iterator		itu;
+	std::string		res;
+	std::vector<std::string>		resline;
 
 	if (sets.size() == 1)
 		return ss->err431();
 	v = split_comma(sets[1]);
-	for (int i = 0; i < v.size(); i++)
+	for (std::vector<std::string>::size_type i = 0; i < v.size(); i++)
 	{
 		if (!doesNicknameExists(v[i]))
 		{
@@ -707,7 +698,7 @@ void		Frame::cmdWhois(Session *ss, std::vector<std::string> const& sets)
 		ss->rep311(session);
 		if (session->user().checkManager())
 			ss->rep313(session);
-		resline = session->user().User::cmdWhois();	// check!
+		resline = session->user().User::cmdWhois();
 		for (it2 = resline.begin(); it2 != resline.end(); it2++)
 			ss->rep319(*it2);
 	}
@@ -726,7 +717,7 @@ void		Frame::broadcastAll(Session *ss, std::string const& str)
 	}
 }
 
-void		Frame::printcommand(Session *ss)
+void		Frame::printCommand(Session *ss)
 {
 	std::string res;
 
@@ -734,13 +725,23 @@ void		Frame::printcommand(Session *ss)
 	res += ss->user().nick();
 	res += " :";
 	ss->replyAsServer(res + "<Command>");
+	ss->replyAsServer(res + "WHO <nick> [o]");
+	ss->replyAsServer(res + "WHOIS <nickmask>[,<nickmask>]");
+	ss->replyAsServer(res + "PRIVMSG <receiver>[,<receiver>] <text to be send>");
+
 	ss->replyAsServer(res + "JOIN <channel>[,<channel>] [<key>[,<key>]");
 	ss->replyAsServer(res + "PART <channel>[,<channel>]");
 	ss->replyAsServer(res + "TOPIC <channel> [<topic>]");
-	//ss->replyAsServer("NAMES");
 	ss->replyAsServer(res + "LIST [<channel>[,<channel>]]");
 	ss->replyAsServer(res + "INVITE <nick> <channel>");
 	ss->replyAsServer(res + "KICK <channel> <user> [<comment>]");
+
+	ss->replyAsServer(res + "NICK <nick>");
+	ss->replyAsServer(res + "USER <user> <host> <server> <real>");
+	ss->replyAsServer(res + "PASS <password>");
+	ss->replyAsServer(res + "OPER <user> <password>");
+	ss->replyAsServer(res + "QUIT <Quit message>");
+
 }
 
 void	Frame::cmdPong(Session *ss)

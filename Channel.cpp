@@ -2,10 +2,10 @@
 #include "include/Session.hpp"
 
 Channel::Channel(Session *creator, std::string const& name, std::string const& topic)
-	: sName(name), sTopic(topic)
+	: _sName(name), _sTopic(topic)
 {
-	mUsers[creator->user().nick()] = creator;
-	mOperators[creator->user().nick()] = creator;
+	_mUsers[creator->user().nick()] = creator;
+	_mOperators[creator->user().nick()] = creator;
 }
 
 Channel::~Channel()
@@ -14,39 +14,39 @@ Channel::~Channel()
 
 void		Channel::addUser(Session *user)
 {
-	mUsers[user->user().nick()] = user;
+	_mUsers[user->user().nick()] = user;
 }
 
 void		Channel::removeUser(User *user)
 {
-	mUsers.erase(mUsers.find(user->nick()));
+	_mUsers.erase(_mUsers.find(user->nick()));
 }
 
 bool		Channel::hasUser(User *user)
 {
-	Usermap::iterator it;
+	Usermap::iterator		it;
 
-	it = mUsers.find(user->nick());
-	if (it == mUsers.end())
-		return (false);
-	return (true);
+	it = _mUsers.find(user->nick());
+	if (it == _mUsers.end())
+		return false;
+	return true;
 }
 
 void		Channel::broadcast(Session *ss, std::string const& message)
 {
-	Usermap::iterator it;
+	Usermap::iterator		it;
 
-	it = mUsers.begin();
-	for (; it != mUsers.end() ; ++it)
+	it = _mUsers.begin();
+	for (; it != _mUsers.end() ; ++it)
 		ss->replyAsUser(it->second, message);
 }
 
 void		Channel::privmsgBroadcast(Session *ss, std::string const& message)
 {
-	Usermap::iterator it;
+	Usermap::iterator		it;
 
-	it = mUsers.begin();
-	for (; it != mUsers.end() ; ++it)
+	it = _mUsers.begin();
+	for (; it != _mUsers.end() ; ++it)
 	{
 		if (ss->user().nick() == it->first)
 			continue ;
@@ -54,59 +54,71 @@ void		Channel::privmsgBroadcast(Session *ss, std::string const& message)
 	}
 }
 
-std::string		Channel::password() const { return sPassword; }
-
-std::string		Channel::topic() const { return sTopic; }
-
-std::string		Channel::name() const { return sName; }
-
-int				Channel::userCount() const { return mUsers.size(); }
-
-bool			Channel::hasPass() const
+std::string		Channel::password() const
 {
-	return (false);
+	return _sPassword;
 }
 
-void	Channel::cmdNick(std::string const& name, std::string const& nick)
+std::string		Channel::topic() const
+{
+	return _sTopic;
+}
+
+std::string		Channel::name() const
+{
+	return _sName;
+}
+
+int		Channel::userCount() const 
+{
+	return _mUsers.size();
+}
+
+bool		Channel::hasPass() const
+{
+	return false;
+}
+
+void		Channel::cmdNick(std::string const& name, std::string const& nick)
 {
 	Usermap::iterator	it;
 
-	it = mUsers.find(name);
-	if (it != mUsers.end())
+	it = _mUsers.find(name);
+	if (it != _mUsers.end())
 	{
-		mUsers.insert(std::pair<std::string, Session*>(nick, it->second));
-		mUsers.erase(it);
+		_mUsers.insert(std::pair<std::string, Session*>(nick, it->second));
+		_mUsers.erase(it);
 	}
-	it = mOperators.find(name);
-	if (it != mOperators.end())
+	it = _mOperators.find(name);
+	if (it != _mOperators.end())
 	{
-		mOperators.insert(std::pair<std::string, Session*>(nick, it->second));
-		mOperators.erase(it);
+		_mOperators.insert(std::pair<std::string, Session*>(nick, it->second));
+		_mOperators.erase(it);
 	}
 }
 
-void	Channel::cmdJoin(Session *ss)
+void		Channel::cmdJoin(Session *ss)
 {
-	std::string	str;
-	Usermap::iterator	it;
+	std::string		str;
+	Usermap::iterator		it;
 
 	if (topic() == "")
 		ss->rep331(name());
 	else
 		ss->rep332(name(), topic());
-	it = mUsers.begin();
-	if (it != mUsers.end())
+	it = _mUsers.begin();
+	if (it != _mUsers.end())
 	{
-		if (mOperators.find(it->first) != mOperators.end())
+		if (_mOperators.find(it->first) != _mOperators.end())
 			str = "@" + it->first;
 		else
 			str = it->first;
 		it++;
 	}
-	for (; it != mUsers.end(); it++)
+	for (; it != _mUsers.end(); it++)
 	{
 		str += " ";
-		if (mOperators.find(it->first) != mOperators.end())
+		if (_mOperators.find(it->first) != _mOperators.end())
 			str += "@";
 		str += it->first;
 	}
@@ -115,43 +127,46 @@ void	Channel::cmdJoin(Session *ss)
 	ss->rep366(name());
 }
 
-bool			Channel::isOperator(std::string const& nick) const
+bool		Channel::isOperator(std::string const& nick) const
 {
-	Usermap::const_iterator	res;
+	Usermap::const_iterator		res;
 
-	res = mOperators.find(nick);
-	if (res == mOperators.end())
-		return (false);
-	return (true);
+	res = _mOperators.find(nick);
+	if (res == _mOperators.end())
+		return false;
+	return true;
 }
-void	Channel::setTopic(std::string const topic)
+void		Channel::setTopic(std::string const topic)
 {
-	sTopic = topic;
+	_sTopic = topic;
 }
 
-std::vector<std::string> Channel::channelVector()
+std::vector<std::string>		Channel::channelVector()
 {
-	Usermap::iterator it;
-	std::vector<std::string> res;
+	Usermap::iterator		it;
+	std::vector<std::string>		res;
 	std::string servername = "ft_irc";
 
-	for (it = mUsers.begin(); it != mUsers.end(); ++it)
+	for (it = _mUsers.begin(); it != _mUsers.end(); ++it)
 	{
-		res.push_back("#" + name() + " " + it->second->user().user() + " " + it->second->user().host() + " " + servername + " " + it->second->user().nick() + " H :0 " + it->second->user().name());
+		if (isOperator(it->second->user().nick()))
+			res.push_back("#" + name() + " " + it->second->user().user() + " " + it->second->user().host() + " " + servername + " " + it->second->user().nick() + " H @ : 0 " + it->second->user().name());
+		else
+			res.push_back("#" + name() + " " + it->second->user().user() + " " + it->second->user().host() + " " + servername + " " + it->second->user().nick() + " H : 0 " + it->second->user().name());
 	}
-	return (res);
+	return res;
 }
 
-std::vector<std::string> Channel::channeloperVector()
+std::vector<std::string>		Channel::channeloperVector()
 {
-	Usermap::iterator it;
-	std::vector<std::string> res;
-	std::string servername = "ft_irc";
+	Usermap::iterator		it;
+	std::vector<std::string>		res;
+	std::string		servername = "ft_irc";
 
-	for (it = mOperators.begin(); it != mOperators.end(); ++it)
+	for (it = _mOperators.begin(); it != _mOperators.end(); ++it)
 	{
-		res.push_back("#" + name() + " " + it->second->user().user() + " " + it->second->user().host() + " " + servername + " " + it->second->user().nick() + " H :0 " + it->second->user().name());
+		res.push_back("#" + name() + " " + it->second->user().user() + " " + it->second->user().host() + " " + servername + " " + it->second->user().nick() + " H @ : 0 " + it->second->user().name());
 
 	}
-	return (res);
+	return res;
 }
