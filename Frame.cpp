@@ -118,7 +118,9 @@ Session*	Frame::findUser(std::string const& name)
 
 bool		Frame::checkNickname(std::string const& name)
 {
-	for (int i = 0; i < name.size(); i++)
+	std::string::size_type	i;
+
+	for (i = 0; i < name.size(); i++)
 	{
 		if (name.size() > 9)
 			return false;
@@ -132,7 +134,9 @@ bool		Frame::checkNickname(std::string const& name)
 
 bool		Frame::checkChannelname(std::string const& name)
 {
-	for (int i = 0; i < name.size(); i++)
+	std::string::size_type	i;
+
+	for (i = 0; i < name.size(); i++)
 	{
 		if (i == 0 && name[0] != '#' && name[0] != '!' && name[0] != '&' && name[0] != '+')
 			return false;
@@ -146,24 +150,29 @@ bool		Frame::checkChannelname(std::string const& name)
 	return true;
 }
 
+/*
+   * Change Upper characters to Lower
+*/
 std::string		Frame::makeLower(std::string const& str)
 {
 	std::string	low;
+	std::string::size_type	i;
 
 	low = "";
-	for (int i = 0; i < str.size(); i++)
+	for (i = 0; i < str.size(); i++)
 		low += std::tolower((char)str[i]);
 	return low;
 }
 
 void		Frame::cmdPart(Session *ss, std::vector<std::string> const& sets)
 {
+	std::string::size_type		i;
 	std::vector<std::string>	v;
 
 	if (sets.size() < 2)
 		return ss->Err_461("PART");	//NeedMoreParams
 	v = split_comma(sets[1]);
-	for (int i = 0; i < v.size(); i++)
+	for (i = 0; i < v.size(); i++)
 	{
 		if (checkChannelname(v[i]) == false)
 			ss->Err_461("PART");	//NeedMoreParams
@@ -179,7 +188,7 @@ void		Frame::cmdQuit(Session *ss, std::vector<std::string> const& sets)
 	std::string	msg;
 
 	msg = vectorToString(sets);
-	ss->user().cmdQuit(ss, sets, msg);
+	ss->user().cmdQuit(ss, msg);
 	removeUser(ss->user().nick());
 	_server.users().erase(ss->soc().sd());
 	ss->replyAsServer(msg);
@@ -187,33 +196,33 @@ void		Frame::cmdQuit(Session *ss, std::vector<std::string> const& sets)
 
 void		Frame::cmdJoin(Session *ss, std::vector<std::string> const& sets)
 {
+	std::string::size_type		i;
 	std::vector<std::string>	v;
 
 	if (sets.size() < 2)
 		return ss->Err_461("JOIN");	//NeedMoreParams
 	else if (sets.size() == 2 && sets[1] == "O")
-		return ss->user().optionJoin(ss, sets, vectorToString(sets));
+		return ss->user().optionJoin(ss, vectorToString(sets));
 	v = split_comma(sets[1]);
-	for (int i = 0; i < v.size(); i++)
+	for (i = 0; i < v.size(); i++)
 	{
 		if (!(checkChannelname(v[i])))
-		{
 			ss->Err_461("JOIN");	//NeedMoreParams
-			continue ;
-		}
-		doJoin(ss, sets, v[i]);
+		else
+			doJoin(ss, sets, v[i]);
 	}
 }
 
 void		Frame::doJoin(Session *ss, std::vector<std::string> const& sets, std::string const& chname)
 {
+	std::string::size_type		i;
 	std::vector<std::string>	v;
 	std::string					msg;
 	Channel*					ch;
 
 	msg = sets[0];
 	msg += " " + chname;
-	for (int i = 2; i < sets.size(); i++)
+	for (i = 2; i < sets.size(); i++)
 		msg += " " + sets[i];
 	if (doesChannelExists(makeLower(chname.substr(1))))
 		ch = findChannel(makeLower(chname.substr(1)));
@@ -305,6 +314,7 @@ void		Frame::cmdTopic(Session *ss, std::vector<std::string> const& sets)
 {
 	ChannelMap::iterator	it;
 	std::string				str;
+	std::string::size_type	i;
 
 	if (sets.size() < 2)
 		return ss->Err_461("TOPIC");			//NeedMoreParams
@@ -324,7 +334,7 @@ void		Frame::cmdTopic(Session *ss, std::vector<std::string> const& sets)
 	else
 	{
 		str = sets[2].substr(1);
-		for (int i = 3; i < sets.size(); i++)
+		for (i = 3; i < sets.size(); i++)
 			str += " " + sets[i];
 		if (it->second->isOperator(ss->user().nick()) == false)
 			return ss->Err_482(it->first);		//ChanOprivsNeeded
@@ -335,6 +345,7 @@ void		Frame::cmdTopic(Session *ss, std::vector<std::string> const& sets)
 
 void		Frame::cmdList(Session *ss, std::vector<std::string> const& sets)
 {
+	std::string::size_type		i;
 	ChannelMap::iterator		it;
 	std::vector<std::string>	v;
 
@@ -346,7 +357,7 @@ void		Frame::cmdList(Session *ss, std::vector<std::string> const& sets)
 		return ss->Rep_323();					//ListEnd
 	}
 	v = split_comma(sets[1]);
-	for (int i = 0; i < v.size(); i++)
+	for (i = 0; i < v.size(); i++)
 	{
 		ss->Rep_321();							//ListStart
 		if (checkChannelname(v[i])
@@ -487,9 +498,10 @@ std::vector<std::string>		Frame::getMask(std::string const& str)
 {
 	int		wild;
 	std::vector<std::string>	v;
+	std::string::size_type		i;
 
 	wild = -1;
-	for (int i = 0; i < str.size(); i++)
+	for (i = 0; i < str.size(); i++)
 	{
 		if (str[i] == '*')
 			wild = i;
@@ -690,7 +702,6 @@ void		Frame::cmdWhois(Session *ss, std::vector<std::string> const& sets)
 	for (it = v.begin(); it != v.end(); it++)
 	{
 		Session *session;
-		int check;
 
 		session = findUser(*it);
 		ss->Rep_311(session);

@@ -3,12 +3,12 @@
 #include "include/Frame.hpp"
 
 User::User(void)
-	: _didUser(false), _didNick(false), _isProperlyQuit(false), _manager(false), _password(true)
+	: _didNick(false), _didUser(false), _manager(false), _password(true), _isProperlyQuit(false)
 {
 }
 
 User::User(User const& other)
-	: _didUser(false), _didNick(false), _isProperlyQuit(false), _manager(false), _password(true)
+	: _didNick(false), _didUser(false), _manager(false), _password(true), _isProperlyQuit(false)
 {
 	*this = other;
 }
@@ -95,7 +95,7 @@ bool			User::pass(void) const
 {
 	return _password;
 }
-const ChannelMap&		User::channel(void) const
+const ChannelMap&	User::channel(void) const
 {
 	return _mChannels;
 }
@@ -105,26 +105,33 @@ std::string		User::msgHeader(void) const
 	return std::string(":" + _sNickname + "!" + _sUsername + "@" + _sHostname+ " ");
 }
 
-bool	User::checkNick(void) const
+bool			User::checkNick(void) const
 {
 	return _didNick;
 }
-bool	User::checkUser(void) const
+bool			User::checkUser(void) const
 {
 	return _didUser;
 }
-bool	User::isConnected(void) const
+
+/*
+   * Check both Nick and User
+ */
+bool			User::isConnected(void) const
 {
 	if (checkNick() && checkUser())
 		return true;
 	return false;
 }
-bool	User::checkManager(void) const
+bool			User::checkManager(void) const
 {
 	return _manager;
 }
 
-bool	User::addNick(std::vector<std::string> const& sets)
+/*
+   * Restore Nick name for connection
+ */
+bool			User::addNick(std::vector<std::string> const& sets)
 {
 	if (_didNick)
 		return false;	//alreadyRegistered
@@ -133,7 +140,10 @@ bool	User::addNick(std::vector<std::string> const& sets)
 	return true;
 }
 
-void	User::cmdNick(std::vector<std::string> const& sets)
+/*
+   * Change Nick name
+ */
+void			User::cmdNick(std::vector<std::string> const& sets)
 {
 	_pastNick.insert(_pastNick.end(), _sNickname);
 	for (ChannelMap::iterator it = _mChannels.begin(); it != _mChannels.end(); it++)
@@ -142,9 +152,10 @@ void	User::cmdNick(std::vector<std::string> const& sets)
 	return ;
 }
 
-bool		User::cmdUser(std::vector<std::string> const& sets)
+bool			User::cmdUser(std::vector<std::string> const& sets)
 {
 	std::string	str;
+	std::string::size_type	i;
 
 	if (_didUser == true)
 		return false;
@@ -153,20 +164,22 @@ bool		User::cmdUser(std::vector<std::string> const& sets)
 	str = sets[4];
 	if (sets[4][0] == ':')
 		str = sets[4].substr(1);
-	for (int i = 5; i < sets.size(); i++)
+	for (i = 5; i < sets.size(); i++)
 		str += " " + sets[i];
 	setName(str);
 	return true;
 }
 
-void	User::cmdJoin(Channel* ch)
+void			User::cmdJoin(Channel* ch)
 {
 	_mChannels.insert(std::pair<std::string, Channel*>(ch->name(), ch));
 }
 
-void	User::optionJoin(Session *ss, std::vector<std::string> const& sets, std::string const& msg)
+void			User::optionJoin(Session *ss, std::string const& msg)
 {
-	for (ChannelMap::iterator it = _mChannels.begin(); it != _mChannels.end(); it++)
+	ChannelMap::iterator	it;
+
+	for (it = _mChannels.begin(); it != _mChannels.end(); it++)
 	{
 		it->second->removeUser(this);
 		it->second->broadcast(ss, msg);
@@ -179,26 +192,31 @@ void	User::optionJoin(Session *ss, std::vector<std::string> const& sets, std::st
 	}
 }
 
-std::string	User::makeLower(std::string const& str)
+/*
+   * Change Upper characters to Lower
+ */
+std::string		User::makeLower(std::string const& str)
 {
 	std::string	low;
+	std::string::size_type	i;
 
 	low = "";
-	for (int i = 0; i < str.size(); i++)
+	for (i = 0; i < str.size(); i++)
 		low += std::tolower((char)str[i]);
 	return low;
 }
 
-bool	User::cmdPart(Session *ss, std::string const& chname, std::vector<std::string> const& sets)
+bool			User::cmdPart(Session *ss, std::string const& chname, std::vector<std::string> const& sets)
 {
-	ChannelMap::iterator	it;
 	std::string				str;
+	std::string::size_type	i;
+	ChannelMap::iterator	it;
 
 	it = _mChannels.find(makeLower(chname.substr(1)));
 	if (it == _mChannels.end())
 		return false;
 	str = sets[0] + " " + chname;
-	for (int i = 2; i < sets.size(); i++)
+	for (i = 2; i < sets.size(); i++)
 		str += " " + sets[i];
 	it->second->broadcast(ss, str);
 	it->second->removeUser(this);
@@ -211,11 +229,13 @@ bool	User::cmdPart(Session *ss, std::string const& chname, std::vector<std::stri
 	return true;
 }
 
-void			User::cmdQuit(Session *ss, std::vector<std::string> const& sets, std::string const& msg)
+void			User::cmdQuit(Session *ss, std::string const& msg)
 {
+	ChannelMap::iterator	it;
+
 	_isProperlyQuit = true;
 	_pastNick.clear();
-	for (ChannelMap::iterator it = _mChannels.begin(); it != _mChannels.end(); it++)
+	for (it = _mChannels.begin(); it != _mChannels.end(); it++)
 	{
 		it->second->removeUser(this);
 		it->second->broadcast(ss, msg);
@@ -223,12 +243,12 @@ void			User::cmdQuit(Session *ss, std::vector<std::string> const& sets, std::str
 	_mChannels.clear();
 }
 
-void	User::cmdOper(void)
+void			User::cmdOper(void)
 {
 	_manager = true;
 }
 
-bool	User::isMemOfChannel(std::string const& chname) const
+bool			User::isMemOfChannel(std::string const& chname) const
 {
 	ChannelMap::const_iterator	res;
 
@@ -238,7 +258,7 @@ bool	User::isMemOfChannel(std::string const& chname) const
 	return true;
 }
 
-std::vector<std::string> User::userVector(void)
+std::vector<std::string>	User::userVector(void)
 {
 	ChannelMap::iterator it = _mChannels.begin();
 	std::vector<std::string> res;
@@ -255,7 +275,7 @@ std::vector<std::string> User::userVector(void)
 	return res;
 }
 
-std::vector<std::string> User::cmdWhois(void)
+std::vector<std::string>	User::cmdWhois(void)
 {
 	ChannelMap::iterator it;
 	std::vector<std::string> res;
@@ -270,12 +290,12 @@ std::vector<std::string> User::cmdWhois(void)
 	return res;
 }
 
-void	User::setProperlyQuit(bool state)
+void			User::setProperlyQuit(bool state)
 {
 	_isProperlyQuit = state;
 }
 
-void	User::partChannel(Channel *ch)
+void			User::partChannel(Channel *ch)
 {
 	_mChannels.erase(ch->name());
 }
