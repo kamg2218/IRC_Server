@@ -42,7 +42,7 @@ void		MainServer::handleRead(std::map<int, Session*>::iterator temp)
 		handleDecline(temp);
 }
 
-void	MainServer::handleAccept(Service* p)
+void	MainServer::handleAccept(void)
 {
 	int			on;
 	int			cs;

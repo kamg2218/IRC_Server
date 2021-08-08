@@ -55,7 +55,7 @@ class MainServer
 		MainServer();
 		void		create(base const& bs);
 		void		handleRead(std::map<int, Session*>::iterator temp);
-		void		handleAccept(Service *p);
+		void		handleAccept(void);
 		void		handleDecline(std::map<int, Session*>::iterator const& pos);
 		int		socket() const;
 		std::string		name() const;
