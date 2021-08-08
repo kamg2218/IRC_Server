@@ -30,6 +30,7 @@ void	MainServer::create(base const& bs)
 {
 	setPass(bs._password);
 	_sd = _sock.makeSocket(bs._port);
+	_sock.makeNonBlocking();
 	if ((bind(_sd, (struct sockaddr *)&(_sock.sin()), sizeof(_sock.sin()))) == -1)
 		throw BindException();
 	if (listen(_sd, 42) < 0)
@@ -53,7 +54,6 @@ void	MainServer::handleAccept(void)
 	if (cs < 0)
 		throw AcceptException();
 	se->soc().setSd(cs);
-	se->soc().makeNonBlocking();
 	on = 1;
 	if (setsockopt(cs, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on)) == -1)
 	{
