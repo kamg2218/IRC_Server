@@ -1,3 +1,4 @@
+#include <unistd.h>
 #include "include/Service.hpp"
 #include "include/User.hpp"
 #include "include/Frame.hpp"
@@ -69,7 +70,6 @@ void		Service::doService(MainServer & sv)
 			temp = it++;
 			if (FD_ISSET(temp->first, &_fdRead))
 			{
-				//temp->second->setPing(true);
 				temp->second->setTime(0);
 				sv.handleRead(temp);
 			}
@@ -103,7 +103,6 @@ void		Service::sendPing(Session *ss)
 	msg += "\r\n";
 	send(ss->soc().sd(), msg.c_str(), msg.length(), 0);
 	std::cout << "send ping to " << ss->user().nick() << std::endl;
-	//ss->setPing(false);
 	ss->setTime(std::time(0));
 }
 

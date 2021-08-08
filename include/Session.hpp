@@ -27,7 +27,6 @@ class Session
 		typedef Session*	pointer;
 		Socket			_soc;
 		User			_user;
-		bool			_ping;
 		std::string		_rstream;
 		std::time_t		_time;
 		Session(Session const& ref);
@@ -41,8 +40,6 @@ class Session
 		User&		user(void);
 		std::time_t	time(void);
 		void		setTime(std::time_t tm);
-		void		setPing(bool p);
-		bool		ping() const;
 		bool		handleRead(void);
 		void		streamAppend(char *str, int r);
 		void		replyAsServer(std::string const& str);
