@@ -614,6 +614,7 @@ void		Frame::cmdPrivmsg(Session *ss, std::vector<std::string> const& sets)
 {
     std::vector<std::string> receivers;
     std::string receiver;
+	std::string msg;
 
 	if (sets.size() == 1)
         return ss->err411(sets[0]);   // errNORECIPIENT
@@ -649,6 +650,8 @@ void		Frame::cmdPrivmsg(Session *ss, std::vector<std::string> const& sets)
         }
         receiverit++;
     }
+	for (std::vector<std::string>::size_type i = 2 ;i < sets.size(); i++)
+		msg += sets[i];
     for (receiverit = receivers.begin(); receiverit != receivers.end(); receiverit++)
     {
         receiver = *receiverit;
@@ -657,14 +660,14 @@ void		Frame::cmdPrivmsg(Session *ss, std::vector<std::string> const& sets)
 			Channel *channel;
 
 			channel = findChannel(makeLower(receiver.substr(1)));
-            channel->privmsgBroadcast(ss, vectorToStringpriv(sets));
+            channel->privmsgBroadcast(ss, "PRIVMSG " + receiver + " " + msg);
         }
         else
         {
 			Session *session;
 
 			session = findUser(receiver);
-			ss->replyAsUser(session, vectorToStringpriv(sets));
+			ss->replyAsUser(session, "PRIVMSG " + receiver + " " + msg);
         }
     }
 }
