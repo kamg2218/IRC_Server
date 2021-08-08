@@ -56,6 +56,7 @@ void		Service::doService(MainServer & sv)
 		return ;
 	else if (_res == 0)
 	{
+		std::cout << "User = " << sv.users().size() << std::endl;
 		for (it = sv.users().begin(); it != sv.users().end() ;)
 		{
 			temp = it++;
