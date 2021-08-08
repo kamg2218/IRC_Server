@@ -56,6 +56,7 @@ void		Service::doService(MainServer & sv)
 		return ;
 	else if (_res == 0)
 	{
+		std::cout << "User = " << sv.users().size() << std::endl;
 		for (it = sv.users().begin(); it != sv.users().end() ;)
 		{
 			temp = it++;
@@ -99,7 +100,7 @@ void		Service::sendPing(Session *ss)
 	msg += ss->user().nick();
 	msg += "\r\n";
 	send(ss->soc().sd(), msg.c_str(), msg.length(), 0);
-	std::cout << "send ping\n";
+	std::cout << "send ping to " << ss->user().nick() << std::endl;
 	ss->setPing(false);
 }
 
