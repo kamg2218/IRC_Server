@@ -96,7 +96,7 @@ void			Socket::makeNonBlocking(void)
 	int			flag;
 
 	flag = fcntl(_sd, F_GETFL, 0);
-	if (fcntl(_sd, F_SETFL, flag | O_NONBLOCK) == -1)
+	if (fcntl(_sd, F_SETFL, O_NONBLOCK) == -1)
 		throw socketException();
 }
 
