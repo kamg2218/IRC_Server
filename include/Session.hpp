@@ -9,6 +9,7 @@
 #include <netdb.h>
 #include <string>
 #include <map>
+#include <ctime>
 #include <iostream>
 #include "Executor.hpp"
 class Session;
@@ -28,6 +29,7 @@ class Session
 		User			_user;
 		bool			_ping;
 		std::string		_rstream;
+		std::time_t		_time;
 		Session(Session const& ref);
 		Session&	operator=(Session const& ref);
 	public:
@@ -37,6 +39,8 @@ class Session
 		int		socket(void) const;
 		Socket&		soc(void);
 		User&		user(void);
+		std::time_t	time(void);
+		void		setTime(std::time_t tm);
 		void		setPing(bool p);
 		bool		ping() const;
 		bool		handleRead(void);

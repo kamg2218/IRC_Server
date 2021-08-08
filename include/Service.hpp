@@ -2,6 +2,7 @@
 # define SERVICE_HPP
 
 #include <map>
+#include <ctime>
 #include <sys/resource.h>
 #include <sys/select.h>
 #include <sys/time.h>
