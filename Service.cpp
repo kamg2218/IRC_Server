@@ -76,7 +76,7 @@ void		Service::doService(MainServer & sv)
 				sendPing(temp->second);
 		}
 		if (FD_ISSET(sv.socket(), &_fdRead))
-			sv.handleAccept(this);
+			sv.handleAccept();
 	}
 }
 
