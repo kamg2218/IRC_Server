@@ -1,4 +1,3 @@
-#include <unistd.h>
 #include "include/Service.hpp"
 #include "include/User.hpp"
 #include "include/Frame.hpp"
