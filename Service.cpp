@@ -99,7 +99,7 @@ void		Service::sendPing(Session *ss)
 	msg += ss->user().nick();
 	msg += "\r\n";
 	send(ss->soc().sd(), msg.c_str(), msg.length(), 0);
-	std::cout << "send ping\n";
+	std::cout << "send ping to " << ss->user().nick() << std::endl;
 	ss->setPing(false);
 }
 
