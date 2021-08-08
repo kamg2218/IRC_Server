@@ -75,7 +75,7 @@ void		Session::streamAppend(char *str, int r)
 	}
 }
 
-bool		Session::handleRead(std::map<int, Session*> & ms, int sd)
+bool		Session::handleRead(void)
 {
 	int			r;
 	char		buf[BUFSIZE] = {0,};

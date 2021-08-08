@@ -4,30 +4,32 @@
 
 const char*		MainServer::BindException::what() const throw()
 {
-	return ("Bind Error");
+	return "Bind Error";
 }
 
 const char*		MainServer::ListenException::what() const throw()
 {
-	return ("Listen Error\n");
+	return "Listen Error\n";
 }
 
 const char*		MainServer::SocketException::what() const throw()
 {
-	return ("Socket Error\n");
+	return "Socket Error\n";
 }
 
 const char*		MainServer::AcceptException::what() const throw()
 {
-	return ("Accpet Error");
+	return "Accpet Error";
 }
 
-MainServer::MainServer() :_name("ft_irc") {}
+MainServer::MainServer() :_name("ft_irc")
+{
+}
 
 void	MainServer::create(base const& bs)
 {
-	setPass(bs.password);
-	_sd = _sock.makeSocket(bs.port);
+	setPass(bs._password);
+	_sd = _sock.makeSocket(bs._port);
 	if ((bind(_sd, (struct sockaddr *)&(_sock.sin()), sizeof(_sock.sin()))) == -1)
 		throw BindException();
 	if (listen(_sd, 42) < 0)
@@ -36,7 +38,7 @@ void	MainServer::create(base const& bs)
 
 void		MainServer::handleRead(std::map<int, Session*>::iterator temp)
 {
-	if (temp->second->handleRead(mSessions, temp->first))
+	if (temp->second->handleRead())
 		handleDecline(temp);
 }
 
@@ -59,25 +61,37 @@ void	MainServer::handleAccept(Service* p)
 		throw AcceptException();
 	}
 	std::cout << inet_ntoa(se->soc().sin().sin_addr) << ":" << ntohs(se->soc().sin().sin_port) << " is connected\n";
-	mSessions.insert(std::pair<int, Session*>(cs, se));
+	_mSessions.insert(std::pair<int, Session*>(cs, se));
 }
 
-void		MainServer::handleDecline(std::map<int, Session*>::iterator& pos)
+void		MainServer::handleDecline(std::map<int, Session*>::iterator const& pos)
 {
 	Session* temp;
 
 	temp = (*pos).second;
-	mSessions.erase(pos);
+	_mSessions.erase(pos);
 	delete (temp);
 	std::cout << "client is removed\n";
 }
 
-int 	MainServer::socket() const { return _sd; }
-std::string 	MainServer::name() const { return _name; }
+int 	MainServer::socket(void) const
+{
+	return _sd;
+}
+std::string 	MainServer::name(void) const
+{
+	return _name;
+}
 
-std::map<int, Session*>&	MainServer::users() { return mSessions; }
+std::map<int, Session*>&	MainServer::users(void)
+{
+	return _mSessions;
+}
 
-const std::map<int, Session*>&	MainServer::users() const { return mSessions; }
+const std::map<int, Session*>&	MainServer::users(void) const
+{
+	return _mSessions;
+}
 
 bool	MainServer::checkPass(std::string const& pass)
 {

@@ -4,9 +4,9 @@
 #include <string>
 #include <cstring>
 
-std::vector<std::string> split(std::string str)
+std::vector<std::string>		split(std::string str)
 {
-	std::vector<std::string>	v;
+	std::vector<std::string>		v;
 	std::string::size_type		pos;
 
 	while ((pos = str.find(":")) != std::string::npos)
@@ -28,17 +28,17 @@ int main(int argc, char *argv[])
 		std::vector<std::string> v;
 
 		v = split(argv[1]);
-		a.host = v[0];
-		a.server_port = std::strtod(v[1].c_str(), 0);
-		a.password_network = v[2];
+		a._host = v[0];
+		a._serverPort = std::strtod(v[1].c_str(), 0);
+		a._passwordNetwork = v[2];
 
-		a.port = std::strtod(argv[2], 0);
-		a.password = argv[3];
+		a._port = std::strtod(argv[2], 0);
+		a._password = argv[3];
 	}
 	else
 	{
-		a.port = std::strtod(argv[1], 0);
-		a.password = argv[2];
+		a._port = std::strtod(argv[1], 0);
+		a._password = argv[2];
 	}
 	try
 	{

@@ -56,7 +56,7 @@ class Frame
 		void		cmdWho(Session *ss, std::vector<std::string> const& sets);
 		void		cmdWhois(Session *ss, std::vector<std::string> const& sets);
 		void		cmdPrivmsg(Session *ss, std::vector<std::string> const& sets);
-		void		printcommand(Session *ss);
+		void		printCommand(Session *ss);
 		void		broadcastAll(Session *ss, std::string const& str);
 		std::string		makeLower(std::string const& str);
 		std::string		vectorToString(std::vector<std::string> const& sets);

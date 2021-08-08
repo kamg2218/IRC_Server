@@ -229,17 +229,29 @@ bool			User::cmdPart(Session *ss, std::string const& chname, std::vector<std::st
 	return true;
 }
 
-void			User::cmdQuit(Session *ss, std::string const& msg)
+void			User::cmdQuit(Session *ss, std::vector<std::string> const& sets, std::string const& msg)
 {
 	ChannelMap::iterator	it;
+	ChannelMap::iterator	tt;
+	std::string				str;
+	std::string::size_type	i;
 
 	_isProperlyQuit = true;
-	_pastNick.clear();
-	for (it = _mChannels.begin(); it != _mChannels.end(); it++)
+	for (i = 1; i < sets.size(); i++)
+		str += " " + sets[i];
+	for (it = _mChannels.begin(); it != _mChannels.end(); )
 	{
-		it->second->removeUser(this);
-		it->second->broadcast(ss, msg);  -> part : PART #hi 	}
-	_mChannels.clear();
+		tt = it++;
+		tt->second->broadcast(ss, "PART #" + tt->first + str);
+		tt->second->broadcast(ss, msg);
+		tt->second->removeUser(this);
+		if (tt->second->userCount() == 0)
+		{
+			delete tt->second;
+			Frame::instance()->removeChannel(tt->first);
+		}
+		_mChannels.erase(tt);
+	}
 }
 
 void			User::cmdOper(void)
@@ -265,11 +277,18 @@ std::vector<std::string>	User::userVector(void)
 
 	if (it == _mChannels.end())
 	{
-		res.push_back("<no Channel> " + user() + " " + host() + " " + servername + " " + nick() + " H :0 " + name());
+		if (_manager)
+			res.push_back("<no Channel> " + user() + " " + host() + " " + servername + " " + nick() + " H @ : 0 " + name());
+		else
+			res.push_back("<no Channel> " + user() + " " + host() + " " + servername + " " + nick() + " H : 0 " + name());
+
 	}
 	for (it = _mChannels.begin(); it != _mChannels.end(); ++it)
 	{
-		res.push_back(it->second->name() + " " + user() + " " + host() + " " + servername + " " + nick() + " H :0 " + name());
+		if (_manager)
+			res.push_back(it->second->name() + " " + user() + " " + host() + " " + servername + " " + nick() + " H @ : 0 " + name());
+		else
+			res.push_back(it->second->name() + " " + user() + " " + host() + " " + servername + " " + nick() + " H : 0 " + name());
 	}
 	return res;
 }
