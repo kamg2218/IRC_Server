@@ -748,5 +748,6 @@ void		Frame::printCommand(Session *ss)
 
 void	Frame::cmdPong(Session *ss)
 {
-	ss->setPing(true);
+	ss->setTime(0);
+	//ss->setPing(true);
 }

@@ -4,18 +4,18 @@
 #include "include/Frame.hpp"
 
 Session::Session()
-	: _ping(true)
+	: _time(0)
 {
 }
 
 Session::Session(int sd)
-	: _ping(true)
+	: _time(0)
 {
 	_soc.setSd(sd);
 }
 
 Session::Session(Session const& ref)
-	: _soc(ref._soc), _user(ref._user), _ping(ref._ping), _rstream(ref._rstream)
+	: _soc(ref._soc), _user(ref._user), _rstream(ref._rstream), _time(ref._time)
 {
 }
 
@@ -25,8 +25,8 @@ Session&		Session::operator=(Session const& ref)
 	{
 		_soc = ref._soc;
 		_user = ref._user;
-		_ping = ref._ping;
 		_rstream = ref._rstream;
+		_time = ref._time;
 	}
 	return *this;
 }
@@ -50,16 +50,14 @@ User&		Session::user()
 {
 	return _user;
 }
-
-
-void		Session::setPing(bool p)
+std::time_t	Session::time()
 {
-	_ping = p;
+	return _time;
 }
 
-bool		Session::ping() const
-{ 
-	return _ping; 
+void		Session::setTime(std::time_t tm)
+{
+	_time = tm;
 }
 
 void		Session::streamAppend(char *str, int r)
