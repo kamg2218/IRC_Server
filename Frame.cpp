@@ -120,11 +120,11 @@ bool		Frame::checkNickname(std::string const& name)
 {
 	std::string::size_type	i;
 
+	if (name.size() == 0 || name.size() > 9)
+		return false;
 	for (i = 0; i < name.size(); i++)
 	{
-		if (name.size() > 9)
-			return false;
-		else if (name[i] == ' ' || name[i] == ',')
+		if (name[i] == ' ' || name[i] == ',')
 			return false;
 		else if ((int)name[i] == 7)
 			return false;
@@ -138,9 +138,10 @@ bool		Frame::checkChannelname(std::string const& name)
 
 	for (i = 0; i < name.size(); i++)
 	{
-		if (i == 0 && name[0] != '#' && name[0] != '!' && name[0] != '&' && name[0] != '+')
+		if (name.size() > 51 || name.size() <= 1)
 			return false;
-		else if (name.size() > 50)
+		else if (i == 0 && name[0] != '#'
+				&& name[0] != '!' && name[0] != '&' && name[0] != '+')
 			return false;
 		else if (name[i] == ' ' || name[i] == ',')
 			return false;
@@ -295,23 +296,6 @@ void		Frame::cmdPass(Session *ss, std::vector<std::string> const& sets)
 		ss->user().setPass(false);
 }
 
-void		Frame::cmdOper(Session *ss, std::vector<std::string> const& sets)
-{
-	if (sets.size() != 3)
-		return ss->err461("OPER");		//NeedMoreParams
-	for (UserMap::iterator it = _mUsers.begin(); it != _mUsers.end(); it++)
-	{
-		if (it->first == sets[1])
-		{
-			if (_server.checkPass(sets[2]) == false)
-				return ss->err464();	//passwdMismatch
-			it->second->user().cmdOper();
-			return ss->rep381();		//RPL_YOUREOPER
-		}
-	}
-	return ss->err491();				//NoOperHost
-}
-
 void		Frame::cmdTopic(Session *ss, std::vector<std::string> const& sets)
 {
 	ChannelMap::iterator	it;
@@ -329,7 +313,7 @@ void		Frame::cmdTopic(Session *ss, std::vector<std::string> const& sets)
 	{
 		if (it->second->topic() == "")
 			return ss->rep331(it->first);		//NoTopic
-		else if (it->second->hasUser(&(ss->user())))
+		else if (it->second->hasUser(ss->user().nick()))
 			return ss->rep332(it->first, it->second->topic());
 		return ss->err442(it->first);			//NotOnChannel
 	}
@@ -439,7 +423,7 @@ void		Frame::cmdKick(Session *ss, std::vector<std::string> const& sets)
 			target = findUser(cmd[2]);
 			channel->broadcast(ss, vectorToString(cmd));
 			target->user().partChannel(channel);
-			channel->removeUser(&(target->user()));
+			channel->removeUser(target->user().nick());
 		}
 		cmdsets.erase(cmdsets.begin());
 	}
@@ -677,7 +661,7 @@ void		Frame::cmdWhois(Session *ss, std::vector<std::string> const& sets)
 	std::vector<std::string>::iterator		it;
 	std::vector<std::string>::iterator		it2;
 	std::vector<std::string>		v;
-	Usermap::iterator		itu;
+	UserMap::iterator		itu;
 	std::string		res;
 	std::vector<std::string>		resline;
 

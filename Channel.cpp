@@ -22,24 +22,39 @@ void		Channel::addOper(Session *user)
 	_mOperators[user->user().nick()] = user;
 }
 
-void		Channel::removeUser(User *user)
+void		Channel::removeUser(std::string const& nick)
 {
-	_mUsers.erase(_mUsers.find(user->nick()));
+	_mUsers.erase(nick);
 }
 
-bool		Channel::hasUser(User *user)
+void		Channel::removeOper(std::string const& nick)
 {
-	Usermap::iterator		it;
+	_mOperators.erase(nick);
+}
 
-	it = _mUsers.find(user->nick());
+bool		Channel::hasUser(std::string const& nick)
+{
+	UserMap::iterator		it;
+
+	it = _mUsers.find(nick);
 	if (it == _mUsers.end())
+		return false;
+	return true;
+}
+
+bool		Channel::hasOper(std::string const& nick)
+{
+	UserMap::iterator		it;
+
+	it = _mOperators.find(nick);
+	if (it == _mOperators.end())
 		return false;
 	return true;
 }
 
 void		Channel::broadcast(Session *ss, std::string const& message)
 {
-	Usermap::iterator		it;
+	UserMap::iterator		it;
 
 	it = _mUsers.begin();
 	for (; it != _mUsers.end() ; ++it)
@@ -48,7 +63,7 @@ void		Channel::broadcast(Session *ss, std::string const& message)
 
 void		Channel::privmsgBroadcast(Session *ss, std::string const& message)
 {
-	Usermap::iterator		it;
+	UserMap::iterator		it;
 
 	it = _mUsers.begin();
 	for (; it != _mUsers.end() ; ++it)
@@ -74,14 +89,36 @@ int		Channel::userCount() const
 	return _mUsers.size();
 }
 
+int		Channel::operCount() const 
+{
+	return _mOperators.size();
+}
+
 bool		Channel::hasPass() const
 {
 	return false;
 }
 
+void		Channel::cmdPart(std::string const& nick)
+{
+	UserMap::iterator	it;
+
+	removeUser(nick);
+	removeOper(nick);
+	//delete channel
+	if (_mUsers.size() == 0)
+		return ;
+	//pass operation to the first user
+	else if (_mOperators.size() == 0)
+	{
+		it = _mUsers.begin();
+		_mOperators[it->first] = it->second;
+	}
+}
+
 void		Channel::cmdNick(std::string const& name, std::string const& nick)
 {
-	Usermap::iterator	it;
+	UserMap::iterator	it;
 
 	it = _mUsers.find(name);
 	if (it != _mUsers.end())
@@ -99,7 +136,7 @@ void		Channel::cmdNick(std::string const& name, std::string const& nick)
 
 void	Channel::cmdTopic(Session *ss, std::string const& topic, std::string const& msg)
 {
-	Usermap::iterator	it;
+	UserMap::iterator	it;
 
 	setTopic(topic);
 	for (it = _mUsers.begin(); it != _mUsers.end(); it++)
@@ -109,7 +146,7 @@ void	Channel::cmdTopic(Session *ss, std::string const& topic, std::string const&
 void	Channel::cmdJoin(Session *ss)
 {
 	std::string		str;
-	Usermap::iterator		it;
+	UserMap::iterator		it;
 
 	if (topic() == "")
 		ss->rep331(name());
@@ -130,7 +167,7 @@ void	Channel::cmdJoin(Session *ss)
 
 bool		Channel::isOperator(std::string const& nick) const
 {
-	Usermap::const_iterator		res;
+	UserMap::const_iterator		res;
 
 	res = _mOperators.find(nick);
 	if (res == _mOperators.end())
@@ -144,7 +181,7 @@ void		Channel::setTopic(std::string const topic)
 
 std::vector<std::string>		Channel::channelVector()
 {
-	Usermap::iterator		it;
+	UserMap::iterator		it;
 	std::vector<std::string>		res;
 	std::string servername = "ft_irc";
 
@@ -160,7 +197,7 @@ std::vector<std::string>		Channel::channelVector()
 
 std::vector<std::string>		Channel::channeloperVector()
 {
-	Usermap::iterator		it;
+	UserMap::iterator		it;
 	std::vector<std::string>		res;
 	std::string		servername = "ft_irc";
 
