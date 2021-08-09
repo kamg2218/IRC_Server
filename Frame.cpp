@@ -246,7 +246,8 @@ void		Frame::cmdNick(Session *ss, std::vector<std::string> const& sets)
 		return ss->err431();			//noNicknameGiven
 	else if (ss->user().pass() == false)
 		return ;
-	else if (!(checkNickname(sets[1])))
+	else if (!(checkNickname(sets[1]))
+			|| (sets[1][0] == ':' && sets[1].size() == 1))
 		return ss->err432(sets[1]);	//ErroneusNickname
 	else if (doesNicknameExists(sets[1]))
 		return ss->err433(sets[1]);	//NicknameInUse
@@ -329,7 +330,7 @@ void		Frame::cmdTopic(Session *ss, std::vector<std::string> const& sets)
 		if (it->second->topic() == "")
 			return ss->rep331(it->first);		//NoTopic
 		else if (it->second->hasUser(&(ss->user())))
-			return ss->replyAsServer(it->second->topic());
+			return ss->rep332(it->first, it->second->topic());
 		return ss->err442(it->first);			//NotOnChannel
 	}
 	else
@@ -337,7 +338,7 @@ void		Frame::cmdTopic(Session *ss, std::vector<std::string> const& sets)
 		str = sets[2].substr(1);
 		for (i = 3; i < sets.size(); i++)
 			str += " " + sets[i];
-		it->second->cmdTopic(str, vectorToString(sets));
+		it->second->cmdTopic(ss, str, vectorToString(sets));
 	}
 }
 
@@ -482,7 +483,7 @@ void		Frame::cmdInvite(Session *ss, std::vector<std::string> const& sets)
 
 bool		Frame::checkMask(std::string const& str, std::string const& name, int wild)
 {
-	int		s;
+	std::string::size_type	s;
 
 	if (wild == -1 && str != name)
 		return false;
@@ -490,6 +491,8 @@ bool		Frame::checkMask(std::string const& str, std::string const& name, int wild
 	{
 		s = str.size() - wild - 1;
 		if (str.substr(0, wild) != name.substr(0, wild))
+			return false;
+		else if (name.size() < s)
 			return false;
 		else if (str.substr(wild + 1, s) != name.substr(name.size() - s, s))
 			return false;
@@ -605,8 +608,6 @@ void		Frame::cmdWho(Session *ss, std::vector<std::string> const& sets)
 							continue ;
 						ss->rep352(itu->second->user().userVector());
 					}
-					else
-						break ;
 				}
 			}
 		}

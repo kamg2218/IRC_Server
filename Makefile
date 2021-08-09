@@ -10,7 +10,7 @@ DFLAGS = -fsanitize=address
 all : $(NAME)
 
 $(NAME) :
-	clang++ $(CFLAGS) $(DFLAGS) $(SRC) -o $(NAME) -g3
+	clang++ $(CFLAGS) $(SRC) -o $(NAME) -g3
 
 clean :
 	rm -rf $(OBJ)
