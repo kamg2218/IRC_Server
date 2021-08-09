@@ -192,7 +192,6 @@ void		Frame::cmdQuit(Session *ss, std::vector<std::string> const& sets)
 	broadcastAll(ss, msg);
 	ss->user().cmdQuit(sets);
 	removeUser(ss->user().nick());
-	_server.users().erase(ss->soc().sd());
 	ss->replyAsUser(ss, msg);
 }
 
