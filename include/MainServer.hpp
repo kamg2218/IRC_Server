@@ -31,10 +31,10 @@ class MainServer
 		std::string		_pass;
 		std::string		_name;
 		std::map<int, Session*>		_mSessions;
-	public:
-		MainServer(void);
 		MainServer(MainServer const& other);
 		MainServer&		operator=(MainServer const& other);
+	public:
+		MainServer(void);
 		~MainServer(void);
 		int				socket(void) const;
 		bool			checkPass(std::string const& pass);

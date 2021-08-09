@@ -54,30 +54,19 @@ void		Service::doService(MainServer & sv)
 
 	if (_res < 0)
 		return ;
-	else if (_res == 0)
+	for (it = sv.users().begin(); it != sv.users().end() ; )
 	{
-		for (it = sv.users().begin(); it != sv.users().end() ;)
+		temp = it++;
+		if (FD_ISSET(temp->first, &_fdRead))
 		{
-			temp = it++;
+			temp->second->setTime(std::time(0));
+			sv.handleRead(temp);
+		}
+		else
 			sendPing(sv, temp->second);
-		}
 	}
-	else
-	{
-		for (it = sv.users().begin(); it != sv.users().end() ; )
-		{
-			temp = it++;
-			if (FD_ISSET(temp->first, &_fdRead))
-			{
-				temp->second->setTime(std::time(0));
-				sv.handleRead(temp);
-			}
-			else
-				sendPing(sv, temp->second);
-		}
-		if (FD_ISSET(sv.socket(), &_fdRead))
-			sv.handleAccept();
-	}
+	if (FD_ISSET(sv.socket(), &_fdRead))
+		sv.handleAccept();
 }
 
 /*
@@ -88,9 +77,9 @@ void		Service::sendPing(MainServer& sv, Session *ss)
 	std::string	msg;
 	std::vector<std::string>	v;
 
-	if (std::difftime(std::time(0), ss->time()) < 5)
+	if (std::difftime(std::time(0), ss->time()) < 4)
 		return ;
-	else if (std::difftime(std::time(0), ss->time()) > 10)
+	else if (std::difftime(std::time(0), ss->time()) > 6)
 	{
 		v.insert(v.end(),"QUIT");
 		v.insert(v.end(), ":" + std::to_string(ss->soc().sd()) + " client is missing");
@@ -102,6 +91,7 @@ void		Service::sendPing(MainServer& sv, Session *ss)
 	msg += ss->user().nick();
 	msg += "\r\n";
 	send(ss->soc().sd(), msg.c_str(), msg.length(), 0);
+	ss->setTime(std::time(0));
 }
 
 const char*		Service::selectException::what(void) const throw()

@@ -9,6 +9,7 @@
 #include <netdb.h>
 #include <fcntl.h>
 #include <exception>
+#include <unistd.h>
 
 class	Socket
 {
@@ -18,10 +19,10 @@ class	Socket
 		unsigned int	_len;
 		sockaddr_in		_sin;
 		protoent*		_proto;
-	public:
-		Socket(void);
 		Socket(Socket const& other);
 		Socket&		operator=(Socket const& other);
+	public:
+		Socket(void);
 		~Socket(void);
 		int					sd(void) const;
 		unsigned int&		port(void);

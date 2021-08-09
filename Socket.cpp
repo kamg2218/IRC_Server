@@ -2,12 +2,12 @@
 #include "include/Socket.hpp"
 
 Socket::Socket(void)
-	: _sd(0), _port(0), _len(0), _proto(0)
+	: _sd(-1), _port(0), _len(0), _proto(0)
 {
 }
 
 Socket::Socket(Socket const& other)
-	: _sd(0), _port(0), _len(0), _proto(0)
+	: _sd(-1), _port(0), _len(0), _proto(0)
 {
 	*this = other;
 }
@@ -16,16 +16,13 @@ Socket&		Socket::operator=(Socket const& other)
 {
 	if (this == &other)
 		return *this;
-	this->_sd = other._sd;
-	this->_port = other._port;
-	this->_len = other._len;
-	this->_sin = other._sin;
-	this->_proto = other._proto;
 	return *this;
 }
 
 Socket::~Socket(void)
 {
+	if (_sd > 2)
+		close(_sd);
 }
 
 void		Socket::setSd(int sd)

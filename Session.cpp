@@ -15,19 +15,14 @@ Session::Session(int sd)
 }
 
 Session::Session(Session const& ref)
-	: _soc(ref._soc), _user(ref._user), _rstream(ref._rstream), _time(ref._time)
 {
+	*this = ref;
 }
 
 Session&		Session::operator=(Session const& ref)
 {
-	if (this != &ref)
-	{
-		_soc = ref._soc;
-		_user = ref._user;
-		_rstream = ref._rstream;
-		_time = ref._time;
-	}
+	if (this == &ref)
+		return *this;
 	return *this;
 }
 
@@ -314,16 +309,6 @@ void		Session::rep366(std::string const& chname)
 	msg += " #";
 	msg += chname;
 	msg += " :End of NAMES list";
-	replyAsServer(msg);
-}
-
-void		Session::rep381(void)
-{
-	std::string		msg;
-
-	msg = "381 ";
-	msg += user().nick();
-	msg += " :You are now an IRC operator";
 	replyAsServer(msg);
 }
 

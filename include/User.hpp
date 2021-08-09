@@ -25,10 +25,10 @@ class User
 		bool			_password;
 		bool			_isProperlyQuit;
 		std::list<std::string>	_pastNick;
-	public:
-		User(void);
 		User(User const& other);
 		User&		operator=(User const& other);
+	public:
+		User(void);
 		~User(void);
 		static User*		create(void);
 		bool		addNick(std::vector<std::string> const& sets);

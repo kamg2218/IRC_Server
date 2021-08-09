@@ -22,10 +22,10 @@ class Frame
 		ChannelMap		_mChannels;
 		MainServer		_server;
 		Service			_service;
-	public:
-		Frame(void);
 		Frame(Frame const& other);
 		Frame&	operator=(Frame const& other);
+	public:
+		Frame(void);
 		~Frame(void);
 		static Frame*		instance(void);
 		void		start(base const& bs);
