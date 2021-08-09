@@ -59,7 +59,7 @@ void		Service::doService(MainServer & sv)
 		for (it = sv.users().begin(); it != sv.users().end() ;)
 		{
 			temp = it++;
-			//sendPing(temp->second);
+			sendPing(temp->second);
 		}
 	}
 	else
@@ -72,8 +72,8 @@ void		Service::doService(MainServer & sv)
 				temp->second->setTime(std::time(0));
 				sv.handleRead(temp);
 			}
-			//else
-			//	sendPing(temp->second);
+			else
+				sendPing(temp->second);
 		}
 		if (FD_ISSET(sv.socket(), &_fdRead))
 			sv.handleAccept();
@@ -81,7 +81,7 @@ void		Service::doService(MainServer & sv)
 }
 
 /*
-   * When there is no data, send Ping Message
+   * When there is no data for 5 seconds, send Ping Message
  */
 void		Service::sendPing(Session *ss)
 {
@@ -101,7 +101,6 @@ void		Service::sendPing(Session *ss)
 	msg += ss->user().nick();
 	msg += "\r\n";
 	send(ss->soc().sd(), msg.c_str(), msg.length(), 0);
-	std::cout << "send ping to " << ss->user().nick() << std::endl;
 	ss->setTime(std::time(0));
 }
 
