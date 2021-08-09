@@ -246,6 +246,8 @@ void			User::cmdQuit(std::vector<std::string> const& sets)
 		}
 		_mChannels.erase(tt);
 	}
+	_didNick = false;
+	_didUser = false;
 }
 
 void			User::cmdOper(void)
