@@ -4,12 +4,12 @@
 #include "include/Frame.hpp"
 
 Session::Session()
-	: _time(0)
+	: _time(std::time(0))
 {
 }
 
 Session::Session(int sd)
-	: _time(0)
+	: _time(std::time(0))
 {
 	_soc.setSd(sd);
 }

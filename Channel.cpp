@@ -17,6 +17,11 @@ void		Channel::addUser(Session *user)
 	_mUsers[user->user().nick()] = user;
 }
 
+void		Channel::addOper(Session *user)
+{
+	_mOperators[user->user().nick()] = user;
+}
+
 void		Channel::removeUser(User *user)
 {
 	_mUsers.erase(_mUsers.find(user->nick()));
@@ -110,18 +115,10 @@ void	Channel::cmdJoin(Session *ss)
 		ss->rep331(name());
 	else
 		ss->rep332(name(), topic());
-	it = _mUsers.begin();
-	if (it != _mUsers.end())
+	for (it = _mUsers.begin(); it != _mUsers.end(); it++)
 	{
-		if (_mOperators.find(it->first) != _mOperators.end())
-			str = "@" + it->first;
-		else
-			str = it->first;
-		it++;
-	}
-	for (; it != _mUsers.end(); it++)
-	{
-		str += " ";
+		if (it != _mUsers.begin())
+			str += " ";
 		if (_mOperators.find(it->first) != _mOperators.end())
 			str += "@";
 		str += it->first;
