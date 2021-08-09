@@ -59,7 +59,7 @@ void		Service::doService(MainServer & sv)
 		for (it = sv.users().begin(); it != sv.users().end() ;)
 		{
 			temp = it++;
-			sendPing(temp->second);
+			sendPing(sv, temp->second);
 		}
 	}
 	else
@@ -73,7 +73,7 @@ void		Service::doService(MainServer & sv)
 				sv.handleRead(temp);
 			}
 			else
-				sendPing(temp->second);
+				sendPing(sv, temp->second);
 		}
 		if (FD_ISSET(sv.socket(), &_fdRead))
 			sv.handleAccept();
@@ -83,7 +83,7 @@ void		Service::doService(MainServer & sv)
 /*
    * When there is no data for 5 seconds, send Ping Message
  */
-void		Service::sendPing(Session *ss)
+void		Service::sendPing(MainServer& sv, Session *ss)
 {
 	std::string	msg;
 	std::vector<std::string>	v;
@@ -95,13 +95,13 @@ void		Service::sendPing(Session *ss)
 		v.insert(v.end(),"QUIT");
 		v.insert(v.end(), ":" + std::to_string(ss->soc().sd()) + " client is missing");
 		Frame::instance()->cmdQuit(ss, v);
+		sv.handleDecline(sv.users().find(ss->socket()));
 		return ;
 	}
 	msg = "PING ";
 	msg += ss->user().nick();
 	msg += "\r\n";
 	send(ss->soc().sd(), msg.c_str(), msg.length(), 0);
-	ss->setTime(std::time(0));
 }
 
 const char*		Service::selectException::what(void) const throw()
