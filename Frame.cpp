@@ -628,13 +628,14 @@ void		Frame::cmdPrivmsg(Session *ss, std::vector<std::string> const& sets)
 	std::set<std::string> s;
 	std::set<std::string>::iterator is;
 	std::pair<std::set<std::string>::iterator, bool> ret;
-	std::string receiver;
 	std::string msg;
+	Channel *channel;
+	Session *session;
 
 	if (sets.size() == 1)
-		return ss->err411(sets[0]);   // ERRNORECIPIENT
+		return ss->err411(sets[0]);		// ERRNORECIPIENT
 	if (sets[2][0] != ':')
-		return ss->err412();   // ERRNOTEXTTOSEND
+		return ss->err412();			// ERRNOTEXTTOSEND
 
 	// massage
 	for (std::vector<std::string>::size_type i = 2 ;i < sets.size(); i++)
@@ -649,44 +650,27 @@ void		Frame::cmdPrivmsg(Session *ss, std::vector<std::string> const& sets)
 	{
 		ret = s.insert(*receiverit);
 		if (ret.second == false)
-		{
-			ss->err407(*receiverit);	// ERRTOOMANYTARGETS
-			continue ;
-		}
-        if (checkChannelname(*receiverit))
+			ss->err407(*receiverit);		// ERRTOOMANYTARGETS
+		else if(checkChannelname(*receiverit))
 		{
             if (!doesChannelExists(makeLower((*receiverit).substr(1))))
+                ss->err404(*receiverit);   	// ERRCANNOTSENDTOCHAN
+			else
 			{
-                ss->err404(*receiverit);   // ERRCANNOTSENDTOCHAN
-				continue ;
-			}
-        }
-        else
-        {
-            if (!doesNicknameExists(*receiverit))
-			{
-                ss->err401(*receiverit);       // ERRNOSUCHNICK
-        		continue ;
+				channel = findChannel(makeLower((*receiverit).substr(1)));
+            	channel->privmsgBroadcast(ss, "PRIVMSG " + *receiverit + " " + msg.substr(1));
 			}
 		}
-        receiver = *receiverit;
-        if (receiver[0] == '#')
-        {
-			Channel *channel;
-
-			channel = findChannel(makeLower(receiver.substr(1)));
-            channel->privmsgBroadcast(ss, "PRIVMSG " + receiver + " " + msg.substr(1));
-        }
-        else if (doesNicknameExists(receiver))
-        {
-			Session *session;
-
-			session = findUser(receiver);
-			ss->replyAsUser(session, "PRIVMSG " + receiver + " " + msg.substr(1));
-        }
+		else if (checkNickname(*receiverit) == false)
+			ss->err411(sets[0]);   			// ERRNORECIPIENT
+		else if (!doesNicknameExists(*receiverit))
+			ss->err401(*receiverit);       // ERRNOSUCHNICK
 		else
-			ss->err411(sets[0]);   // ERRNORECIPIENT
-    }
+		{
+			session = findUser(*receiverit);
+			ss->replyAsUser(session, "PRIVMSG " + *receiverit + " " + msg.substr(1));
+		}
+	}
 }
 
 void		Frame::cmdWhois(Session *ss, std::vector<std::string> const& sets)
