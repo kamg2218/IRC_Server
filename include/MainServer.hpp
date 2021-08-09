@@ -32,18 +32,21 @@ class MainServer
 		std::string		_name;
 		std::map<int, Session*>		_mSessions;
 	public:
-		MainServer();
-		void		create(base const& bs);
-		void		handleRead(std::map<int, Session*>::iterator temp);
-		void		handleAccept(void);
-		void		handleDecline(std::map<int, Session*>::iterator const& pos);
-		int		socket() const;
-		std::string		name() const;
-		std::map<int, Session*>&		users();
-		const std::map<int, Session*>&		users() const;
-		bool		checkPass(std::string const& pass);
-		void		setPass(std::string const& pass);
-		std::string		msgHeader();
+		MainServer(void);
+		MainServer(MainServer const& other);
+		MainServer&		operator=(MainServer const& other);
+		~MainServer(void);
+		int				socket(void) const;
+		bool			checkPass(std::string const& pass);
+		void			handleAccept(void);
+		void			create(base const& bs);
+		void			setPass(std::string const& pass);
+		void			handleRead(std::map<int, Session*>::iterator temp);
+		void			handleDecline(std::map<int, Session*>::iterator const& pos);
+		std::string		msgHeader(void);
+		std::string		name(void) const;
+		std::map<int, Session*>&	users(void);
+		const std::map<int, Session*>&	users(void) const;
 		class BindException : public std::exception
 		{
 			public:

@@ -271,6 +271,7 @@ std::vector<std::string>	User::userVector(void)
 	std::vector<std::string> res;
 	std::string servername = "ft_irc";
 
+	// has nat Channel
 	if (it == _mChannels.end())
 	{
 		if (_manager)
@@ -288,6 +289,7 @@ std::vector<std::string>	User::userVector(void)
 	}
 	return res;
 }
+
 
 std::vector<std::string>	User::cmdWhois(void)
 {
