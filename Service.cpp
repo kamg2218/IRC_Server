@@ -59,7 +59,7 @@ void		Service::doService(MainServer & sv)
 		for (it = sv.users().begin(); it != sv.users().end() ;)
 		{
 			temp = it++;
-			sendPing(temp->second);
+			//sendPing(temp->second);
 		}
 	}
 	else
@@ -72,8 +72,8 @@ void		Service::doService(MainServer & sv)
 				temp->second->setTime(std::time(0));
 				sv.handleRead(temp);
 			}
-			else
-				sendPing(temp->second);
+			//else
+			//	sendPing(temp->second);
 		}
 		if (FD_ISSET(sv.socket(), &_fdRead))
 			sv.handleAccept();

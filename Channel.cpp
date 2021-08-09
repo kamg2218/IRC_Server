@@ -97,13 +97,13 @@ void		Channel::cmdNick(std::string const& name, std::string const& nick)
 	}
 }
 
-void	Channel::cmdTopic(std::string const& topic, std::string const& msg)
+void	Channel::cmdTopic(Session *ss, std::string const& topic, std::string const& msg)
 {
 	Usermap::iterator	it;
 
 	setTopic(topic);
 	for (it = _mUsers.begin(); it != _mUsers.end(); it++)
-		broadcast(it->second, msg);
+		broadcast(ss, msg);
 }
 
 void	Channel::cmdJoin(Session *ss)
@@ -151,9 +151,9 @@ std::vector<std::string>		Channel::channelVector()
 	for (it = _mUsers.begin(); it != _mUsers.end(); ++it)
 	{
 		if (isOperator(it->second->user().nick()))
-			res.push_back("#" + name() + " " + it->second->user().user() + " " + it->second->user().host() + " " + servername + " " + it->second->user().nick() + " H @ : 0 " + it->second->user().name());
+			res.push_back("#" + name() + " " + it->second->user().user() + " " + it->second->user().host() + " " + servername + " " + it->second->user().nick() + " H @ :0 " + it->second->user().name());
 		else
-			res.push_back("#" + name() + " " + it->second->user().user() + " " + it->second->user().host() + " " + servername + " " + it->second->user().nick() + " H : 0 " + it->second->user().name());
+			res.push_back("#" + name() + " " + it->second->user().user() + " " + it->second->user().host() + " " + servername + " " + it->second->user().nick() + " H :0 " + it->second->user().name());
 	}
 	return res;
 }
@@ -166,7 +166,7 @@ std::vector<std::string>		Channel::channeloperVector()
 
 	for (it = _mOperators.begin(); it != _mOperators.end(); ++it)
 	{
-		res.push_back("#" + name() + " " + it->second->user().user() + " " + it->second->user().host() + " " + servername + " " + it->second->user().nick() + " H @ : 0 " + it->second->user().name());
+		res.push_back("#" + name() + " " + it->second->user().user() + " " + it->second->user().host() + " " + servername + " " + it->second->user().nick() + " H @ :0 " + it->second->user().name());
 
 	}
 	return res;

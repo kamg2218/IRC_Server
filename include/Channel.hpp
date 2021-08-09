@@ -20,7 +20,7 @@ class Channel
 		void		addUser(Session *user);
 		void		addOper(Session *user);
 		void		cmdJoin(Session *ss);
-		void		cmdTopic(std::string const& topic, std::string const& msg);
+		void		cmdTopic(Session *ss, std::string const& topic, std::string const& msg);
 		void		cmdNick(std::string const& name, std::string const& nick);
 		void		removeUser(User *user);
 		bool		hasUser(User *user);
