@@ -337,8 +337,6 @@ void		Frame::cmdTopic(Session *ss, std::vector<std::string> const& sets)
 		str = sets[2].substr(1);
 		for (i = 3; i < sets.size(); i++)
 			str += " " + sets[i];
-		if (it->second->isOperator(ss->user().nick()) == false)
-			return ss->err482(it->first);		//ChanOprivsNeeded
 		it->second->cmdTopic(str, vectorToString(sets));
 	}
 }
