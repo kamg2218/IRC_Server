@@ -22,7 +22,29 @@ const char*		MainServer::AcceptException::what() const throw()
 	return "Accpet Error";
 }
 
-MainServer::MainServer() :_name("ft_irc")
+MainServer::MainServer(void) :_name("ft_irc")
+{
+}
+
+MainServer::MainServer(MainServer const& other)
+{
+	*this = other;
+}
+
+
+MainServer&	MainServer::operator=(const MainServer& other)
+{
+	if (this == &other)
+		return *this;
+	this->_sd = other._sd;
+	this->_sock = other._sock;
+	this->_pass = other._pass;
+	this->_name = other._name;
+	this->_mSessions = other._mSessions;
+	return *this;
+}
+
+MainServer::~MainServer(void)
 {
 }
 

@@ -171,3 +171,4 @@ std::vector<std::string>		Channel::channeloperVector()
 	}
 	return res;
 }
+

@@ -593,13 +593,38 @@ void		Frame::cmdWho(Session *ss, std::vector<std::string> const& sets)
 			}
 			else
 			{
+				// hostName
 				for (itu = _mUsers.begin(); itu != _mUsers.end(); ++itu)
 				{
-					if (itu->second->user().host() == v[i]			// hostname
-							||	itu->second->user().name() == v[i]	// realname
-							||	itu->second->user().nick() == v[i])	// nickname
+					if (itu->second->user().host() == v[i])
 					{
-						if (sets.size() > 2 && sets[2] == "o" && itu->second->user().checkManager() == 0)
+						if (sets.size() > 2
+								&& sets[2] == "o"
+								&& itu->second->user().checkManager() == 0)
+							continue ;
+						ss->rep352(itu->second->user().userVector());
+					}
+				}
+				// realName
+				for (itu = _mUsers.begin(); itu != _mUsers.end(); ++itu)
+				{
+					if (itu->second->user().host() == v[i])
+					{
+						if (sets.size() > 2
+								&& sets[2] == "o"
+								&& itu->second->user().checkManager() == 0)
+							continue ;
+						ss->rep352(itu->second->user().userVector());
+					}
+				}
+				// nickName
+				for (itu = _mUsers.begin(); itu != _mUsers.end(); ++itu)
+				{
+					if (itu->second->user().host() == v[i])
+					{
+						if (sets.size() > 2
+								&& sets[2] == "o"
+								&& itu->second->user().checkManager() == 0)
 							continue ;
 						ss->rep352(itu->second->user().userVector());
 					}
@@ -613,62 +638,67 @@ void		Frame::cmdWho(Session *ss, std::vector<std::string> const& sets)
 void		Frame::cmdPrivmsg(Session *ss, std::vector<std::string> const& sets)
 {
     std::vector<std::string> receivers;
-    std::string receiver;
+	std::set<std::string> s;
+	std::set<std::string>::iterator is;
+	std::pair<std::set<std::string>::iterator, bool> ret;
+	std::string receiver;
 	std::string msg;
 
 	if (sets.size() == 1)
-        return ss->err411(sets[0]);   // errNORECIPIENT
-	if (sets.size() != 3)
-	{
-		if (sets[1][0] == ':')
-        	return ss->err411(sets[0]);   // errNORECIPIENT
-		if (sets[2][0] != ':')
-        	return ss->err412();   // errNOTEXTTOSEND
-	}
-    // split receivers
+		return ss->err411(sets[0]);   // ERRNORECIPIENT
+	if (sets[2][0] != ':')
+		return ss->err412();   // ERRNOTEXTTOSEND
+
+	// massage
+	for (std::vector<std::string>::size_type i = 2 ;i < sets.size(); i++)
+		msg += " " + sets[i];
+    
+	// split receivers
     receivers = split_comma(sets[1]);
     std::vector<std::string>::iterator		receiverit = receivers.begin();
-    std::vector<std::string>::iterator		tmp;
-    
+   
     // check receivers
-    while (receiverit != receivers.end())
-    {
+	for (; receiverit != receivers.end(); receiverit++)
+	{
+		ret = s.insert(*receiverit);
+		if (ret.second == false)
+		{
+			ss->err407(*receiverit);	// ERRTOOMANYTARGETS
+			continue ;
+		}
         if (checkChannelname(*receiverit))
 		{
             if (!doesChannelExists(makeLower((*receiverit).substr(1))))
-                return ss->err404(*receiverit);   // errCANNOTSENDTOCHAN
+			{
+                ss->err404(*receiverit);   // ERRCANNOTSENDTOCHAN
+				continue ;
+			}
         }
         else
         {
             if (!doesNicknameExists(*receiverit))
-                return ss->err401(*receiverit);       // errNOSUCHNICK
-			for (tmp = receiverit + 1; tmp != receivers.end(); tmp++)
-            {
-                if (*(tmp - 1) == *tmp)
-                    return ss->err407(*tmp);       // errTOOMANYTARGETS
-            }
-        }
-        receiverit++;
-    }
-	for (std::vector<std::string>::size_type i = 2 ;i < sets.size(); i++)
-		msg += sets[i];
-    for (receiverit = receivers.begin(); receiverit != receivers.end(); receiverit++)
-    {
+			{
+                ss->err401(*receiverit);       // ERRNOSUCHNICK
+        		continue ;
+			}
+		}
         receiver = *receiverit;
         if (receiver[0] == '#')
         {
 			Channel *channel;
 
 			channel = findChannel(makeLower(receiver.substr(1)));
-            channel->privmsgBroadcast(ss, "PRIVMSG " + receiver + " " + msg);
+            channel->privmsgBroadcast(ss, "PRIVMSG " + receiver + " " + msg.substr(1));
         }
-        else
+        else if (doesNicknameExists(receiver))
         {
 			Session *session;
 
 			session = findUser(receiver);
-			ss->replyAsUser(session, "PRIVMSG " + receiver + " " + msg);
+			ss->replyAsUser(session, "PRIVMSG " + receiver + " " + msg.substr(1));
         }
+		else
+			ss->err411(sets[0]);   // ERRNORECIPIENT
     }
 }
 
@@ -729,20 +759,22 @@ void		Frame::printCommand(Session *ss)
 	ss->replyAsServer(res + "<Command>");
 	ss->replyAsServer(res + "WHO <nick> [o]");
 	ss->replyAsServer(res + "WHOIS <nickmask>[,<nickmask>]");
-	ss->replyAsServer(res + "PRIVMSG <receiver>[,<receiver>] <text to be send>");
+	ss->replyAsServer(res + "PRIVMSG <receiver>[,<receiver>] <:text to be send>");
 
-	ss->replyAsServer(res + "JOIN <channel>[,<channel>] [<key>[,<key>]");
+	ss->replyAsServer(res + "JOIN <channel>[,<channel>]");
 	ss->replyAsServer(res + "PART <channel>[,<channel>]");
 	ss->replyAsServer(res + "TOPIC <channel> [<topic>]");
 	ss->replyAsServer(res + "LIST [<channel>[,<channel>]]");
 	ss->replyAsServer(res + "INVITE <nick> <channel>");
 	ss->replyAsServer(res + "KICK <channel> <user> [<comment>]");
+	ss->replyAsServer(res + "KICK <channel> <user>[,<user>] [<comment>]");
+	ss->replyAsServer(res + "KICK <channel>[,<channel>] <user>[,<user>] [<comment>]");
 
 	ss->replyAsServer(res + "NICK <nick>");
 	ss->replyAsServer(res + "USER <user> <host> <server> <real>");
 	ss->replyAsServer(res + "PASS <password>");
 	ss->replyAsServer(res + "OPER <user> <password>");
-	ss->replyAsServer(res + "QUIT <Quit message>");
+	ss->replyAsServer(res + "QUIT [Quit message]");
 
 }
 

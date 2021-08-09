@@ -9,6 +9,7 @@
 #include "Channel.hpp"
 #include "MainServer.hpp"
 #include "Service.hpp"
+#include <set>
 
 typedef std::map<std::string, Session*> UserMap;
 typedef std::map<std::string, Channel*> ChannelMap;
