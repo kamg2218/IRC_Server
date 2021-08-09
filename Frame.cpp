@@ -188,10 +188,11 @@ void		Frame::cmdQuit(Session *ss, std::vector<std::string> const& sets)
 	std::string	msg;
 
 	msg = vectorToString(sets);
-	ss->user().cmdQuit(ss, sets, msg);
+	broadcastAll(ss, msg);
+	ss->user().cmdQuit(sets);
 	removeUser(ss->user().nick());
 	_server.users().erase(ss->soc().sd());
-	ss->replyAsServer(msg);
+	ss->replyAsUser(ss, msg);
 }
 
 void		Frame::cmdJoin(Session *ss, std::vector<std::string> const& sets)
@@ -748,6 +749,5 @@ void		Frame::printCommand(Session *ss)
 
 void	Frame::cmdPong(Session *ss)
 {
-	ss->setTime(0);
-	//ss->setPing(true);
+	ss->setTime(std::time(0));
 }
