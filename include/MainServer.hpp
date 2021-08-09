@@ -52,18 +52,21 @@ class MainServer
 			public:
 				virtual const char *what(void) const throw();
 		};
-		MainServer();
+		MainServer(void);
+		MainServer(MainServer const& other);
+		MainServer&	operator=(MainServer const& other);
+		~MainServer(void);
 		void		create(base const& bs);
 		void		handleRead(std::map<int, Session*>::iterator temp);
 		void		handleAccept(void);
 		void		handleDecline(std::map<int, Session*>::iterator const& pos);
-		int		socket() const;
-		std::string		name() const;
-		std::map<int, Session*>&		users();
-		const std::map<int, Session*>&		users() const;
+		int		socket(void) const;
+		std::string		name(void) const;
+		std::map<int, Session*>&		users(void);
+		const std::map<int, Session*>&		users(void) const;
 		bool		checkPass(std::string const& pass);
 		void		setPass(std::string const& pass);
-		std::string		msgHeader();
+		std::string		msgHeader(void);
 };
 
 #endif

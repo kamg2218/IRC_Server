@@ -406,7 +406,7 @@ void		Session::err411(std::string const &cmd)
 	msg += "411 ";
 	msg += user().nick();
 	msg += " ";
-	msg += ":No recipient given";
+	msg += ":No recipient given ";
 	msg += cmd;
 	replyAsServer(msg);
 }
