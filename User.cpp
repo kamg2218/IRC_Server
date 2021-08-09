@@ -229,7 +229,7 @@ bool			User::cmdPart(Session *ss, std::string const& chname, std::vector<std::st
 	return true;
 }
 
-void			User::cmdQuit(Session *ss, std::vector<std::string> const& sets, std::string const& msg)
+void			User::cmdQuit(std::vector<std::string> const& sets)
 {
 	ChannelMap::iterator	it;
 	ChannelMap::iterator	tt;
@@ -242,8 +242,6 @@ void			User::cmdQuit(Session *ss, std::vector<std::string> const& sets, std::str
 	for (it = _mChannels.begin(); it != _mChannels.end(); )
 	{
 		tt = it++;
-		tt->second->broadcast(ss, "PART #" + tt->first + str);
-		tt->second->broadcast(ss, msg);
 		tt->second->removeUser(this);
 		if (tt->second->userCount() == 0)
 		{

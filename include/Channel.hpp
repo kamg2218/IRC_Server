@@ -18,6 +18,7 @@ class Channel
 		Channel(Session *creator, std::string const& name, std::string const& topic = "");
 		~Channel();
 		void		addUser(Session *user);
+		void		addOper(Session *user);
 		void		cmdJoin(Session *ss);
 		void		cmdTopic(std::string const& topic, std::string const& msg);
 		void		cmdNick(std::string const& name, std::string const& nick);

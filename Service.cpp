@@ -69,7 +69,7 @@ void		Service::doService(MainServer & sv)
 			temp = it++;
 			if (FD_ISSET(temp->first, &_fdRead))
 			{
-				temp->second->setTime(0);
+				temp->second->setTime(std::time(0));
 				sv.handleRead(temp);
 			}
 			else
@@ -88,15 +88,15 @@ void		Service::sendPing(Session *ss)
 	std::string	msg;
 	std::vector<std::string>	v;
 
-	if (ss->time() != 0 && std::difftime(std::time(0), ss->time()) > 5)
+	if (std::difftime(std::time(0), ss->time()) < 5)
+		return ;
+	else if (std::difftime(std::time(0), ss->time()) > 10)
 	{
 		v.insert(v.end(),"QUIT");
 		v.insert(v.end(), ":" + std::to_string(ss->soc().sd()) + " client is missing");
 		Frame::instance()->cmdQuit(ss, v);
 		return ;
 	}
-	else if (ss->time() != 0)
-		return ;
 	msg = "PING ";
 	msg += ss->user().nick();
 	msg += "\r\n";

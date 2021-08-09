@@ -3,6 +3,7 @@
 
 #include <string>
 #include <map>
+#include <ctime>
 #include <cctype>
 #include "User.hpp"
 #include "Channel.hpp"
