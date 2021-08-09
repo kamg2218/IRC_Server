@@ -361,6 +361,8 @@ std::vector<std::string>		Frame::split_comma(std::string s)
 	while ((pos = s.find(",")) != std::string::npos)
 	{
 		res.push_back(s.substr(0, pos));
+		if (res.size() == pos + 1)
+			break ;
 		s.erase(0, pos + 1);
 	}
 	res.push_back(s);
@@ -379,9 +381,11 @@ std::vector<std::vector<std::string> >		Frame::kicklist(std::vector<std::string>
 	tgtlist = split_comma(sets[2]);
 	for (std::vector<std::string>::size_type i = 3 ; i < sets.size() ; i++)
 	{
-		if (i == 3 && sets[i][0] != ':')
+		if (i == 3 && sets[i].find(":") == std::string::npos)
 			break ;
 		message += sets[i];
+		if (i != sets.size()- 1)
+			message += " ";
 	}
 	for (std::vector<std::string>::size_type i = 0 ; i < chlist.size() || i < tgtlist.size() ; i++)
 	{
@@ -418,12 +422,12 @@ void		Frame::cmdKick(Session *ss, std::vector<std::string> const& sets)
 			ss->err442(cmd[1].substr(1));
 		else if (!((channel = findChannel(makeLower(cmd[1].substr(1))))->isOperator(ss->user().nick())))
 			ss->err482(cmd[1].substr(1));
-		else if (doesNicknameExists(cmd[2]))
+		else if (ss->user().nick() != cmd[2] && channel->hasUser(cmd[2]))
 		{
 			target = findUser(cmd[2]);
 			channel->broadcast(ss, vectorToString(cmd));
 			target->user().partChannel(channel);
-			channel->removeUser(target->user().nick());
+			channel->cmdPart(target->user().nick());
 		}
 		cmdsets.erase(cmdsets.begin());
 	}
