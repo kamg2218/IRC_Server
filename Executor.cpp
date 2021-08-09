@@ -131,8 +131,6 @@ void		Executor::execute(std::string& buff, Session* ss)
 		frame->cmdList(ss, splited_cmd);
 	else if (splited_cmd[0] == "INVITE")
 		frame->cmdInvite(ss, splited_cmd);
-	else if (splited_cmd[0] == "OPER")
-		frame->cmdOper(ss, splited_cmd);
 	else if (splited_cmd[0] == "WHO")
 		frame->cmdWho(ss, splited_cmd);
 	else if (splited_cmd[0] == "WHOIS")

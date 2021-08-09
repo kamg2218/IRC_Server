@@ -58,7 +58,6 @@ class User
 		std::string		user(void) const;
 		std::string		msgHeader(void) const;
 		std::string		makeLower(std::string const& str);
-		const ChannelMap&		channel(void) const;	// tmp
 		std::vector<std::string>		userVector(void);
 		std::vector<std::string>		cmdWhois(void);
 };

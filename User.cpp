@@ -42,7 +42,7 @@ User::~User(void)
 		for (; it != _mChannels.end() ; ++it)
 		{
 			it->second->broadcast(frame->findUser(_sNickname), "PART #" + it->second->name());
-			it->second->removeUser(this);
+			it->second->cmdPart(this->nick());
 		}
 		_mChannels.clear();
 		frame->broadcastAll(frame->findUser(_sNickname), "QUIT :User lost connection");
@@ -94,10 +94,6 @@ std::string		User::user(void) const
 bool			User::pass(void) const
 {
 	return _password;
-}
-const ChannelMap&	User::channel(void) const
-{
-	return _mChannels;
 }
 
 std::string		User::msgHeader(void) const
@@ -181,8 +177,8 @@ void			User::optionJoin(Session *ss, std::string const& msg)
 
 	for (it = _mChannels.begin(); it != _mChannels.end(); it++)
 	{
-		it->second->removeUser(this);
 		it->second->broadcast(ss, msg);
+		it->second->cmdPart(this->nick());
 		if (it->second->userCount() == 0)
 		{
 			delete it->second;
@@ -219,7 +215,7 @@ bool			User::cmdPart(Session *ss, std::string const& chname, std::vector<std::st
 	for (i = 2; i < sets.size(); i++)
 		str += " " + sets[i];
 	it->second->broadcast(ss, str);
-	it->second->removeUser(this);
+	it->second->cmdPart(this->nick());
 	if (it->second->userCount() == 0)
 	{
 		delete it->second;
@@ -242,7 +238,7 @@ void			User::cmdQuit(std::vector<std::string> const& sets)
 	for (it = _mChannels.begin(); it != _mChannels.end(); )
 	{
 		tt = it++;
-		tt->second->removeUser(this);
+		tt->second->cmdPart(this->nick());
 		if (tt->second->userCount() == 0)
 		{
 			delete tt->second;
@@ -250,6 +246,8 @@ void			User::cmdQuit(std::vector<std::string> const& sets)
 		}
 		_mChannels.erase(tt);
 	}
+	_didNick = false;
+	_didUser = false;
 }
 
 void			User::cmdOper(void)
