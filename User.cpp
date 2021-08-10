@@ -249,32 +249,6 @@ bool			User::isMemOfChannel(std::string const& chname) const
 	return true;
 }
 
-std::vector<std::string>	User::userVector(void)
-{
-	ChannelMap::iterator it = _mChannels.begin();
-	std::vector<std::string> res;
-	std::string servername = "ft_irc";
-
-	// has not Channel
-	if (it == _mChannels.end())
-	{
-		if (_manager)
-			res.push_back("<no Channel> " + user() + " " + host() + " " + servername + " " + nick() + " H @ :0 " + name());
-		else
-			res.push_back("<no Channel> " + user() + " " + host() + " " + servername + " " + nick() + " H :0 " + name());
-
-	}
-	for (it = _mChannels.begin(); it != _mChannels.end(); ++it)
-	{
-		if (it->second->hasOper(nick()))
-			res.push_back(it->second->name() + " " + user() + " " + host() + " " + servername + " " + nick() + " H @ :0 " + name());
-		else
-			res.push_back(it->second->name() + " " + user() + " " + host() + " " + servername + " " + nick() + " H :0 " + name());
-	}
-	return res;
-}
-
-
 void		User::cmdWhois(Session *ss)
 {
 	ChannelMap::iterator it;
@@ -296,4 +270,33 @@ void			User::setProperlyQuit(bool state)
 void			User::partChannel(Channel *ch)
 {
 	_mChannels.erase(ch->name());
+}
+
+std::vector<std::string>	User::userVectorOper(std::vector<std::string> const& sets)
+{
+	ChannelMap::iterator it = _mChannels.begin();
+	std::vector<std::string> res;
+	std::string servername = "ft_irc";
+
+	// has not Channel
+	if (it == _mChannels.end())
+	{
+		if (checkManager())
+			res.push_back("<no Channel> " + user() + " " + host() + " " + servername + " " + nick() + " H @ :0 " + name());
+		else
+			res.push_back("<no Channel> " + user() + " " + host() + " " + servername + " " + nick() + " H :0 " + name());
+
+	}
+	for (it = _mChannels.begin(); it != _mChannels.end(); ++it)
+	{
+		if (sets.size() > 2 
+				&& sets[2] == "o"
+				&& it->second->hasOper(nick()))
+			res.push_back(it->second->name() + " " + user() + " " + host() + " " + servername + " " + nick() + " H @ :0 " + name());
+		else if (it->second->hasOper(nick()))
+			res.push_back(it->second->name() + " " + user() + " " + host() + " " + servername + " " + nick() + " H @ :0 " + name());
+		else
+			res.push_back(it->second->name() + " " + user() + " " + host() + " " + servername + " " + nick() + " H :0 " + name());
+	}
+	return res;
 }
