@@ -415,7 +415,7 @@ void		Frame::cmdKick(Session *ss, std::vector<std::string> const& sets)
 			ss->err403(cmd[1].substr(1));
 		else if (!(ss->user().isMemOfChannel(cmd[1].substr(1))))
 			ss->err442(cmd[1].substr(1));
-		else if (!((channel = findChannel(makeLower(cmd[1].substr(1))))->isOperator(ss->user().nick())))
+		else if (!((channel = findChannel(makeLower(cmd[1].substr(1))))->hasOper(ss->user().nick())))
 			ss->err482(cmd[1].substr(1));
 		else if (ss->user().nick() != cmd[2] && channel->hasUser(cmd[2]))
 		{
