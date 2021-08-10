@@ -35,6 +35,7 @@ class Session
 	public:
 		Session(void);
 		Session(int sd);
+		~Session(void);
 		static pointer	create(void);
 		int		socket(void) const;
 		Socket&		soc(void);

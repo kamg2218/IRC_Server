@@ -57,7 +57,7 @@ void	MainServer::handleAccept(void)
 		delete se;
 		throw AcceptException();
 	}
-	std::cout << inet_ntoa(se->soc().sin().sin_addr) << ":" << ntohs(se->soc().sin().sin_port) << " is connected\n";
+	std::cout << inet_ntoa(se->soc().sin().sin_addr) << ":" << ntohs(se->soc().sin().sin_port) << " client " << se->soc().sd() << " is connected\n";
 	_mSessions.insert(std::pair<int, Session*>(cs, se));
 }
 
@@ -66,6 +66,7 @@ void		MainServer::handleDecline(std::map<int, Session*>::iterator const& pos)
 	Session* temp;
 
 	temp = (*pos).second;
+	std::cout << "client " << temp->soc().sd() << " gone away\n";
 	_mSessions.erase(pos);
 	delete (temp);
 }
