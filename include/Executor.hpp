@@ -6,7 +6,8 @@
 #include <map>
 class Session;
 
-# define DELI "\r\n"
+# define RNDELI "\r\n"
+# define NDELI "\n"
 
 class Executor
 {
