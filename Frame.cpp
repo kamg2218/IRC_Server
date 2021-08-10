@@ -499,6 +499,8 @@ std::vector<std::string>		Frame::channelMask(std::string const& str)
 		if (checkMask(makeLower(str), it->first, wild))
 			v.insert(v.end(), it->first);
 	}
+	if (v.size() == 0)
+		return userMask(str);
 	return v;
 }
 
@@ -545,19 +547,6 @@ std::string		Frame::vectorToString(std::vector<std::string> const& sets)
 	}
 	res += sets[i];
     return res;
-}
-
-std::string		Frame::vectorToStringpriv(std::vector<std::string> const& sets)
-{
-    std::string res;
-
-    for (std::vector<std::string>::size_type i = 0; i < sets.size(); i++)
-    {
-		if (i == 2 && sets[2][0] != ':')
-			res += ":";
-        res += sets[i] + " ";
-	}
-	return res.substr(0, res.size() - 1);
 }
 
 MainServer&		Frame::getServer()

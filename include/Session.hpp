@@ -31,6 +31,7 @@ class Session
 		std::time_t		_time;
 		Session(Session const& ref);
 		Session&	operator=(Session const& ref);
+		void		streamAppend(char *str, int r);
 	public:
 		Session(void);
 		Session(int sd);
@@ -41,7 +42,6 @@ class Session
 		std::time_t	time(void);
 		void		setTime(std::time_t tm);
 		bool		handleRead(void);
-		void		streamAppend(char *str, int r);
 		void		replyAsServer(std::string const& str);
 		void		replyAsUser(Session *target, std::string const& str);
 		void		rep001(User *us);

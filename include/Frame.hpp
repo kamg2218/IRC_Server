@@ -24,6 +24,16 @@ class Frame
 		Service			_service;
 		Frame(Frame const& other);
 		Frame&	operator=(Frame const& other);
+		bool			checkMask(std::string const& str, std::string const& name, int wild);
+		void			printCommand(Session *ss);
+		void			broadcastAll(Session *ss, std::string const& str);
+		void			doJoin(Session *ss, std::vector<std::string> const& sets, std::string const& chname);
+		std::string		makeLower(std::string const& str);
+		std::string		vectorToString(std::vector<std::string> const& sets);
+		std::vector<std::string>	userMask(std::string const& str);
+		std::vector<std::string>	channelMask(std::string const& str);
+		std::vector<std::string>	split_comma(std::string s);
+		std::vector<std::vector<std::string> >		kicklist(std::vector<std::string> const& sets);
 	public:
 		Frame(void);
 		~Frame(void);
@@ -39,6 +49,7 @@ class Frame
 		bool		checkChannelname(std::string const& name);
 		bool		doesChannelExists(std::string const& name);
 		bool		doesNicknameExists(std::string const& name);
+		MainServer&	getServer(void);
 		Session*	findUser(std::string const& name);
 		Channel*	findChannel(std::string const& name);
 		void		cmdPong(Session *ss);
@@ -50,23 +61,11 @@ class Frame
 		void		cmdPass(Session *ss, std::vector<std::string> const& sets);
 		void		cmdTopic(Session *ss, std::vector<std::string> const& sets);
 		void		cmdList(Session *ss, std::vector<std::string> const& sets);
-		void		doJoin(Session *ss, std::vector<std::string> const& sets, std::string const& chname);
 		void		cmdKick(Session *ss, std::vector<std::string> const& sets);
 		void		cmdInvite(Session *ss, std::vector<std::string> const& sets);
-		bool		checkMask(std::string const& str, std::string const& name, int wild);
 		void		cmdWho(Session *ss, std::vector<std::string> const& sets);
 		void		cmdWhois(Session *ss, std::vector<std::string> const& sets);
 		void		cmdPrivmsg(Session *ss, std::vector<std::string> const& sets);
-		void		printCommand(Session *ss);
-		void		broadcastAll(Session *ss, std::string const& str);
-		std::string		makeLower(std::string const& str);
-		std::string		vectorToString(std::vector<std::string> const& sets);
-		std::string		vectorToStringpriv(std::vector<std::string> const& sets);
-		MainServer&		getServer(void);
-		std::vector<std::string>	userMask(std::string const& str);
-		std::vector<std::string>	channelMask(std::string const& str);
-		std::vector<std::string>	split_comma(std::string s);
-		std::vector<std::vector<std::string> >		kicklist(std::vector<std::string> const& sets);
 };
 
 #endif

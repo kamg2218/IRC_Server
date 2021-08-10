@@ -27,16 +27,15 @@ class User
 		std::list<std::string>	_pastNick;
 		User(User const& other);
 		User&		operator=(User const& other);
+		std::string		makeLower(std::string const& str);
 	public:
 		User(void);
 		~User(void);
 		static User*		create(void);
-		bool		addNick(std::vector<std::string> const& sets);
-		void		cmdNick(std::vector<std::string> const& sets);
-		bool		cmdUser(std::vector<std::string> const& sets);
+		void		cmdWhois(Session *ss);
 		void		cmdJoin(Channel* ch);
+		void		cmdNick(std::vector<std::string> const& sets);
 		void		optionJoin(Session *ss, std::string const& msg);
-		bool		cmdPart(Session *ss, std::string const& chname, std::vector<std::string> const& sets);
 		void		cmdQuit(std::vector<std::string> const& sets);
 		void		cmdOper(void);
 		void		setPass(bool pass);
@@ -51,15 +50,16 @@ class User
 		bool		checkUser(void) const;
 		bool		checkManager(void) const;
 		bool		isRegistered(void) const;
+		bool		addNick(std::vector<std::string> const& sets);
+		bool		cmdUser(std::vector<std::string> const& sets);
 		bool		isMemOfChannel(std::string const& chname) const;
+		bool		cmdPart(Session *ss, std::string const& chname, std::vector<std::string> const& sets);
 		std::string		name(void) const;
 		std::string		nick(void) const;
 		std::string		host(void) const;
 		std::string		user(void) const;
 		std::string		msgHeader(void) const;
-		std::string		makeLower(std::string const& str);
-		std::vector<std::string>		userVectorOper(std::vector<std::string> const& sets);
-		void		cmdWhois(Session *ss);
+		std::vector<std::string>	userVectorOper(std::vector<std::string> const& sets);
 };
 
 #endif
