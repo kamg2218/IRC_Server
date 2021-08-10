@@ -23,19 +23,14 @@ User::~User(void)
 {
 	if (isRegistered() && !_isProperlyQuit)
 	{
-		Frame	*frame;
-		ChannelMap::iterator it;
+		Frame		*frame;
+		ChannelMap::iterator		it;
+		std::vector<std::string>	quitmsg;
 
+		quitmsg.push_back("QUIT");
+		quitmsg.push_back(":User unexpectedly lost connection");
 		frame = Frame::instance();
-		it = _mChannels.begin();
-		for (; it != _mChannels.end() ; ++it)
-		{
-			it->second->broadcast(frame->findUser(_sNickname), "PART #" + it->second->name());
-			it->second->cmdPart(this->nick());
-		}
-		_mChannels.clear();
-		frame->broadcastAll(frame->findUser(_sNickname), "QUIT :User lost connection");
-		frame->removeUser(_sNickname);
+		frame->cmdQuit(frame->findUser(_sNickname), quitmsg);
 	}
 }
 
