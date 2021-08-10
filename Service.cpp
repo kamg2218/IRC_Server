@@ -62,8 +62,8 @@ void		Service::doService(MainServer & sv)
 			temp->second->setTime(std::time(0));
 			sv.handleRead(temp);
 		}
-		//else
-			//sendPing(sv, temp->second);
+		else
+			sendPing(sv, temp->second);
 	}
 	if (FD_ISSET(sv.socket(), &_fdRead))
 		sv.handleAccept();
@@ -91,7 +91,6 @@ void		Service::sendPing(MainServer& sv, Session *ss)
 	msg += ss->user().nick();
 	msg += "\r\n";
 	send(ss->soc().sd(), msg.c_str(), msg.length(), 0);
-	ss->setTime(std::time(0));
 }
 
 const char*		Service::selectException::what(void) const throw()

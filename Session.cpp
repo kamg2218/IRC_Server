@@ -26,6 +26,10 @@ Session&		Session::operator=(Session const& ref)
 	return *this;
 }
 
+Session::~Session()
+{
+}
+
 Session::pointer		Session::create(void)
 {
 	return new Session();
@@ -78,7 +82,9 @@ bool		Session::handleRead(void)
 		streamAppend(buf, r);
 	while (executor.gotFullMsg(_rstream))
 	{
-		std::cout << "Got msg : " << executor.getMessage(_rstream) << std::endl;
+		#ifdef TEST
+			std::cout << "Got msg : " << executor.getMessage(_rstream) << std::endl;
+		#endif
 		executor.execute(_rstream, this);
 		executor.reset(_rstream);
 	}
@@ -95,7 +101,9 @@ void		Session::replyAsServer(std::string const& str)
 	msg += Frame::instance()->getServer().msgHeader();
 	msg += " ";
 	msg += str;
-	std::cout << "replied as SV: " << msg << "\n";
+	#ifdef TEST
+		std::cout << "replied as SV: " << msg << "\n";
+	#endif
 	msg += "\r\n";
 	send(_soc.sd(), msg.c_str(), msg.length(), 0);
 }
@@ -108,7 +116,9 @@ void		Session::replyAsUser(Session *target, std::string const& str)
 	msg += user().msgHeader();
 	msg += " ";
 	msg += str;
-	std::cout << "replied as US: " << msg << "\n";
+	#ifdef TEST
+		std::cout << "replied as US: " << msg << "\n";
+	#endif
 	msg += "\r\n";
 	send(target->soc().sd(), msg.c_str(), msg.length(), 0);
 }

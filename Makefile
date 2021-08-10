@@ -6,6 +6,7 @@ NAME=ircserv
 TEMP=$(NAME:=.dSYM)
 CFLAGS = -Wall -Werror -Wextra
 DFLAGS = -fsanitize=address
+TEST = -DTEST
 
 all : $(NAME)
 
@@ -18,5 +19,8 @@ clean :
 fclean: clean
 	rm -rf $(NAME)
 	rm -rf $(TEMP)
-	
+
+test : fclean
+	clang++ $(CFLAGS) $(DFLAGS) $(TEST) $(SRC) -o $(NAME) -g3
+
 re : fclean all
