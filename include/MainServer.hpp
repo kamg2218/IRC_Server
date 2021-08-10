@@ -35,8 +35,6 @@ class MainServer
 		MainServer&		operator=(MainServer const& other);
 	public:
 		MainServer(void);
-		MainServer(MainServer const& other);
-		MainServer&	operator=(MainServer const& other);
 		~MainServer(void);
 		void		create(base const& bs);
 		void		handleRead(std::map<int, Session*>::iterator temp);
