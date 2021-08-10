@@ -59,7 +59,7 @@ class User
 		std::string		msgHeader(void) const;
 		std::string		makeLower(std::string const& str);
 		std::vector<std::string>		userVector(void);
-		std::vector<std::string>		cmdWhois(void);
+		void		cmdWhois(Session *ss);
 };
 
 #endif
