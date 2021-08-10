@@ -568,12 +568,12 @@ MainServer&		Frame::getServer()
 void		Frame::cmdWho(Session *ss, std::vector<std::string> const& sets)
 {
 	UserMap::iterator itu;
-
 	std::vector<std::string> v;
+	
 	if (sets.size() == 1)
-		v = getMask("*");
+		v = channelMask("*");
 	else
-		v = getMask(sets[1]);
+		v = channelMask(sets[1]);
 	if (v.size() == 0)
 		return ss->rep315(sets[1]);
 	for (std::vector<std::string>::size_type i = 0; i < v.size(); i++)
@@ -676,7 +676,7 @@ void		Frame::cmdWhois(Session *ss, std::vector<std::string> const& sets)
 	split_v = split_comma(sets[1]);
 	for (its = split_v.begin(); its != split_v.end(); ++its)
 	{
-		wild_v = getMask(*its);
+		wild_v = userMask(*its);
 		if (wild_v.size() == 0)
 			return ss->rep318(sets[1]);
 		for (itw = wild_v.begin(); itw != wild_v.end(); ++itw)
