@@ -79,7 +79,7 @@ void		Service::sendPing(MainServer& sv, Session *ss)
 
 	if (std::difftime(std::time(0), ss->time()) < 4)
 		return ;
-	else if (std::difftime(std::time(0), ss->time()) > 6)
+	else if (std::difftime(std::time(0), ss->time()) > 7)
 	{
 		v.insert(v.end(),"QUIT");
 		v.insert(v.end(), ":" + std::to_string(ss->soc().sd()) + " client is missing");

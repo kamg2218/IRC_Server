@@ -132,11 +132,11 @@ bool		Frame::checkChannelname(std::string const& name)
 {
 	std::string::size_type	i;
 
+	if (name.size() > 51 || name.size() <= 1)
+		return false;
 	for (i = 0; i < name.size(); i++)
 	{
-		if (name.size() > 51 || name.size() <= 1)
-			return false;
-		else if (i == 0 && name[0] != '#'
+		if (i == 0 && name[0] != '#'
 				&& name[0] != '!' && name[0] != '&' && name[0] != '+')
 			return false;
 		else if (name[i] == ' ' || name[i] == ',')
@@ -409,7 +409,7 @@ void		Frame::cmdKick(Session *ss, std::vector<std::string> const& sets)
 	while(cmdsets.size())
 	{
 		cmd = cmdsets[0];
-		if (cmd.size() < 3 || (!checkChannelname(sets[1])))
+		if (cmd.size() < 3 || (!checkChannelname(cmd[1])))
 			ss->err461("KICK");
 		else if (!doesChannelExists(makeLower(cmd[1].substr(1))))
 			ss->err403(cmd[1].substr(1));
@@ -591,7 +591,7 @@ void		Frame::cmdWho(Session *ss, std::vector<std::string> const& sets)
 				// realName
 				for (itu = _mUsers.begin(); itu != _mUsers.end(); ++itu)
 				{
-					if (itu->second->user().host() == v[i])
+					if (itu->second->user().name() == v[i])
 					{
 						if (sets.size() > 2
 								&& sets[2] == "o"
@@ -603,7 +603,7 @@ void		Frame::cmdWho(Session *ss, std::vector<std::string> const& sets)
 				// nickName
 				for (itu = _mUsers.begin(); itu != _mUsers.end(); ++itu)
 				{
-					if (itu->second->user().host() == v[i])
+					if (itu->second->user().nick() == v[i])
 					{
 						if (sets.size() > 2
 								&& sets[2] == "o"

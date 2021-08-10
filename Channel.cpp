@@ -155,8 +155,7 @@ void	Channel::cmdTopic(Session *ss, std::string const& topic, std::string const&
 	UserMap::iterator	it;
 
 	setTopic(topic);
-	for (it = _mUsers.begin(); it != _mUsers.end(); it++)
-		broadcast(ss, msg);
+	broadcast(ss, msg);
 }
 
 void	Channel::cmdJoin(Session *ss)
