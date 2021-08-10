@@ -271,7 +271,7 @@ std::vector<std::string>	User::userVector(void)
 	}
 	for (it = _mChannels.begin(); it != _mChannels.end(); ++it)
 	{
-		if (_manager)
+		if (it->second->hasOper(nick()))
 			res.push_back(it->second->name() + " " + user() + " " + host() + " " + servername + " " + nick() + " H @ :0 " + name());
 		else
 			res.push_back(it->second->name() + " " + user() + " " + host() + " " + servername + " " + nick() + " H :0 " + name());
@@ -280,19 +280,17 @@ std::vector<std::string>	User::userVector(void)
 }
 
 
-std::vector<std::string>	User::cmdWhois(void)
+void		User::cmdWhois(Session *ss)
 {
 	ChannelMap::iterator it;
-	std::vector<std::string> res;
 
 	for (it = _mChannels.begin(); it != _mChannels.end(); ++it)
 	{
-		if (_manager)
-			res.push_back(nick() + " :@" + it->second->name() + " ");
+		if (it->second->hasOper(nick()))
+			ss->rep319(nick() + " :@" + it->second->name() + " ");
 		else
-			res.push_back(nick() + " :" + it->second->name() + " ");
+			ss->rep319(nick() + " :" + it->second->name() + " ");
 	}
-	return res;
 }
 
 void			User::setProperlyQuit(bool state)
