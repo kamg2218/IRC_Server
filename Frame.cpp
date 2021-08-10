@@ -499,6 +499,8 @@ std::vector<std::string>		Frame::channelMask(std::string const& str)
 		if (checkMask(makeLower(str), it->first, wild))
 			v.insert(v.end(), it->first);
 	}
+	if (v.size() == 0)
+		return userMask(str);
 	return v;
 }
 

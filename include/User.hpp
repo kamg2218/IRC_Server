@@ -27,6 +27,7 @@ class User
 		std::list<std::string>	_pastNick;
 		User(User const& other);
 		User&		operator=(User const& other);
+		std::string		makeLower(std::string const& str);
 	public:
 		User(void);
 		~User(void);
@@ -57,8 +58,7 @@ class User
 		std::string		host(void) const;
 		std::string		user(void) const;
 		std::string		msgHeader(void) const;
-		std::string		makeLower(std::string const& str);
-		std::vector<std::string>		userVectorOper(std::vector<std::string> const& sets);
+		std::vector<std::string>	userVectorOper(std::vector<std::string> const& sets);
 		void		cmdWhois(Session *ss);
 };
 

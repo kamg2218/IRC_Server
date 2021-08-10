@@ -24,6 +24,10 @@ class Frame
 		Service			_service;
 		Frame(Frame const& other);
 		Frame&	operator=(Frame const& other);
+		bool		checkMask(std::string const& str, std::string const& name, int wild);
+		void		printCommand(Session *ss);
+		void		doJoin(Session *ss, std::vector<std::string> const& sets, std::string const& chname);
+		std::string		makeLower(std::string const& str);
 	public:
 		Frame(void);
 		~Frame(void);
@@ -50,16 +54,12 @@ class Frame
 		void		cmdPass(Session *ss, std::vector<std::string> const& sets);
 		void		cmdTopic(Session *ss, std::vector<std::string> const& sets);
 		void		cmdList(Session *ss, std::vector<std::string> const& sets);
-		void		doJoin(Session *ss, std::vector<std::string> const& sets, std::string const& chname);
 		void		cmdKick(Session *ss, std::vector<std::string> const& sets);
 		void		cmdInvite(Session *ss, std::vector<std::string> const& sets);
-		bool		checkMask(std::string const& str, std::string const& name, int wild);
 		void		cmdWho(Session *ss, std::vector<std::string> const& sets);
 		void		cmdWhois(Session *ss, std::vector<std::string> const& sets);
 		void		cmdPrivmsg(Session *ss, std::vector<std::string> const& sets);
-		void		printCommand(Session *ss);
 		void		broadcastAll(Session *ss, std::string const& str);
-		std::string		makeLower(std::string const& str);
 		std::string		vectorToString(std::vector<std::string> const& sets);
 		std::string		vectorToStringpriv(std::vector<std::string> const& sets);
 		MainServer&		getServer(void);
