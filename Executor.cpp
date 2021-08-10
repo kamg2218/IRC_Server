@@ -44,9 +44,9 @@ bool		Executor::gotFullMsg(std::string const& buff) const
 
 std::string		Executor::getMessage(std::string const& buff) const
 {
-	if (buff.find(RNDELI))
+	if (buff.find(RNDELI) != std::string::npos)
 		return buff.substr(0, buff.find(RNDELI));
-	if (buff.find(NDELI))
+	if (buff.find(NDELI) != std::string::npos)
 		return buff.substr(0, buff.find(NDELI));
 	return "";
 	/*
