@@ -120,7 +120,7 @@ bool		Frame::checkNickname(std::string const& name)
 		return false;
 	for (i = 0; i < name.size(); i++)
 	{
-		if (name[i] == ' ' || name[i] == ',')
+		if (name[i] == ' ' || name[i] == ',' || name[i] == '*')
 			return false;
 		else if ((int)name[i] == 7)
 			return false;
@@ -139,7 +139,7 @@ bool		Frame::checkChannelname(std::string const& name)
 		if (i == 0 && name[0] != '#'
 				&& name[0] != '!' && name[0] != '&' && name[0] != '+')
 			return false;
-		else if (name[i] == ' ' || name[i] == ',')
+		else if (name[i] == ' ' || name[i] == ',' || name[i] == '*')
 			return false;
 		else if ((int)name[i] == 7)
 			return false;
@@ -415,7 +415,7 @@ void		Frame::cmdKick(Session *ss, std::vector<std::string> const& sets)
 			ss->err403(cmd[1].substr(1));
 		else if (!(ss->user().isMemOfChannel(cmd[1].substr(1))))
 			ss->err442(cmd[1].substr(1));
-		else if (!((channel = findChannel(makeLower(cmd[1].substr(1))))->isOperator(ss->user().nick())))
+		else if (!((channel = findChannel(makeLower(cmd[1].substr(1))))->hasOper(ss->user().nick())))
 			ss->err482(cmd[1].substr(1));
 		else if (ss->user().nick() != cmd[2] && channel->hasUser(cmd[2]))
 		{
@@ -662,19 +662,20 @@ void		Frame::cmdPrivmsg(Session *ss, std::vector<std::string> const& sets)
 
 void		Frame::cmdWhois(Session *ss, std::vector<std::string> const& sets)
 {
+	Session *session;
 	std::vector<std::string>		split_v;
 	std::vector<std::string>		wild_v;
+	std::vector<std::string>::iterator	its;
+	std::vector<std::string>::iterator	itw;
 
 	if (sets.size() == 1)
 		return ss->err431();
 	split_v = split_comma(sets[1]);
-	for (std::vector<std::string>::iterator its = split_v.begin(); its != split_v.end(); ++its)
+	for (its = split_v.begin(); its != split_v.end(); ++its)
 	{
 		wild_v = getMask(*its);
-		for (std::vector<std::string>::iterator itw = wild_v.begin(); itw != wild_v.end(); ++itw)
+		for (itw = wild_v.begin(); itw != wild_v.end(); ++itw)
 		{
-			Session *session;
-
 			if (!doesNicknameExists(*itw))
 				ss->err401(*itw);
 			else
