@@ -34,12 +34,6 @@ bool		Executor::gotFullMsg(std::string const& buff) const
 	if (res != std::string::npos)
 		return true;
 	return false;
-	/*
-	res = buff.find(DELI);
-	if (res == std::string::npos)
-		return false;
-	return true;
-	*/
 }
 
 std::string		Executor::getMessage(std::string const& buff) const
@@ -49,12 +43,6 @@ std::string		Executor::getMessage(std::string const& buff) const
 	if (buff.find(NDELI) != std::string::npos)
 		return buff.substr(0, buff.find(NDELI));
 	return "";
-	/*
-	std::string		res;
-	
-	res = buff.substr(0, buff.find(DELI));
-	return res;
-	**/
 }
 
 void		Executor::reset(std::string& buff)
@@ -63,7 +51,6 @@ void		Executor::reset(std::string& buff)
 		buff.erase(0, buff.find(RNDELI) + 2);
 	else if (buff.find(NDELI) != std::string::npos)
 		buff.erase(0, buff.find(NDELI) + 1);
-	//buff.erase(0, buff.find(DELI) + 2);
 }
 
 int		Executor::msglen(std::string& buff) const
@@ -77,12 +64,6 @@ int		Executor::msglen(std::string& buff) const
 	if (res != std::string::npos)
 		return res;
 	return 0;
-	/*
-	res = buff.find(DELI);
-	if (res == std::string::npos)
-		return 0;
-	return res;
-	*/
 }
 
 bool		Executor::isPrefix(std::string const& s) const
