@@ -96,7 +96,7 @@ void		Session::replyAsServer(std::string const& str)
 	msg += Frame::instance()->getServer().msgHeader();
 	msg += " ";
 	msg += str;
-	//std::cout << "replied as SV: " <<msg << "\n";
+	std::cout << "replied as SV: " <<msg << "\n";
 	msg += "\r\n";
 	send(_soc.sd(), msg.c_str(), msg.length(), 0);
 }
@@ -109,7 +109,7 @@ void		Session::replyAsUser(Session *target, std::string const& str)
 	msg += user().msgHeader();
 	msg += " ";
 	msg += str;
-	//std::cout << "replied as US: " <<msg << "\n";
+	std::cout << "replied as US: " <<msg << "\n";
 	msg += "\r\n";
 	send(target->soc().sd(), msg.c_str(), msg.length(), 0);
 }

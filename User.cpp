@@ -282,9 +282,9 @@ void		User::cmdWhois(Session *ss)
 	for (it = _mChannels.begin(); it != _mChannels.end(); ++it)
 	{
 		if (it->second->hasOper(nick()))
-			ss->rep319(nick() + " :@" + it->second->name() + " ");
+			ss->rep319(nick() + " :@" + it->first + " ");
 		else
-			ss->rep319(nick() + " :" + it->second->name() + " ");
+			ss->rep319(nick() + " :" + it->first + " ");
 	}
 }
 
