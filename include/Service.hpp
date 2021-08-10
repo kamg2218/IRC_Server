@@ -17,6 +17,7 @@ class Service
 		int				_max;
 		int				_res;
 		struct timeval	_tv;
+		void		sendPing(MainServer& sv, Session *ss);
 	public:
 		Service(void);
 		Service(Service const& other);
@@ -24,7 +25,6 @@ class Service
 		~Service(void);
 		void		doSelect(MainServer const& sv);
 		void		doService(MainServer & sv);
-		void		sendPing(MainServer& sv, Session *ss);
 		class 		selectException : public std::exception
 		{
 			public:
