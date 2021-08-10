@@ -120,7 +120,7 @@ bool		Frame::checkNickname(std::string const& name)
 		return false;
 	for (i = 0; i < name.size(); i++)
 	{
-		if (name[i] == ' ' || name[i] == ',')
+		if (name[i] == ' ' || name[i] == ',' || name[i] == '*')
 			return false;
 		else if ((int)name[i] == 7)
 			return false;
@@ -139,7 +139,7 @@ bool		Frame::checkChannelname(std::string const& name)
 		if (i == 0 && name[0] != '#'
 				&& name[0] != '!' && name[0] != '&' && name[0] != '+')
 			return false;
-		else if (name[i] == ' ' || name[i] == ',')
+		else if (name[i] == ' ' || name[i] == ',' || name[i] == '*')
 			return false;
 		else if ((int)name[i] == 7)
 			return false;
@@ -550,71 +550,62 @@ void		Frame::cmdWho(Session *ss, std::vector<std::string> const& sets)
 {
 	UserMap::iterator itu;
 
-	if (sets.size() == 1 || (sets.size() == 2 && sets[1] == "*"))
-	{
-		for (itu = _mUsers.begin(); itu != _mUsers.end(); ++itu)
-			ss->rep352(itu->second->user().userVector());
-		ss->rep315("");
-	}
+	std::vector<std::string> v;
+	if (sets.size() == 1)
+		v = getMask("*");
 	else
+		v = getMask(sets[1]);
+	for (std::vector<std::string>::size_type i = 0; i < v.size(); i++)
 	{
-		std::vector<std::string> v;
-		if (checkChannelname(sets[1]))
-			v = getMask(sets[1].substr(1));
-		else
-			v = getMask(sets[1]);
-		for (std::vector<std::string>::size_type i = 0; i < v.size(); i++)
+		if (doesChannelExists(v[i]))	// channel
 		{
-			if (doesChannelExists(v[i]))	// channel
-			{
-				Channel *channel;
-				channel = findChannel(v[i]);
-				if (sets.size() > 2 && sets[2] == "o")
-					ss->rep352(channel->channeloperVector());
-				else
-					ss->rep352(channel->channelVector());
-			}
+			Channel *channel;
+			channel = findChannel(v[i]);
+			if (sets.size() > 2 && sets[2] == "o")
+				ss->rep352(channel->channeloperVector());
 			else
+				ss->rep352(channel->channelVector());			
+		}
+		else
+		{
+			// hostName
+			for (itu = _mUsers.begin(); itu != _mUsers.end(); ++itu)
 			{
-				// hostName
-				for (itu = _mUsers.begin(); itu != _mUsers.end(); ++itu)
+				if (itu->second->user().host() == v[i])
 				{
-					if (itu->second->user().host() == v[i])
-					{
-						if (sets.size() > 2
-								&& sets[2] == "o"
-								&& itu->second->user().checkManager() == 0)
-							continue ;
-						ss->rep352(itu->second->user().userVector());
-					}
+					if (sets.size() > 2
+							&& sets[2] == "o"
+							&& itu->second->user().checkManager() == 0)
+						continue ;
+					ss->rep352(itu->second->user().userVector());
 				}
-				// realName
-				for (itu = _mUsers.begin(); itu != _mUsers.end(); ++itu)
+			}
+			// realName
+			for (itu = _mUsers.begin(); itu != _mUsers.end(); ++itu)
+			{
+				if (itu->second->user().name() == v[i])
 				{
-					if (itu->second->user().name() == v[i])
-					{
-						if (sets.size() > 2
-								&& sets[2] == "o"
-								&& itu->second->user().checkManager() == 0)
-							continue ;
-						ss->rep352(itu->second->user().userVector());
-					}
+					if (sets.size() > 2
+							&& sets[2] == "o"
+							&& itu->second->user().checkManager() == 0)
+						continue ;
+					ss->rep352(itu->second->user().userVector());
 				}
-				// nickName
-				for (itu = _mUsers.begin(); itu != _mUsers.end(); ++itu)
+			}
+			// nickName
+			for (itu = _mUsers.begin(); itu != _mUsers.end(); ++itu)
+			{
+				if (itu->second->user().nick() == v[i])
 				{
-					if (itu->second->user().nick() == v[i])
-					{
-						if (sets.size() > 2
-								&& sets[2] == "o"
-								&& itu->second->user().checkManager() == 0)
-							continue ;
-						ss->rep352(itu->second->user().userVector());
-					}
+					if (sets.size() > 2
+							&& sets[2] == "o"
+							&& itu->second->user().checkManager() == 0)
+						continue ;
+					ss->rep352(itu->second->user().userVector());
 				}
 			}
 		}
-		ss->rep315(sets[1]);
+		ss->rep315(v[i]);
 	}
 }
 
@@ -650,7 +641,7 @@ void		Frame::cmdPrivmsg(Session *ss, std::vector<std::string> const& sets)
 		else if(checkChannelname(*receiverit))
 		{
             if (!doesChannelExists(makeLower((*receiverit).substr(1))))
-                ss->err404(*receiverit);   	// ERRCANNOTSENDTOCHAN
+                ss->err404((*receiverit).substr(1));   	// ERRCANNOTSENDTOCHAN
 			else
 			{
 				channel = findChannel(makeLower((*receiverit).substr(1)));
@@ -671,37 +662,33 @@ void		Frame::cmdPrivmsg(Session *ss, std::vector<std::string> const& sets)
 
 void		Frame::cmdWhois(Session *ss, std::vector<std::string> const& sets)
 {
-	std::vector<std::string>::iterator		it;
-	std::vector<std::string>::iterator		it2;
-	std::vector<std::string>		v;
-	UserMap::iterator		itu;
-	std::string		res;
-	std::vector<std::string>		resline;
+	Session *session;
+	std::vector<std::string>		split_v;
+	std::vector<std::string>		wild_v;
+	std::vector<std::string>::iterator	its;
+	std::vector<std::string>::iterator	itw;
 
 	if (sets.size() == 1)
 		return ss->err431();
-	v = split_comma(sets[1]);
-	for (std::vector<std::string>::size_type i = 0; i < v.size(); i++)
+	split_v = split_comma(sets[1]);
+	for (its = split_v.begin(); its != split_v.end(); ++its)
 	{
-		if (!doesNicknameExists(v[i]))
+		wild_v = getMask(*its);
+		for (itw = wild_v.begin(); itw != wild_v.end(); ++itw)
 		{
-			ss->err401(v[i]);
-			return ss->rep318(sets[1]);
+			if (!doesNicknameExists(*itw))
+				ss->err401(*itw);
+			else
+			{
+				session = findUser(*itw);
+				ss->rep311(session);
+				if (session->user().checkManager())
+					ss->rep313(session);
+				session->user().cmdWhois(ss);
+			}
+			ss->rep318(*itw);
 		}
 	}
-	for (it = v.begin(); it != v.end(); it++)
-	{
-		Session *session;
-
-		session = findUser(*it);
-		ss->rep311(session);
-		if (session->user().checkManager())
-			ss->rep313(session);
-		resline = session->user().User::cmdWhois();
-		for (it2 = resline.begin(); it2 != resline.end(); it2++)
-			ss->rep319(*it2);
-	}
-	ss->rep318(sets[1]);
 }
 
 void		Frame::broadcastAll(Session *ss, std::string const& str)

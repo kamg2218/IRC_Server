@@ -15,19 +15,19 @@ class Session;
 
 typedef struct base
 {
-    std::string		_host;
-    int		_serverPort;
-    std::string		_passwordNetwork;
     int		_port;
+    int		_serverPort;
+    std::string		_host;
     std::string		_password;
+    std::string		_passwordNetwork;
   
 } base;
 
 class MainServer
 {
 	private:
-		int		_sd;
-		Socket		_sock;
+		int				_sd;
+		Socket			_sock;
 		std::string		_pass;
 		std::string		_name;
 		std::map<int, Session*>		_mSessions;
@@ -36,17 +36,17 @@ class MainServer
 	public:
 		MainServer(void);
 		~MainServer(void);
-		void		create(base const& bs);
-		void		handleRead(std::map<int, Session*>::iterator temp);
 		void		handleAccept(void);
-		void		handleDecline(std::map<int, Session*>::iterator const& pos);
-		int		socket(void) const;
-		std::string		name(void) const;
-		std::map<int, Session*>&		users(void);
-		const std::map<int, Session*>&		users(void) const;
-		bool		checkPass(std::string const& pass);
+		void		create(base const& bs);
 		void		setPass(std::string const& pass);
-		std::string		msgHeader(void);
+		void		handleRead(std::map<int, Session*>::iterator temp);
+		void		handleDecline(std::map<int, Session*>::iterator const& pos);
+		int			socket(void) const;
+		bool		checkPass(std::string const& pass);
+		std::string	msgHeader(void);
+		std::string	name(void) const;
+		std::map<int, Session*>&		users(void);
+		const std::map<int, Session*>&	users(void) const;
 		class BindException : public std::exception
 		{
 			public:

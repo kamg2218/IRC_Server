@@ -48,9 +48,9 @@ void		Channel::removeOper(std::string const& nick)
 	_mOperators.erase(nick);
 }
 
-bool		Channel::hasUser(std::string const& nick)
+bool		Channel::hasUser(std::string const& nick) const
 {
-	UserMap::iterator		it;
+	UserMap::const_iterator		it;
 
 	it = _mUsers.find(nick);
 	if (it == _mUsers.end())
@@ -58,9 +58,9 @@ bool		Channel::hasUser(std::string const& nick)
 	return true;
 }
 
-bool		Channel::hasOper(std::string const& nick)
+bool		Channel::hasOper(std::string const& nick) const
 {
-	UserMap::iterator		it;
+	UserMap::const_iterator		it;
 
 	it = _mOperators.find(nick);
 	if (it == _mOperators.end())
@@ -180,15 +180,6 @@ void	Channel::cmdJoin(Session *ss)
 	ss->rep366(name());
 }
 
-bool		Channel::isOperator(std::string const& nick) const
-{
-	UserMap::const_iterator		res;
-
-	res = _mOperators.find(nick);
-	if (res == _mOperators.end())
-		return false;
-	return true;
-}
 void		Channel::setTopic(std::string const topic)
 {
 	_sTopic = topic;
@@ -202,7 +193,7 @@ std::vector<std::string>		Channel::channelVector()
 
 	for (it = _mUsers.begin(); it != _mUsers.end(); ++it)
 	{
-		if (isOperator(it->second->user().nick()))
+		if (hasOper(it->second->user().nick()))
 			res.push_back("#" + name() + " " + it->second->user().user() + " " + it->second->user().host() + " " + servername + " " + it->second->user().nick() + " H @ :0 " + it->second->user().name());
 		else
 			res.push_back("#" + name() + " " + it->second->user().user() + " " + it->second->user().host() + " " + servername + " " + it->second->user().nick() + " H :0 " + it->second->user().name());
