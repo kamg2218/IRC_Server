@@ -282,7 +282,7 @@ std::vector<std::string>	User::cmdWhois(void)
 
 	for (it = _mChannels.begin(); it != _mChannels.end(); ++it)
 	{
-		if (hasOper(it->first))
+		if (it->second->hasOper(it->first))
 			res.push_back(nick() + " :@" + it->second->name() + " ");
 		else
 			res.push_back(nick() + " :" + it->second->name() + " ");

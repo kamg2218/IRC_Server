@@ -415,7 +415,7 @@ void		Frame::cmdKick(Session *ss, std::vector<std::string> const& sets)
 			ss->err403(cmd[1].substr(1));
 		else if (!(ss->user().isMemOfChannel(cmd[1].substr(1))))
 			ss->err442(cmd[1].substr(1));
-		else if (!((channel = findChannel(makeLower(cmd[1].substr(1))))->isOperator(ss->user().nick())))
+		else if (!((channel = findChannel(makeLower(cmd[1].substr(1))))->hasOper(ss->user().nick())))
 			ss->err482(cmd[1].substr(1));
 		else if (ss->user().nick() != cmd[2] && channel->hasUser(cmd[2]))
 		{
@@ -682,7 +682,7 @@ void		Frame::cmdWhois(Session *ss, std::vector<std::string> const& sets)
 	v = split_comma(sets[1]);
 	for (it = v.begin(); it != v.end(); it++)
 	{
-		mask_v = getMask(v[i]);
+		mask_v = getMask(*it);
 		for (mt = mask_v.begin(); mt != mask_v.end(); mt++)
 		{
 			if (!doesNicknameExists(*mt))
@@ -693,7 +693,7 @@ void		Frame::cmdWhois(Session *ss, std::vector<std::string> const& sets)
 				ss->rep311(session);
 				if (session->user().checkManager())
 					ss->rep313(session);
-				session->user().cmdWhois(ss);
+				session->user().cmdWhois();
 			}
 			ss->rep318(*mt);
 		}
