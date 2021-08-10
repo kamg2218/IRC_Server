@@ -260,7 +260,7 @@ std::vector<std::string>	User::userVector(void)
 	std::vector<std::string> res;
 	std::string servername = "ft_irc";
 
-	// has nat Channel
+	// has not Channel
 	if (it == _mChannels.end())
 	{
 		if (_manager)
