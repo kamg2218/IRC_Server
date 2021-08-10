@@ -63,7 +63,8 @@ class Frame
 		std::string		vectorToString(std::vector<std::string> const& sets);
 		std::string		vectorToStringpriv(std::vector<std::string> const& sets);
 		MainServer&		getServer(void);
-		std::vector<std::string>	getMask(std::string const& str);
+		std::vector<std::string>	userMask(std::string const& str);
+		std::vector<std::string>	channelMask(std::string const& str);
 		std::vector<std::string>	split_comma(std::string s);
 		std::vector<std::vector<std::string> >		kicklist(std::vector<std::string> const& sets);
 };

@@ -478,7 +478,7 @@ bool		Frame::checkMask(std::string const& str, std::string const& name, int wild
 	return true;
 }
 
-std::vector<std::string>		Frame::getMask(std::string const& str)
+std::vector<std::string>		Frame::channelMask(std::string const& str)
 {
 	int		wild;
 	std::vector<std::string>	v;
@@ -488,7 +488,10 @@ std::vector<std::string>		Frame::getMask(std::string const& str)
 	for (i = 0; i < str.size(); i++)
 	{
 		if (str[i] == '*')
+		{
 			wild = i;
+			break ;
+		}
 	}
 	//checkChannelName
 	for (ChannelMap::iterator it = _mChannels.begin(); it != _mChannels.end(); it++)
@@ -496,8 +499,24 @@ std::vector<std::string>		Frame::getMask(std::string const& str)
 		if (checkMask(makeLower(str), it->first, wild))
 			v.insert(v.end(), it->first);
 	}
-	if (v.size() != 0)
-		return v;
+	return v;
+}
+
+std::vector<std::string>		Frame::userMask(std::string const& str)
+{
+	int		wild;
+	std::vector<std::string>	v;
+	std::string::size_type		i;
+
+	wild = -1;
+	for (i = 0; i < str.size(); i++)
+	{
+		if (str[i] == '*')
+		{
+			wild = i;
+			break ;
+		}
+	}
 	//checkServerName - Not Exist
 	for (UserMap::iterator it = _mUsers.begin(); it != _mUsers.end(); it++)
 	{

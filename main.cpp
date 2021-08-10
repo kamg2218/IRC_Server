@@ -28,7 +28,7 @@ int main(int argc, char *argv[])
 		std::vector<std::string> v;
 
 		v = split(argv[1]);
-		if (v.size() < 3)
+		if (v.size() != 3)
 			return (-1);
 		a._host = v[0];
 		a._serverPort = std::strtod(v[1].c_str(), 0);
