@@ -120,7 +120,7 @@ bool		Frame::checkNickname(std::string const& name)
 		return false;
 	for (i = 0; i < name.size(); i++)
 	{
-		if (name[i] == ' ' || name[i] == ',')
+		if (name[i] == ' ' || name[i] == ',' || name[i] == '*')
 			return false;
 		else if ((int)name[i] == 7)
 			return false;
@@ -139,7 +139,7 @@ bool		Frame::checkChannelname(std::string const& name)
 		if (i == 0 && name[0] != '#'
 				&& name[0] != '!' && name[0] != '&' && name[0] != '+')
 			return false;
-		else if (name[i] == ' ' || name[i] == ',')
+		else if (name[i] == ' ' || name[i] == ',' || name[i] == '*')
 			return false;
 		else if ((int)name[i] == 7)
 			return false;
@@ -672,36 +672,32 @@ void		Frame::cmdPrivmsg(Session *ss, std::vector<std::string> const& sets)
 void		Frame::cmdWhois(Session *ss, std::vector<std::string> const& sets)
 {
 	std::vector<std::string>::iterator		it;
-	std::vector<std::string>::iterator		it2;
+	std::vector<std::string>::iterator		mt;
 	std::vector<std::string>		v;
-	UserMap::iterator		itu;
-	std::string		res;
-	std::vector<std::string>		resline;
+	std::vector<std::string>	mask_v;
+	Session *session;
 
 	if (sets.size() == 1)
 		return ss->err431();
 	v = split_comma(sets[1]);
-	for (std::vector<std::string>::size_type i = 0; i < v.size(); i++)
-	{
-		if (!doesNicknameExists(v[i]))
-		{
-			ss->err401(v[i]);
-			return ss->rep318(sets[1]);
-		}
-	}
 	for (it = v.begin(); it != v.end(); it++)
 	{
-		Session *session;
-
-		session = findUser(*it);
-		ss->rep311(session);
-		if (session->user().checkManager())
-			ss->rep313(session);
-		resline = session->user().User::cmdWhois();
-		for (it2 = resline.begin(); it2 != resline.end(); it2++)
-			ss->rep319(*it2);
+		mask_v = getMask(v[i]);
+		for (mt = mask_v.begin(); mt != mask_v.end(); mt++)
+		{
+			if (!doesNicknameExists(*mt))
+				ss->err401(*mt);
+			else
+			{
+				session = findUser(*mt);
+				ss->rep311(session);
+				if (session->user().checkManager())
+					ss->rep313(session);
+				session->user().cmdWhois(ss);
+			}
+			ss->rep318(*mt);
+		}
 	}
-	ss->rep318(sets[1]);
 }
 
 void		Frame::broadcastAll(Session *ss, std::string const& str)

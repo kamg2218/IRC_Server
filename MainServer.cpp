@@ -68,7 +68,6 @@ void		MainServer::handleDecline(std::map<int, Session*>::iterator const& pos)
 	temp = (*pos).second;
 	_mSessions.erase(pos);
 	delete (temp);
-	std::cout << "client is removed\n";
 }
 
 int 	MainServer::socket(void) const
