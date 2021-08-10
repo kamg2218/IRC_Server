@@ -58,7 +58,8 @@ class User
 		std::string		user(void) const;
 		std::string		msgHeader(void) const;
 		std::string		makeLower(std::string const& str);
-		std::vector<std::string>		userVector(void);
+		//std::vector<std::string>		userVector(void);
+		std::vector<std::string>		userVectorIrcOper(std::vector<std::string> const& sets);
 		void		cmdWhois(Session *ss);
 };
 

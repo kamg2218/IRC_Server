@@ -555,6 +555,8 @@ void		Frame::cmdWho(Session *ss, std::vector<std::string> const& sets)
 		v = getMask("*");
 	else
 		v = getMask(sets[1]);
+	if (v.size() == 0)
+		return ss->rep315(sets[1]);
 	for (std::vector<std::string>::size_type i = 0; i < v.size(); i++)
 	{
 		if (doesChannelExists(v[i]))	// channel
@@ -573,11 +575,15 @@ void		Frame::cmdWho(Session *ss, std::vector<std::string> const& sets)
 			{
 				if (itu->second->user().host() == v[i])
 				{
+					/*
 					if (sets.size() > 2
 							&& sets[2] == "o"
 							&& itu->second->user().checkManager() == 0)
 						continue ;
 					ss->rep352(itu->second->user().userVector());
+					*/
+					ss->rep352(itu->second->user().userVectorIrcOper(sets));
+					continue ;
 				}
 			}
 			// realName
@@ -585,11 +591,15 @@ void		Frame::cmdWho(Session *ss, std::vector<std::string> const& sets)
 			{
 				if (itu->second->user().name() == v[i])
 				{
+					/*
 					if (sets.size() > 2
 							&& sets[2] == "o"
 							&& itu->second->user().checkManager() == 0)
 						continue ;
 					ss->rep352(itu->second->user().userVector());
+				*/
+				ss->rep352(itu->second->user().userVectorIrcOper(sets));
+				continue ;
 				}
 			}
 			// nickName
@@ -597,11 +607,15 @@ void		Frame::cmdWho(Session *ss, std::vector<std::string> const& sets)
 			{
 				if (itu->second->user().nick() == v[i])
 				{
+					/*
 					if (sets.size() > 2
 							&& sets[2] == "o"
 							&& itu->second->user().checkManager() == 0)
 						continue ;
 					ss->rep352(itu->second->user().userVector());
+				*/
+				ss->rep352(itu->second->user().userVectorIrcOper(sets));
+				continue ;
 				}
 			}
 		}
@@ -674,6 +688,8 @@ void		Frame::cmdWhois(Session *ss, std::vector<std::string> const& sets)
 	for (its = split_v.begin(); its != split_v.end(); ++its)
 	{
 		wild_v = getMask(*its);
+		if (wild_v.size() == 0)
+			return ss->rep318(sets[1]);
 		for (itw = wild_v.begin(); itw != wild_v.end(); ++itw)
 		{
 			if (!doesNicknameExists(*itw))
