@@ -574,49 +574,19 @@ void		Frame::cmdWho(Session *ss, std::vector<std::string> const& sets)
 			for (itu = _mUsers.begin(); itu != _mUsers.end(); ++itu)
 			{
 				if (itu->second->user().host() == v[i])
-				{
-					/*
-					if (sets.size() > 2
-							&& sets[2] == "o"
-							&& itu->second->user().checkManager() == 0)
-						continue ;
-					ss->rep352(itu->second->user().userVector());
-					*/
-					ss->rep352(itu->second->user().userVectorIrcOper(sets));
-					continue ;
-				}
+					ss->rep352(itu->second->user().userVectorOper(sets));
 			}
 			// realName
 			for (itu = _mUsers.begin(); itu != _mUsers.end(); ++itu)
 			{
 				if (itu->second->user().name() == v[i])
-				{
-					/*
-					if (sets.size() > 2
-							&& sets[2] == "o"
-							&& itu->second->user().checkManager() == 0)
-						continue ;
-					ss->rep352(itu->second->user().userVector());
-				*/
-				ss->rep352(itu->second->user().userVectorIrcOper(sets));
-				continue ;
-				}
+					ss->rep352(itu->second->user().userVectorOper(sets));
 			}
 			// nickName
 			for (itu = _mUsers.begin(); itu != _mUsers.end(); ++itu)
 			{
 				if (itu->second->user().nick() == v[i])
-				{
-					/*
-					if (sets.size() > 2
-							&& sets[2] == "o"
-							&& itu->second->user().checkManager() == 0)
-						continue ;
-					ss->rep352(itu->second->user().userVector());
-				*/
-				ss->rep352(itu->second->user().userVectorIrcOper(sets));
-				continue ;
-				}
+					ss->rep352(itu->second->user().userVectorOper(sets));
 			}
 		}
 		ss->rep315(v[i]);
