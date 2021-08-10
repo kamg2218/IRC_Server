@@ -2,26 +2,6 @@
 #include "include/Session.hpp"
 #include "include/Service.hpp"
 
-const char*		MainServer::BindException::what() const throw()
-{
-	return "Bind Error";
-}
-
-const char*		MainServer::ListenException::what() const throw()
-{
-	return "Listen Error\n";
-}
-
-const char*		MainServer::SocketException::what() const throw()
-{
-	return "Socket Error\n";
-}
-
-const char*		MainServer::AcceptException::what() const throw()
-{
-	return "Accpet Error";
-}
-
 MainServer::MainServer(void) :_name("ft_irc")
 {
 }
@@ -36,11 +16,6 @@ MainServer&	MainServer::operator=(const MainServer& other)
 {
 	if (this == &other)
 		return *this;
-	this->_sd = other._sd;
-	this->_sock = other._sock;
-	this->_pass = other._pass;
-	this->_name = other._name;
-	this->_mSessions = other._mSessions;
 	return *this;
 }
 
@@ -130,4 +105,24 @@ void	MainServer::setPass(std::string const& pass)
 std::string		MainServer::msgHeader()
 {
 	return (inet_ntoa(_sock.sin().sin_addr));
+}
+
+const char*		MainServer::BindException::what() const throw()
+{
+	return "Bind Error";
+}
+
+const char*		MainServer::ListenException::what() const throw()
+{
+	return "Listen Error\n";
+}
+
+const char*		MainServer::SocketException::what() const throw()
+{
+	return "Socket Error\n";
+}
+
+const char*		MainServer::AcceptException::what() const throw()
+{
+	return "Accpet Error";
 }

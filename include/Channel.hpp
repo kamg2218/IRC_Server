@@ -10,13 +10,15 @@ typedef std::map<std::string, Session*> UserMap;
 class Channel
 {
 	private:
-		const std::string		_sName;
-		std::string		_sTopic;
-		UserMap		_mUsers;
-		UserMap		_mOperators;
+		const std::string	_sName;
+		std::string			_sTopic;
+		UserMap				_mUsers;
+		UserMap				_mOperators;
 	public:
 		Channel(Session *creator, std::string const& name, std::string const& topic = "");
-		~Channel();
+		Channel(Channel const& other);
+		Channel&	operator=(Channel const& other);
+		~Channel(void);
 		void		addUser(Session *user);
 		void		addOper(Session *user);
 		void		cmdJoin(Session *ss);
@@ -29,15 +31,16 @@ class Channel
 		bool		hasOper(std::string const& nick);
 		void		broadcast(Session *ss, std::string const& message);
 		void		privmsgBroadcast(Session *ss, std::string const& message);
-		std::string 	password() const;
-		std::string 	topic() const;
-		std::string 	name() const;
+		std::string password() const;
+		std::string topic() const;
+		std::string name() const;
 		int			userCount() const;
 		int			operCount() const;
 		bool		hasPass() const;
 		bool		isOperator(std::string const& nick) const;
 		void		setTopic(std::string topic);
-		std::vector<std::string>		channelVector();
-		std::vector<std::string>		channeloperVector();
+		std::vector<std::string>	channelVector();
+		std::vector<std::string>	channeloperVector();
 };
+
 #endif

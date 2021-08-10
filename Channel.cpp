@@ -8,6 +8,22 @@ Channel::Channel(Session *creator, std::string const& name, std::string const& t
 	_mOperators[creator->user().nick()] = creator;
 }
 
+Channel::Channel(Channel const& other)
+	: _sName(other._sName)
+{
+	*this = other;
+}
+
+Channel&	Channel::operator=(Channel const& other)
+{
+	if (this == &other)
+		return *this;
+	this->_sTopic = other._sTopic;
+	this->_mUsers = other._mUsers;
+	this->_mOperators = other._mOperators;
+	return *this;
+}
+
 Channel::~Channel()
 {
 }

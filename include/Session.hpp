@@ -59,7 +59,6 @@ class Session
 		void		rep352(std::vector<std::string> const& v);
 		void		rep353(std::string const& chname, std::string const& nic);
 		void		rep366(std::string const& chname);
-		void		rep381(void);
 		void		err401(std::string const& nick);
 		void		err402(std::string const& name);
 		void		err403(std::string const& chname);

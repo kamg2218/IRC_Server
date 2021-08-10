@@ -11,13 +11,13 @@ class Session;
 class Executor
 {
 	private:
-		Executor(Executor const& ref);
-		Executor&		operator=(Executor const& ref);
 		std::string		split(std::string& buff, std::vector<std::string>& v);
 		bool		isPrefix(std::string const& s) const;
 		bool		doesMatchNick(std::string const& prefix, std::string const& sender_nick) const;
 	public:
 		Executor(void);
+		Executor(Executor const& ref);
+		Executor&		operator=(Executor const& ref);
 		~Executor(void);
 		std::string		getMessage(std::string const& buff) const;
 		bool		gotFullMsg(std::string const& buff) const;

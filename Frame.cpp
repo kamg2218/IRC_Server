@@ -15,10 +15,6 @@ Frame&	Frame::operator=(Frame const& other)
 {
 	if (this == &other)
 		return *this;
-	this->_mUsers = other._mUsers;
-	this->_mChannels = other._mChannels;
-	this->_server = other._server;
-	this->_service = other._service;
 	return *this;
 }
 
@@ -335,7 +331,7 @@ void		Frame::cmdList(Session *ss, std::vector<std::string> const& sets)
 	{
 		ss->rep321();							//ListStart
 		for (it = _mChannels.begin(); it != _mChannels.end(); it++)
-			ss->rep322(it->second);			//List
+			ss->rep322(it->second);				//List
 		return ss->rep323();					//ListEnd
 	}
 	v = split_comma(sets[1]);

@@ -8,7 +8,6 @@ User::User(void)
 }
 
 User::User(User const& other)
-	: _didNick(false), _didUser(false), _manager(false), _password(true), _isProperlyQuit(false)
 {
 	*this = other;
 }
@@ -17,16 +16,6 @@ User&	User::operator=(User const& other)
 {
 	if (this == &other)
 		return *this;
-	this->_sRealname = other._sRealname;
-	this->_sNickname = other._sNickname;
-	this->_sHostname = other._sHostname;
-	this->_sUsername = other._sUsername;
-	this->_didNick = other._didNick;
-	this->_didUser = other._didUser;
-	this->_manager = other._manager;
-	this->_password = other._password;
-	this->_isProperlyQuit = other._isProperlyQuit;
-	this->_pastNick = other._pastNick;
 	return *this;
 }
 
@@ -271,7 +260,7 @@ std::vector<std::string>	User::userVector(void)
 	std::vector<std::string> res;
 	std::string servername = "ft_irc";
 
-	// has nat Channel
+	// has not Channel
 	if (it == _mChannels.end())
 	{
 		if (_manager)

@@ -24,7 +24,7 @@ class Service
 		~Service(void);
 		void		doSelect(MainServer const& sv);
 		void		doService(MainServer & sv);
-		void		sendPing(Session *ss);
+		void		sendPing(MainServer& sv, Session *ss);
 		class 		selectException : public std::exception
 		{
 			public:
