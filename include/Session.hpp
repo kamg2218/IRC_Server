@@ -30,6 +30,7 @@ class Session
 		std::string		_rstream;
 		std::time_t		_time;
 		bool			_ping;
+		Executor		_executor;
 		Session(Session const& ref);
 		Session&	operator=(Session const& ref);
 		void		streamAppend(char *str, int r);

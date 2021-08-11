@@ -48,6 +48,7 @@ class User
 		bool		checkNick(void) const;
 		bool		checkUser(void) const;
 		bool		checkManager(void) const;
+		bool		checkQuit(void) const;
 		bool		isRegistered(void) const;
 		bool		addNick(std::vector<std::string> const& sets);
 		bool		cmdUser(std::vector<std::string> const& sets);
