@@ -564,10 +564,11 @@ void		Frame::cmdWho(Session *ss, std::vector<std::string> const& sets)
 	else
 		v = channelMask(sets[1]);
 	if (v.size() == 0)
-		return ss->rep315(sets[1]);
+		return ss->rep315(sets[1]);		// RPL_ENDOFWHO
 	for (std::vector<std::string>::size_type i = 0; i < v.size(); i++)
 	{
-		if (doesChannelExists(v[i]))	// channel
+		// check channelName
+		if (doesChannelExists(v[i]))
 		{
 			Channel *channel;
 			channel = findChannel(v[i]);
@@ -578,19 +579,19 @@ void		Frame::cmdWho(Session *ss, std::vector<std::string> const& sets)
 		}
 		else
 		{
-			// hostName
+			// check hostName
 			for (itu = _mUsers.begin(); itu != _mUsers.end(); ++itu)
 			{
 				if (itu->second->user().host() == v[i])
 					ss->rep352(itu->second->user().userVectorOper(sets));
 			}
-			// realName
+			// check realName
 			for (itu = _mUsers.begin(); itu != _mUsers.end(); ++itu)
 			{
 				if (itu->second->user().name() == v[i])
 					ss->rep352(itu->second->user().userVectorOper(sets));
 			}
-			// nickName
+			// check nickName
 			for (itu = _mUsers.begin(); itu != _mUsers.end(); ++itu)
 			{
 				if (itu->second->user().nick() == v[i])
@@ -661,17 +662,20 @@ void		Frame::cmdWhois(Session *ss, std::vector<std::string> const& sets)
 	std::vector<std::string>::iterator	itw;
 
 	if (sets.size() == 1)
-		return ss->err431();
+		return ss->err431();			// ERR_NONICKNAMEGIVEN
 	split_v = split_comma(sets[1]);
 	for (its = split_v.begin(); its != split_v.end(); ++its)
 	{
 		wild_v = userMask(*its);
 		if (wild_v.size() == 0)
-			return ss->rep318(sets[1]);
+		{
+			ss->err401(*itw);		// ERR_NOSUCHNICK
+			continue ;
+		}
 		for (itw = wild_v.begin(); itw != wild_v.end(); ++itw)
 		{
 			if (!doesNicknameExists(*itw))
-				ss->err401(*itw);
+				ss->err401(*itw);		// ERR_NOSUCHNICK
 			else
 			{
 				session = findUser(*itw);
