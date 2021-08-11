@@ -242,6 +242,7 @@ void		Frame::cmdNick(Session *ss, std::vector<std::string> const& sets)
 	else								//change Nickname
 	{
 		broadcastAll(ss, vectorToString(sets));
+		ss->replyAsUser(ss, vectorToString(sets));
 		_mUsers.insert(std::pair<std::string, Session*>(sets[1], ss));
 		_mUsers.erase(ss->user().nick());
 		ss->user().cmdNick(sets);
