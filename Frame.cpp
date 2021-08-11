@@ -232,8 +232,7 @@ void		Frame::cmdNick(Session *ss, std::vector<std::string> const& sets)
 		return ss->err431();			//noNicknameGiven
 	else if (ss->user().pass() == false)
 		return ;
-	else if (!(checkNickname(sets[1]))
-			|| (sets[1][0] == ':' && sets[1].size() == 1))
+	else if (!(checkNickname(sets[1])))
 		return ss->err432(sets[1]);		//ErroneusNickname
 	else if (doesNicknameExists(sets[1]))
 		return ss->err433(sets[1]);		//NicknameInUse
