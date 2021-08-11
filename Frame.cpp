@@ -668,7 +668,10 @@ void		Frame::cmdWhois(Session *ss, std::vector<std::string> const& sets)
 	{
 		wild_v = userMask(*its);
 		if (wild_v.size() == 0)
-			return ss->rep318(sets[1]);
+		{
+			ss->err401(*itw);		// ERR_NOSUCHNICK
+			continue ;
+		}
 		for (itw = wild_v.begin(); itw != wild_v.end(); ++itw)
 		{
 			if (!doesNicknameExists(*itw))
