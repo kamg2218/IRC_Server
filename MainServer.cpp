@@ -23,7 +23,7 @@ MainServer::~MainServer(void)
 {
 }
 
-void	MainServer::create(base const& bs)
+void	MainServer::create(Base const& bs)
 {
 	setPass(bs._password);
 	_sd = _sock.makeSocket(bs._port);

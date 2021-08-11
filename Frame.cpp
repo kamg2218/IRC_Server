@@ -29,8 +29,9 @@ Frame*		Frame::instance(void)
 	if (!_pInstance)
 		_pInstance = new Frame();
 	return _pInstance;
-} 
-void		Frame::start(base const& bs)
+}
+
+void		Frame::start(Base const& bs)
 {
 	_server.create(bs);
 	while(1)

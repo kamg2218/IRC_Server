@@ -95,7 +95,7 @@ std::string		Executor::split(std::string& buff, std::vector<std::string> & v)
 	}
 	it = v[0].begin();
 	for (; it != v[0].end() ; ++it)
-		(*it) = toupper(*it);
+		(*it) = std::toupper(*it);
 	return prefix;
 }
 
@@ -124,6 +124,8 @@ void		Executor::execute(std::string& buff, Session* ss)
 		return frame->cmdUser(ss, splited_cmd);
 	else if (splited_cmd[0] == "PASS")
 		return frame->cmdPass(ss, splited_cmd);
+	else if (splited_cmd[0] == "PONG")
+		return frame->cmdPong(ss);
 	if (!(ss->user().isRegistered()))
 		ss->err451();
 	else if (splited_cmd[0] == "PRIVMSG")
@@ -146,8 +148,6 @@ void		Executor::execute(std::string& buff, Session* ss)
 		frame->cmdWho(ss, splited_cmd);
 	else if (splited_cmd[0] == "WHOIS")
 		frame->cmdWhois(ss, splited_cmd);
-	else if (splited_cmd[0] == "PONG")
-		frame->cmdPong(ss);
 	else
 		ss->err421(splited_cmd[0]);
 }
