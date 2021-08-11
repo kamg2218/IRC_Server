@@ -63,8 +63,8 @@ void		Service::doService(MainServer & sv)
 			temp->second->setTime(std::time(0));
 			sv.handleRead(temp);
 		}
-		//else
-		//	sendPing(sv, temp->second);
+		else
+			sendPing(sv, temp->second);
 	}
 	if (FD_ISSET(sv.socket(), &_fdRead))
 		sv.handleAccept();
