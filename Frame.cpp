@@ -615,7 +615,7 @@ void		Frame::cmdPrivmsg(Session *ss, std::vector<std::string> const& sets)
 
 	if (sets.size() == 1)
 		return ss->err411(sets[0]);		// ERRNORECIPIENT
-	if (sets[2][0] != ':')
+	else if (sets.size() == 2 || sets[2][0] != ':')
 		return ss->err412();			// ERRNOTEXTTOSEND
 
 	// massage
