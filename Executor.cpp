@@ -114,7 +114,7 @@ void		Executor::execute(std::string& buff, Session* ss)
 	std::string		sender_prefix;
 	std::vector<std::string>	splited_cmd;
 	
-	frame = Frame().instance();
+	frame = Frame::instance();
 	sender_prefix = split(buff, splited_cmd);
 	if (!doesMatchNick(sender_prefix, ss->user().nick()))
 		return ;
