@@ -30,11 +30,6 @@ Session::~Session()
 {
 }
 
-Session::pointer		Session::create(void)
-{
-	return new Session();
-}
-
 int		Session::socket() const
 {
 	return _soc.sd();

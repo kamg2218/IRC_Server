@@ -2,12 +2,12 @@
 #include "include/Socket.hpp"
 
 Socket::Socket(void)
-	: _sd(-1), _port(0), _len(0), _proto(0)
+	: _sd(-1), _port(0), _len(sizeof(_sin)), _proto(0)
 {
 }
 
 Socket::Socket(Socket const& other)
-	: _sd(-1), _port(0), _len(0), _proto(0)
+	: _sd(-1), _port(0), _len(sizeof(_sin)), _proto(0)
 {
 	*this = other;
 }
@@ -57,15 +57,15 @@ int				Socket::makeSocket(unsigned int port)
 	_proto = getprotobyname("tcp");
 	if (!_proto)
 		throw protoException();
+	_sin.sin_family = AF_INET;
+	_sin.sin_port = htons(port);
+	_sin.sin_addr.s_addr = htonl(INADDR_ANY);
 	_sd = socket(AF_INET, SOCK_STREAM, _proto->p_proto);
 	if (_sd == -1)
 		throw socketException();
 	on = 1;
 	if (setsockopt(_sd, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on)) == -1)
 		throw socketException();
-	_sin.sin_family = AF_INET;
-	_sin.sin_port = htons(port);
-	_sin.sin_addr.s_addr = htonl(INADDR_ANY);
 	return _sd;
 }
 
@@ -76,15 +76,15 @@ int				Socket::makeSocket(unsigned int port, unsigned long addr)
 	_proto = getprotobyname("tcp");
 	if (!_proto)
 		throw protoException();
+	_sin.sin_family = AF_INET;
+	_sin.sin_port = htons(port);
+	_sin.sin_addr.s_addr = htonl(addr);
 	_sd = socket(AF_INET, SOCK_STREAM, _proto->p_proto);
 	if (_sd == -1)
 		throw socketException();
 	on = 1;
 	if (setsockopt(_sd, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on)) == -1)
 		throw socketException();
-	_sin.sin_family = AF_INET;
-	_sin.sin_port = htons(port);
-	_sin.sin_addr.s_addr = htonl(addr);
 	return _sd;
 }
 

@@ -46,7 +46,7 @@ void	MainServer::handleAccept(void)
 	int			cs;
 	Session		*se;
 
-	se = Session().create();
+	se = new Session();
 	cs = accept(_sd, (struct sockaddr*)&(se->soc().sin()), &(se->soc().len()));
 	if (cs < 0)
 		throw AcceptException();
