@@ -287,11 +287,11 @@ std::vector<std::string>	User::userVectorOper(std::vector<std::string> const& se
 		if (sets.size() > 2 
 				&& sets[2] == "o"
 				&& it->second->hasOper(nick()))
-			res.push_back(it->second->name() + " " + user() + " " + host() + " " + servername + " " + nick() + " H @ :0 " + name());
+			res.push_back("#" + it->second->name() + " " + user() + " " + host() + " " + servername + " " + nick() + " H @ :0 " + name());
 		else if (it->second->hasOper(nick()))
-			res.push_back(it->second->name() + " " + user() + " " + host() + " " + servername + " " + nick() + " H @ :0 " + name());
+			res.push_back("#" + it->second->name() + " " + user() + " " + host() + " " + servername + " " + nick() + " H @ :0 " + name());
 		else
-			res.push_back(it->second->name() + " " + user() + " " + host() + " " + servername + " " + nick() + " H :0 " + name());
+			res.push_back("#" + it->second->name() + " " + user() + " " + host() + " " + servername + " " + nick() + " H :0 " + name());
 	}
 	return res;
 }

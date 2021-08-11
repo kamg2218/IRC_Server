@@ -4,7 +4,7 @@
 #include <string>
 #include <cstring>
 
-std::vector<std::string>		split(std::string str)
+std::vector<std::string>		split_colon(std::string str)
 {
 	std::vector<std::string>		v;
 	std::string::size_type		pos;
@@ -27,7 +27,7 @@ int main(int argc, char *argv[])
 	{
 		std::vector<std::string> v;
 
-		v = split(argv[1]);
+		v = split_colon(argv[1]);
 		if (v.size() != 3)
 			return (-1);
 		a._host = v[0];
