@@ -4,12 +4,12 @@
 #include "include/Frame.hpp"
 
 Session::Session()
-	: _time(std::time(0))
+	: _time(std::time(0)), _ping(false)
 {
 }
 
 Session::Session(int sd)
-	: _time(std::time(0))
+	: _time(std::time(0)), _ping(false)
 {
 	_soc.setSd(sd);
 }
@@ -34,6 +34,10 @@ int		Session::socket() const
 {
 	return _soc.sd();
 }
+bool		Session::ping() const
+{
+	return _ping;
+}
 
 Socket&		Session::soc()
 {
@@ -52,6 +56,11 @@ std::time_t	Session::time()
 void		Session::setTime(std::time_t tm)
 {
 	_time = tm;
+}
+
+void		Session::setPing(bool value)
+{
+	_ping = value;
 }
 
 void		Session::streamAppend(char *str, int r)

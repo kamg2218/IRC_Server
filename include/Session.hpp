@@ -29,6 +29,7 @@ class Session
 		User			_user;
 		std::string		_rstream;
 		std::time_t		_time;
+		bool			_ping;
 		Session(Session const& ref);
 		Session&	operator=(Session const& ref);
 		void		streamAppend(char *str, int r);
@@ -37,9 +38,11 @@ class Session
 		Session(int sd);
 		~Session(void);
 		int		socket(void) const;
+		bool		ping(void) const;
 		Socket&		soc(void);
 		User&		user(void);
 		std::time_t	time(void);
+		void		setPing(bool value);
 		void		setTime(std::time_t tm);
 		bool		handleRead(void);
 		void		replyAsServer(std::string const& str);
