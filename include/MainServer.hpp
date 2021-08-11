@@ -13,15 +13,14 @@ class Service;
 class Session;
 #include "Socket.hpp"
 
-typedef struct base
+typedef struct Base
 {
     int		_port;
     int		_serverPort;
     std::string		_host;
     std::string		_password;
     std::string		_passwordNetwork;
-  
-} base;
+} Base;
 
 class MainServer
 {
@@ -37,7 +36,7 @@ class MainServer
 		MainServer(void);
 		~MainServer(void);
 		void		handleAccept(void);
-		void		create(base const& bs);
+		void		create(Base const& bs);
 		void		setPass(std::string const& pass);
 		void		handleRead(std::map<int, Session*>::iterator temp);
 		void		handleDecline(std::map<int, Session*>::iterator const& pos);

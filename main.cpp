@@ -17,35 +17,33 @@ std::vector<std::string>		split_colon(std::string str)
 	return v;
 }
 
-int main(int argc, char *argv[])
+int		main(int argc, char *argv[])
 {
-	base a;
+	Base	base;
+	std::vector<std::string> v;
 	
 	if (argc != 3 && argc != 4)
 		return (-1);
 	if (argc == 4)
 	{
-		std::vector<std::string> v;
-
 		v = split_colon(argv[1]);
 		if (v.size() != 3)
 			return (-1);
-		a._host = v[0];
-		a._serverPort = std::strtod(v[1].c_str(), 0);
-		a._passwordNetwork = v[2];
-
-		a._port = std::strtod(argv[2], 0);
-		a._password = argv[3];
+		base._host = v[0];
+		base._serverPort = std::strtod(v[1].c_str(), 0);
+		base._passwordNetwork = v[2];
+		base._port = std::strtod(argv[2], 0);
+		base._password = argv[3];
 	}
 	else
 	{
-		a._port = std::strtod(argv[1], 0);
-		a._password = argv[2];
+		base._port = std::strtod(argv[1], 0);
+		base._password = argv[2];
 	}
 	try
 	{
 		Frame *mainframe = Frame::instance();
-		mainframe->start(a);
+		mainframe->start(base);
 	}
 	catch(std::exception const& err)
 	{

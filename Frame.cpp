@@ -29,8 +29,9 @@ Frame*		Frame::instance(void)
 	if (!_pInstance)
 		_pInstance = new Frame();
 	return _pInstance;
-} 
-void		Frame::start(base const& bs)
+}
+
+void		Frame::start(Base const& bs)
 {
 	_server.create(bs);
 	while(1)
@@ -43,14 +44,6 @@ void		Frame::start(base const& bs)
 bool		Frame::doesNicknameExists(std::string const& name)
 {
 	return _mUsers.find(name) != _mUsers.end();
-}
-
-bool		Frame::addUser(Session *new_user)
-{
-	if (doesNicknameExists(new_user->user().nick()))
-		return false;
-	_mUsers[new_user->user().nick()] = new_user;
-	return true;
 }
 
 void		Frame::removeUser(std::string const& nick)
@@ -235,28 +228,22 @@ void		Frame::doJoin(Session *ss, std::vector<std::string> const& sets, std::stri
 
 void		Frame::cmdNick(Session *ss, std::vector<std::string> const& sets)
 {
-	UserMap::iterator	it;
-
 	if (sets.size() < 2)
 		return ss->err431();			//noNicknameGiven
 	else if (ss->user().pass() == false)
 		return ;
-	else if (!(checkNickname(sets[1]))
-			|| (sets[1][0] == ':' && sets[1].size() == 1))
-		return ss->err432(sets[1]);	//ErroneusNickname
+	else if (!(checkNickname(sets[1])))
+		return ss->err432(sets[1]);		//ErroneusNickname
 	else if (doesNicknameExists(sets[1]))
-		return ss->err433(sets[1]);	//NicknameInUse
+		return ss->err433(sets[1]);		//NicknameInUse
 	else if (ss->user().addNick(sets) == true)
 		return ;						//success to register
 	else								//change Nickname
 	{
-		it = _mUsers.find(ss->user().nick());
-		if (it == _mUsers.end())
-			return ;
-		for (UserMap::iterator tmp = _mUsers.begin(); tmp != _mUsers.end(); tmp++)
-			ss->replyAsUser(tmp->second, vectorToString(sets));
-		_mUsers.insert(std::pair<std::string, Session*>(sets[1], it->second));
-		_mUsers.erase(it);
+		broadcastAll(ss, vectorToString(sets));
+		ss->replyAsUser(ss, vectorToString(sets));
+		_mUsers.insert(std::pair<std::string, Session*>(sets[1], ss));
+		_mUsers.erase(ss->user().nick());
 		ss->user().cmdNick(sets);
 	}
 }
@@ -271,9 +258,8 @@ void		Frame::cmdUser(Session *ss, std::vector<std::string> const& sets)
 		return ;
 	else if (ss->user().cmdUser(sets) == false)
 		return ss->err462();			//AlreadyRegistered
-	else if (addUser(ss) == false)
-		return ss->err462();			//AlreadyRegistered
 	ss->user().setHost(inet_ntoa(ss->soc().sin().sin_addr));
+	_mUsers[ss->user().nick()] = ss;
 	ss->rep001(&(ss->user()));	//Success
 	printCommand(ss);
 }

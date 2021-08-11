@@ -4,6 +4,8 @@
 
 Service::Service(void)
 {
+	_tv.tv_sec = 5;
+	_tv.tv_usec = 0;
 }
 
 Service::Service(Service const& other)
@@ -34,8 +36,6 @@ void		Service::doSelect(MainServer const& sv)
 	_res = 0;
 	FD_ZERO(&_fdRead);
 	FD_SET(sv.socket(), &_fdRead);
-	_tv.tv_sec = 5;
-	_tv.tv_usec = 0;
 	_max = sv.socket();
 	for (it = sv.users().begin() ; it != sv.users().end() ; ++it)
 	{
@@ -75,7 +75,7 @@ void		Service::doService(MainServer & sv)
  */
 void		Service::sendPing(MainServer& sv, Session *ss)
 {
-	std::string	msg;
+	std::string					msg;
 	std::vector<std::string>	v;
 
 	if (std::difftime(std::time(0), ss->time()) < 5)
