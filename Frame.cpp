@@ -670,7 +670,7 @@ void		Frame::cmdWhois(Session *ss, std::vector<std::string> const& sets)
 		wild_v = userMask(*its);
 		if (wild_v.size() == 0)
 		{
-			ss->err401(*itw);		// ERR_NOSUCHNICK
+			ss->err401(*its);		// ERR_NOSUCHNICK
 			continue ;
 		}
 		for (itw = wild_v.begin(); itw != wild_v.end(); ++itw)
