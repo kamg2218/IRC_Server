@@ -654,9 +654,9 @@ void		Frame::cmdPrivmsg(Session *ss, std::vector<std::string> const& sets)
 
 void		Frame::cmdWhois(Session *ss, std::vector<std::string> const& sets)
 {
-	Session *session;
-	std::vector<std::string>		split_v;
-	std::vector<std::string>		wild_v;
+	Session								*session;
+	std::vector<std::string>			split_v;
+	std::vector<std::string>			wild_v;
 	std::vector<std::string>::iterator	its;
 	std::vector<std::string>::iterator	itw;
 
@@ -673,16 +673,11 @@ void		Frame::cmdWhois(Session *ss, std::vector<std::string> const& sets)
 		}
 		for (itw = wild_v.begin(); itw != wild_v.end(); ++itw)
 		{
-			if (!doesNicknameExists(*itw))
-				ss->err401(*itw);		// ERR_NOSUCHNICK
-			else
-			{
-				session = findUser(*itw);
-				ss->rep311(session);
-				if (session->user().checkManager())
-					ss->rep313(session);
-				session->user().cmdWhois(ss);
-			}
+			session = findUser(*itw);
+			ss->rep311(session);
+			if (session->user().checkManager())
+				ss->rep313(session);
+			session->user().cmdWhois(ss);
 			ss->rep318(*itw);
 		}
 	}
