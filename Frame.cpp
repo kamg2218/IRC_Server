@@ -575,7 +575,8 @@ void		Frame::cmdWho(Session *ss, std::vector<std::string> const& sets)
 			if (sets.size() > 2 && sets[2] == "o")
 				ss->rep352(channel->channeloperVector());
 			else
-				ss->rep352(channel->channelVector());			
+				ss->rep352(channel->channelVector());
+			ss->rep315("#" + v[i]);
 		}
 		else
 		{
@@ -597,8 +598,8 @@ void		Frame::cmdWho(Session *ss, std::vector<std::string> const& sets)
 				if (itu->second->user().nick() == v[i])
 					ss->rep352(itu->second->user().userVectorOper(sets));
 			}
+			ss->rep315(v[i]);
 		}
-		ss->rep315(v[i]);
 	}
 }
 
