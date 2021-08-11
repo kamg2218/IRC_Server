@@ -34,11 +34,6 @@ User::~User(void)
 	}
 }
 
-User*			User::create(void)
-{
-	return new User();
-}
-
 void			User::setName(std::string const& s)
 {
 	_sRealname = s;

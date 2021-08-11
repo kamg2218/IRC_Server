@@ -31,7 +31,6 @@ class User
 	public:
 		User(void);
 		~User(void);
-		static User*		create(void);
 		void		cmdWhois(Session *ss);
 		void		cmdJoin(Channel* ch);
 		void		cmdNick(std::vector<std::string> const& sets);

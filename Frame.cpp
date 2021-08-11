@@ -188,7 +188,6 @@ void		Frame::cmdQuit(Session *ss, std::vector<std::string> const& sets)
 	broadcastAll(ss, msg);
 	ss->user().cmdQuit(sets);
 	removeUser(ss->user().nick());
-	ss->replyAsUser(ss, msg);
 }
 
 void		Frame::cmdJoin(Session *ss, std::vector<std::string> const& sets)
