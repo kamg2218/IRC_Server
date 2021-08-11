@@ -536,9 +536,10 @@ std::vector<std::string>		Frame::userMask(std::string const& str)
 
 std::string		Frame::vectorToString(std::vector<std::string> const& sets)
 {
-    std::string res;
-	std::vector<std::string>::size_type i = 0;
+    std::string							res;
+	std::vector<std::string>::size_type i;
 
+	i = 0;
     while (i < sets.size() - 1)
     {
         res += sets[i] + " ";
@@ -555,8 +556,8 @@ MainServer&		Frame::getServer()
 
 void		Frame::cmdWho(Session *ss, std::vector<std::string> const& sets)
 {
-	UserMap::iterator itu;
-	std::vector<std::string> v;
+	UserMap::iterator			itu;
+	std::vector<std::string>	v;
 	
 	if (sets.size() == 1)
 		v = channelMask("*");
@@ -603,13 +604,13 @@ void		Frame::cmdWho(Session *ss, std::vector<std::string> const& sets)
 
 void		Frame::cmdPrivmsg(Session *ss, std::vector<std::string> const& sets)
 {
-    std::vector<std::string> receivers;
-	std::set<std::string> s;
-	std::set<std::string>::iterator is;
-	std::pair<std::set<std::string>::iterator, bool> ret;
-	std::string msg;
-	Channel *channel;
-	Session *session;
+    std::vector<std::string>							receivers;
+	std::set<std::string>								s;
+	std::set<std::string>::iterator						is;
+	std::pair<std::set<std::string>::iterator, bool>	ret;
+	std::string											msg;
+	Channel												*channel;
+	Session												*session;
 
 	if (sets.size() == 1)
 		return ss->err411(sets[0]);		// ERRNORECIPIENT
@@ -654,9 +655,9 @@ void		Frame::cmdPrivmsg(Session *ss, std::vector<std::string> const& sets)
 
 void		Frame::cmdWhois(Session *ss, std::vector<std::string> const& sets)
 {
-	Session *session;
-	std::vector<std::string>		split_v;
-	std::vector<std::string>		wild_v;
+	Session								*session;
+	std::vector<std::string>			split_v;
+	std::vector<std::string>			wild_v;
 	std::vector<std::string>::iterator	its;
 	std::vector<std::string>::iterator	itw;
 
@@ -673,16 +674,11 @@ void		Frame::cmdWhois(Session *ss, std::vector<std::string> const& sets)
 		}
 		for (itw = wild_v.begin(); itw != wild_v.end(); ++itw)
 		{
-			if (!doesNicknameExists(*itw))
-				ss->err401(*itw);		// ERR_NOSUCHNICK
-			else
-			{
-				session = findUser(*itw);
-				ss->rep311(session);
-				if (session->user().checkManager())
-					ss->rep313(session);
-				session->user().cmdWhois(ss);
-			}
+			session = findUser(*itw);
+			ss->rep311(session);
+			if (session->user().checkManager())
+				ss->rep313(session);
+			session->user().cmdWhois(ss);
 			ss->rep318(*itw);
 		}
 	}
