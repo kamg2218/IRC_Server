@@ -79,18 +79,19 @@ bool		Session::handleRead(void)
 {
 	int			r;
 	char		buf[BUFSIZE] = {0,};
-	Executor	executor;
 
 	r = recv(_soc.sd(), buf, BUFSIZE, 0);
 	if (r)
 		streamAppend(buf, r);
-	while (executor.gotFullMsg(_rstream))
+	while (_executor.gotFullMsg(_rstream))
 	{
 		#ifdef TEST
-			std::cout << "Got msg : " << executor.getMessage(_rstream) << std::endl;
+			std::cout << "Got msg : " << _executor.getMessage(_rstream) << std::endl;
 		#endif
-		executor.execute(_rstream, this);
-		executor.reset(_rstream);
+		_executor.execute(_rstream, this);
+		if (user().checkQuit())
+			return (true);
+		_executor.reset(_rstream);
 	}
 	if (r <= 0)
 		return true;

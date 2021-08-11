@@ -89,6 +89,13 @@ bool			User::checkUser(void) const
 	return _didUser;
 }
 
+bool			User::checkQuit(void) const
+{
+	if (_isProperlyQuit)
+		return true;
+	return false;
+}
+
 /*
    * Check both Nick and User
  */
