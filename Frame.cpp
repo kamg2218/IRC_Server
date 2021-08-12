@@ -558,10 +558,10 @@ void		Frame::cmdWho(Session *ss, std::vector<std::string> const& sets)
 			Channel *channel;
 			channel = findChannel(v[i]);
 			if (sets.size() > 2 && sets[2] == "o")
-				ss->rep352(channel->channeloperVector());
+				ss->rep352(channel->channeloperVector());		// RPL_WHOREPLY
 			else
-				ss->rep352(channel->channelVector());
-			ss->rep315("#" + v[i]);
+				ss->rep352(channel->channelVector());			// RPL_WHOREPLY
+			ss->rep315("#" + v[i]);		// RPL_ENDOFWHO
 		}
 		else
 		{
@@ -569,21 +569,21 @@ void		Frame::cmdWho(Session *ss, std::vector<std::string> const& sets)
 			for (itu = _mUsers.begin(); itu != _mUsers.end(); ++itu)
 			{
 				if (itu->second->user().host() == v[i])
-					ss->rep352(itu->second->user().userVectorOper(sets));
+					ss->rep352(itu->second->user().userVectorOper(sets));	// RPL_WHOREPLY
 			}
 			// check realName
 			for (itu = _mUsers.begin(); itu != _mUsers.end(); ++itu)
 			{
 				if (itu->second->user().name() == v[i])
-					ss->rep352(itu->second->user().userVectorOper(sets));
+					ss->rep352(itu->second->user().userVectorOper(sets));	// RPL_WHOREPLY
 			}
 			// check nickName
 			for (itu = _mUsers.begin(); itu != _mUsers.end(); ++itu)
 			{
 				if (itu->second->user().nick() == v[i])
-					ss->rep352(itu->second->user().userVectorOper(sets));
+					ss->rep352(itu->second->user().userVectorOper(sets));	// RPL_WHOREPLY
 			}
-			ss->rep315(v[i]);
+			ss->rep315(v[i]);	// RPL_ENDOFWHO
 		}
 	}
 }
@@ -591,6 +591,8 @@ void		Frame::cmdWho(Session *ss, std::vector<std::string> const& sets)
 void		Frame::cmdPrivmsg(Session *ss, std::vector<std::string> const& sets)
 {
     std::vector<std::string>							receivers;
+    std::vector<std::string>::iterator					receiverit;
+	std::string											name;
 	std::set<std::string>								s;
 	std::set<std::string>::iterator						is;
 	std::pair<std::set<std::string>::iterator, bool>	ret;
@@ -609,32 +611,37 @@ void		Frame::cmdPrivmsg(Session *ss, std::vector<std::string> const& sets)
     
 	// split receivers
     receivers = split_comma(sets[1]);
-    std::vector<std::string>::iterator		receiverit = receivers.begin();
+    receiverit = receivers.begin();
    
     // check receivers
 	for (; receiverit != receivers.end(); receiverit++)
 	{
-		ret = s.insert(*receiverit);
+		name.clear();
+		if (checkChannelname(*receiverit))
+			name = makeLower((*receiverit));
+		else
+			name = *receiverit;
+		ret = s.insert(name);
 		if (ret.second == false)
 			ss->err407(*receiverit);		// ERRTOOMANYTARGETS
-		else if(checkChannelname(*receiverit))
+		else if(checkChannelname(name))
 		{
-            if (!doesChannelExists(makeLower((*receiverit).substr(1))))
+            if (!doesChannelExists(name.substr(1)))
                 ss->err404((*receiverit).substr(1));   	// ERRCANNOTSENDTOCHAN
 			else
 			{
-				channel = findChannel(makeLower((*receiverit).substr(1)));
-            	channel->privmsgBroadcast(ss, "PRIVMSG " + *receiverit + " " + msg.substr(1));
+				channel = findChannel(name.substr(1));
+            	channel->privmsgBroadcast(ss, "PRIVMSG " + name + " " + msg.substr(1));
 			}
 		}
-		else if (checkNickname(*receiverit) == false)
+		else if (checkNickname(name) == false)
 			ss->err411(sets[0]);   			// ERRNORECIPIENT
-		else if (!doesNicknameExists(*receiverit))
-			ss->err401(*receiverit);       // ERRNOSUCHNICK
+		else if (!doesNicknameExists(name))
+			ss->err401(name);       		// ERRNOSUCHNICK
 		else
 		{
-			session = findUser(*receiverit);
-			ss->replyAsUser(session, "PRIVMSG " + *receiverit + " " + msg.substr(1));
+			session = findUser(name);
+			ss->replyAsUser(session, "PRIVMSG " + name + " " + msg.substr(1));
 		}
 	}
 }
@@ -655,17 +662,17 @@ void		Frame::cmdWhois(Session *ss, std::vector<std::string> const& sets)
 		wild_v = userMask(*its);
 		if (wild_v.size() == 0)
 		{
-			ss->err401(*its);		// ERR_NOSUCHNICK
+			ss->err401(*its);			// ERR_NOSUCHNICK
 			continue ;
 		}
 		for (itw = wild_v.begin(); itw != wild_v.end(); ++itw)
 		{
 			session = findUser(*itw);
-			ss->rep311(session);
+			ss->rep311(session);			// RPL_WHOISUSER
 			if (session->user().checkManager())
-				ss->rep313(session);
-			session->user().cmdWhois(ss);
-			ss->rep318(*itw);
+				ss->rep313(session);		// RPL_WHOISOPERATOR
+			session->user().cmdWhois(ss);	// RPL_WHOISCHANNELS
+			ss->rep318(*itw);				// RPL_ENDOFWHOIS
 		}
 	}
 }

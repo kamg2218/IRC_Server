@@ -247,6 +247,9 @@ bool			User::isMemOfChannel(std::string const& chname) const
 	return true;
 }
 
+/*
+   * Fit to a RPL_WHOISCHANNELS format 
+*/
 void		User::cmdWhois(Session *ss)
 {
 	ChannelMap::iterator it;
@@ -270,6 +273,9 @@ void			User::partChannel(Channel *ch)
 	_mChannels.erase(ch->name());
 }
 
+/*
+   * Fit to a RPL_WHOREPLY format 
+*/
 std::vector<std::string>	User::userVectorOper(std::vector<std::string> const& sets)
 {
 	ChannelMap::iterator it = _mChannels.begin();
