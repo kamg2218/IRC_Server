@@ -35,7 +35,7 @@ class User
 		void		cmdJoin(Channel* ch);
 		void		cmdNick(std::vector<std::string> const& sets);
 		void		optionJoin(Session *ss, std::string const& msg);
-		void		cmdQuit(std::vector<std::string> const& sets);
+		void		cmdQuit(void);
 		void		cmdOper(void);
 		void		setPass(bool pass);
 		void		partChannel(Channel *ch);

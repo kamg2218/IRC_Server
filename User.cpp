@@ -211,16 +211,12 @@ bool			User::cmdPart(Session *ss, std::string const& chname, std::vector<std::st
 	return true;
 }
 
-void			User::cmdQuit(std::vector<std::string> const& sets)
+void			User::cmdQuit(void)
 {
 	ChannelMap::iterator	it;
 	ChannelMap::iterator	tt;
-	std::string				str;
-	std::string::size_type	i;
 
 	_isProperlyQuit = true;
-	for (i = 1; i < sets.size(); i++)
-		str += " " + sets[i];
 	for (it = _mChannels.begin(); it != _mChannels.end(); )
 	{
 		tt = it++;
