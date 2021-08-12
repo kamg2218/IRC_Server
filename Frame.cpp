@@ -166,7 +166,7 @@ void		Frame::cmdPart(Session *ss, std::vector<std::string> const& sets)
 	{
 		if (checkChannelname(v[i]) == false)
 			ss->err461("PART");	//NeedMoreParams
-		else if (_mChannels.find(makeLower(v[i].substr(1))) == _mChannels.end())
+		else if (!doesChannelExists(makeLower(v[i].substr(1))))
 			ss->err403(v[i].substr(1));	//NoSuchChannel
 		else if (ss->user().cmdPart(ss, v[i], sets) == false)
 			ss->err442(v[i].substr(1));	//NotOnChannel
@@ -175,11 +175,8 @@ void		Frame::cmdPart(Session *ss, std::vector<std::string> const& sets)
 
 void		Frame::cmdQuit(Session *ss, std::vector<std::string> const& sets)
 {
-	std::string	msg;
-
-	msg = vectorToString(sets);
-	broadcastAll(ss, msg);
-	ss->user().cmdQuit(sets);
+	broadcastAll(ss, vectorToString(sets));
+	ss->user().cmdQuit();
 	removeUser(ss->user().nick());
 }
 
@@ -260,7 +257,7 @@ void		Frame::cmdUser(Session *ss, std::vector<std::string> const& sets)
 		return ss->err462();			//AlreadyRegistered
 	ss->user().setHost(inet_ntoa(ss->soc().sin().sin_addr));
 	_mUsers[ss->user().nick()] = ss;
-	ss->rep001(&(ss->user()));	//Success
+	ss->rep001(&(ss->user()));			//Success
 	printCommand(ss);
 }
 
@@ -282,20 +279,18 @@ void		Frame::cmdTopic(Session *ss, std::vector<std::string> const& sets)
 	std::string				str;
 	std::string::size_type	i;
 
-	if (sets.size() < 2)
-		return ss->err461("TOPIC");			//NeedMoreParams
-	else if (!(checkChannelname(sets[1])))
-		return ss->err461("TOPIC");			//NeedMoreParams
+	if (sets.size() < 2 || !(checkChannelname(sets[1])))
+		return ss->err461("TOPIC");					//NeedMoreParams
 	it = _mChannels.find(makeLower(sets[1].substr(1)));
 	if (it == _mChannels.end())
-		return ss->err442(sets[1].substr(1));	//NotOnChannel
+		return ss->err442(sets[1].substr(1));		//NotOnChannel
+	else if (!(it->second->hasUser(ss->user().nick())))
+		return ss->err442(it->first);				//NotOnChannel
 	if (sets.size() == 2 || sets[2][0] != ':')
 	{
 		if (it->second->topic() == "")
-			return ss->rep331(it->first);		//NoTopic
-		else if (it->second->hasUser(ss->user().nick()))
-			return ss->rep332(it->first, it->second->topic());
-		return ss->err442(it->first);			//NotOnChannel
+			return ss->rep331(it->first);			//NoTopic
+		ss->rep332(it->first, it->second->topic());	//Topic
 	}
 	else
 	{
@@ -323,11 +318,10 @@ void		Frame::cmdList(Session *ss, std::vector<std::string> const& sets)
 	for (i = 0; i < v.size(); i++)
 	{
 		ss->rep321();							//ListStart
-		if (checkChannelname(v[i])
-				&& doesChannelExists(makeLower(v[i].substr(1))))
+		if (doesChannelExists(makeLower(v[i].substr(1))))
 		{
 			it = _mChannels.find(makeLower(v[i].substr(1)));
-			ss->rep322(it->second);
+			ss->rep322(it->second);				//List
 		}
 		ss->rep323();							//ListEnd
 	}
@@ -408,6 +402,11 @@ void		Frame::cmdKick(Session *ss, std::vector<std::string> const& sets)
 			channel->broadcast(ss, vectorToString(cmd));
 			target->user().partChannel(channel);
 			channel->cmdPart(target->user().nick());
+			if (!channel->userCount())
+			{
+				delete channel;
+				removeChannel(channel->name());
+			}
 		}
 		cmdsets.erase(cmdsets.begin());
 	}
