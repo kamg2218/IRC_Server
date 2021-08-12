@@ -1,5 +1,6 @@
 #include "include/Channel.hpp"
 #include "include/Session.hpp"
+#include "include/Frame.hpp"
 
 Channel::Channel(Session *creator, std::string const& name, std::string const& topic)
 	: _sName(name), _sTopic(topic)
@@ -185,11 +186,14 @@ void		Channel::setTopic(std::string const topic)
 	_sTopic = topic;
 }
 
+/*
+   * Fit to a RPL_WHOREPLY format
+*/
 std::vector<std::string>		Channel::channelVector()
 {
 	UserMap::iterator		it;
 	std::vector<std::string>		res;
-	std::string servername = "ft_irc";
+	std::string		servername = Frame::instance()->getServer().name();
 
 	for (it = _mUsers.begin(); it != _mUsers.end(); ++it)
 	{
@@ -201,11 +205,14 @@ std::vector<std::string>		Channel::channelVector()
 	return res;
 }
 
+/*
+   * Only Channel Manager responded
+*/
 std::vector<std::string>		Channel::channeloperVector()
 {
 	UserMap::iterator		it;
 	std::vector<std::string>		res;
-	std::string		servername = "ft_irc";
+	std::string		servername = Frame::instance()->getServer().name();
 
 	for (it = _mOperators.begin(); it != _mOperators.end(); ++it)
 	{
