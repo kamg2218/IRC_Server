@@ -68,7 +68,7 @@ int		Executor::msglen(std::string& buff) const
 
 bool		Executor::isPrefix(std::string const& s) const
 {
-	if (*(s.begin()) == ':')
+	if (s.size() && *(s.begin()) == ':')
 		return true;
 	return false;
 }
@@ -88,6 +88,8 @@ std::string		Executor::split(std::string& buff, std::vector<std::string> & v)
 	}
 	if (msgline.size())
 		v.push_back(msgline);
+	if (!v.size())
+		return prefix;
 	if (isPrefix(v[0]))
 	{
 		prefix = v[0];
