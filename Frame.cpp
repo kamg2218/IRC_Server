@@ -591,7 +591,8 @@ void		Frame::cmdWho(Session *ss, std::vector<std::string> const& sets)
 void		Frame::cmdPrivmsg(Session *ss, std::vector<std::string> const& sets)
 {
     std::vector<std::string>							receivers;
-	std::string		name;
+    std::vector<std::string>::iterator					receiverit;
+	std::string											name;
 	std::set<std::string>								s;
 	std::set<std::string>::iterator						is;
 	std::pair<std::set<std::string>::iterator, bool>	ret;
@@ -610,7 +611,7 @@ void		Frame::cmdPrivmsg(Session *ss, std::vector<std::string> const& sets)
     
 	// split receivers
     receivers = split_comma(sets[1]);
-    std::vector<std::string>::iterator		receiverit = receivers.begin();
+    receiverit = receivers.begin();
    
     // check receivers
 	for (; receiverit != receivers.end(); receiverit++)
@@ -623,24 +624,24 @@ void		Frame::cmdPrivmsg(Session *ss, std::vector<std::string> const& sets)
 		ret = s.insert(name);
 		if (ret.second == false)
 			ss->err407(*receiverit);		// ERRTOOMANYTARGETS
-		else if(checkChannelname(*receiverit))
+		else if(checkChannelname(name))
 		{
-            if (!doesChannelExists(makeLower((*receiverit).substr(1))))
+            if (!doesChannelExists(name.substr(1)))
                 ss->err404((*receiverit).substr(1));   	// ERRCANNOTSENDTOCHAN
 			else
 			{
-				channel = findChannel(makeLower((*receiverit).substr(1)));
-            	channel->privmsgBroadcast(ss, "PRIVMSG " + makeLower(*receiverit) + " " + msg.substr(1));
+				channel = findChannel(name.substr(1));
+            	channel->privmsgBroadcast(ss, "PRIVMSG " + name + " " + msg.substr(1));
 			}
 		}
-		else if (checkNickname(*receiverit) == false)
+		else if (checkNickname(name) == false)
 			ss->err411(sets[0]);   			// ERRNORECIPIENT
-		else if (!doesNicknameExists(*receiverit))
-			ss->err401(*receiverit);       // ERRNOSUCHNICK
+		else if (!doesNicknameExists(name))
+			ss->err401(name);       		// ERRNOSUCHNICK
 		else
 		{
-			session = findUser(*receiverit);
-			ss->replyAsUser(session, "PRIVMSG " + *receiverit + " " + msg.substr(1));
+			session = findUser(name);
+			ss->replyAsUser(session, "PRIVMSG " + name + " " + msg.substr(1));
 		}
 	}
 }
