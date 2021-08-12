@@ -630,7 +630,7 @@ void		Frame::cmdPrivmsg(Session *ss, std::vector<std::string> const& sets)
 			else
 			{
 				channel = findChannel(makeLower((*receiverit).substr(1)));
-            	channel->privmsgBroadcast(ss, "PRIVMSG " + *receiverit + " " + msg.substr(1));
+            	channel->privmsgBroadcast(ss, "PRIVMSG " + makeLower(*receiverit) + " " + msg.substr(1));
 			}
 		}
 		else if (checkNickname(*receiverit) == false)
