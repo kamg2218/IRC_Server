@@ -402,6 +402,11 @@ void		Frame::cmdKick(Session *ss, std::vector<std::string> const& sets)
 			channel->broadcast(ss, vectorToString(cmd));
 			target->user().partChannel(channel);
 			channel->cmdPart(target->user().nick());
+			if (!channel->userCount())
+			{
+				delete it->second;
+				removeChannel(it->first);
+			}
 		}
 		cmdsets.erase(cmdsets.begin());
 	}
