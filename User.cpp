@@ -3,7 +3,7 @@
 #include "include/Frame.hpp"
 
 User::User(void)
-	: _didNick(false), _didUser(false), _manager(false), _password(true), _isProperlyQuit(false)
+	: _didNick(false), _didUser(false), _manager(false), _password(false), _isProperlyQuit(false)
 {
 }
 
@@ -101,7 +101,7 @@ bool			User::checkQuit(void) const
  */
 bool			User::isRegistered(void) const
 {
-	if (checkNick() && checkUser())
+	if (checkNick() && checkUser() && pass())
 		return true;
 	return false;
 }
