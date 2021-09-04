@@ -24,7 +24,6 @@ class Service;
 class Session
 {
 	private:
-		typedef Session*	pointer;
 		Socket			_soc;
 		User			_user;
 		std::string		_rstream;
